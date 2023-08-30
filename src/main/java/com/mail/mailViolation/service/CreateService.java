@@ -32,30 +32,30 @@ public class CreateService {
 		log.info("------------------------------------------------------temp 전호출");
 		String temp = row.getCell(5).toString();
 
-		System.out.println("------------------------------------------------------날짜 추출 =" + temp);
+		log.info("------------------------------------------------------날짜 추출 =" + temp);
 
 		log.info("------------------------------------------------------날짜 설정 전호출");
 
-		System.out.println("------------------------------------------------------year =" + strYear);
+		log.info("------------------------------------------------------year =" + strYear);
 		// 년
 		int year = Integer.valueOf(strYear);
 
 
 		// 월
 		int month = Integer.valueOf(temp.substring(0, 2));
-		System.out.println("------------------------------------------------------month =" + month);
+		log.info("------------------------------------------------------month =" + month);
 
 		// 일
 		int day = Integer.valueOf(temp.substring(3, 5));
-		System.out.println("------------------------------------------------------day =" + day);
+		log.info("------------------------------------------------------day =" + day);
 
 		// 시
 		int hour = Integer.valueOf(temp.substring(6, 8));
-		System.out.println("------------------------------------------------------hour =" + hour);
+		log.info("------------------------------------------------------hour =" + hour);
 
 		// 분
 		int minutes = Integer.valueOf(temp.substring(9, 11));
-		System.out.println("------------------------------------------------------minutes =" + minutes);
+		log.info("------------------------------------------------------minutes =" + minutes);
 		
 		LocalDateTime ApprovalDate = LocalDateTime.of(year, month, day, hour, minutes);
 		

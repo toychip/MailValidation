@@ -52,7 +52,7 @@ public class ExelService {
             // 4번째 행부터 시작.
             for (int i = 3; i <= sheet.getLastRowNum(); i++) {
             	log.info("------------------------------현재 i: " + i);
-                System.out.println("------------------------------sheet.getLastRowNum() = " + sheet.getLastRowNum());
+                log.info("------------------------------sheet.getLastRowNum() = " + sheet.getLastRowNum());
                 Row currentRow = sheet.getRow(i);
 
                 if (currentRow == null) {
@@ -60,7 +60,7 @@ public class ExelService {
                 }
 
                 ApprovalMailDao approvalMailDao = createService.createMailDao(currentRow, year);
-                System.out.println("approvalMail.getDocNumber() = " + approvalMailDao.getDocNumber());
+                log.info("approvalMail.getDocNumber() = " + approvalMailDao.getDocNumber());
                 log.info(approvalMailDao.getDocNumber() + "--" + approvalMailDao.getDraftsman() + "--" + approvalMailDao.getTitle());
 
             }

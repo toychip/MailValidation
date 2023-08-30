@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
-import com.mail.mailViolation.dto.ApprovalMail;
+import com.mail.mailViolation.dto.ApprovalMailDao;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -23,8 +23,11 @@ import com.mail.mailViolation.dto.response.ValidationResponse;
 @Service
 @RequiredArgsConstructor
 public class ExelService {
+
+	private final CreateService createService;
 	
 	public List<ValidationResponse> processExcelFile(MultipartFile file){
+
 		
         InputStream inputStream = null;
 		log.info("-------------------------엑셀 처리 전 로그");
@@ -55,6 +58,10 @@ public class ExelService {
                 if (currentRow == null) {
                     continue;   // 행이 비어 있으면 건너뛰기
                 }
+
+                ApprovalMailDao approvalMailDao = createService.createMailDao(currentRow, year);
+                System.out.println("approvalMail.getDocNumber() = " + approvalMailDao.getDocNumber());
+                log.info(approvalMailDao.getDocNumber() + "--" + approvalMailDao.getDraftsman() + "--" + approvalMailDao.getTitle());
 
 //                log.info("------------------------------" + currentRow);
             }

@@ -11,7 +11,7 @@ import lombok.Getter;
 @Getter
 @Builder
 @AllArgsConstructor
-public class ApprovalMailDao {
+public class ApprovalMail {
 	
 	private Integer docNumber;	// 문서 번호
 	private String draftsman;	// 기안자

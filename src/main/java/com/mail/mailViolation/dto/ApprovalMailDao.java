@@ -23,4 +23,5 @@ public class ApprovalMailDao {
 	private String reference;	// 참조
 	private String blockCause;	// 차단사유
 	private String lastApprover;	// 최종 결재
+	private String result; 		// 적격 여부 일단 1 or 0 으로 설정. 추후 보안사항 위반일 경우 위반의 해당하는 값 1, 2, 3, .. 기입
 }

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Excel Upload</title>
+</head>
+<body>
+
+    <h1>Excel File Upload</h1>
+
+    <!-- "multipart/form-data"은 파일 업로드를 위해 필요합니다. -->
+
+	<form action="/upload" method="post" enctype="multipart/form-data"> 
+		<label for="file">Choose Excel file to upload:</label> 
+		<input type="file" id="file" name="file"> 
+		<button type="submit">Upload</button> 
+	</form>
+
+</body>
+</html>

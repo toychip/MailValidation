@@ -13,7 +13,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public class ApprovalMailDao {
 	
-	private Integer docNumber;	// 문서 번호
+	private String docNumber;	// 문서 번호
 	private String draftsman;	// 기안자
 	private String dept;		// 소속부서
 	private String title;		// 제목

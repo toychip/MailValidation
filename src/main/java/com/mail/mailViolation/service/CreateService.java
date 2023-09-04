@@ -18,9 +18,9 @@ public class CreateService {
 		log.info("------------------------------------------------------CreateService 호출");
 
 		// 1.0 으로 된 사번 Integer 형으로 변환
-		String strDocNumber = row.getCell(0).toString();
-		int intDocNumber = (int)Double.parseDouble(strDocNumber);
-		Integer docNumber = intDocNumber;
+		String strDocNumber = row.getCell(1).toString();
+//		int intDocNumber = (int)Double.parseDouble(strDocNumber);
+//		Integer docNumber = intDocNumber;
 
 		log.info("------------------------------------------------------draftsman 전호출");
 
@@ -70,7 +70,7 @@ public class CreateService {
 		log.info("------------------------------------------------------생성 전호출");
 		
 		ApprovalMailDao buildApprovalMailDao = ApprovalMailDao.builder()
-											.docNumber(docNumber)
+											.docNumber(strDocNumber)
 											.draftsman(draftsman)
 											.dept(dept)
 											.title(title)

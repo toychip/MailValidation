@@ -10,10 +10,6 @@ import java.util.List;
 @Mapper
 public interface MailMapper {
 
-//    @Select("SELECT EMP_ID, EMP_NAME, DEPT_ID, EMP_EMAIL, APPR_REFER_YN" +
-//            " FROM TB_AS_SCRT_EMP" +
-//            " WHERE EMP_NAME = #{draftsman}" +
-//            " AND APPR_REFER_YN = 'N'")
     List<EmployeeDao> findEmployeeByDraftsmanAndApprReferYn(@Param("draftsman") String draftsman);
 
 }

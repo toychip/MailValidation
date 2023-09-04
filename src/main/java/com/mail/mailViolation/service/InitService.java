@@ -16,7 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class CreateService {
+public class InitService {
 
 	private final MailMapper mapper;
 
@@ -92,10 +92,28 @@ public class CreateService {
 		return buildApprovalMailDao;
 	}
 
-	public List<EmployeeDao> getEmp(String name) {
+	// Y, N 등 여러개의 리스트 반환시 가장 최신 것으로 반환하는 메서드
+	public EmployeeDao getEmp(String name) {
 		List<EmployeeDao> result = mapper.findEmployeeByDraftsmanAndApprReferYn(name);
-		return result;
+		EmployeeDao latestEmployee = null;
+
+		for (EmployeeDao employeeDao : result) {
+			char userYN = employeeDao.getUseYN().charAt(0);
+			if(userYN == 'Y'){
+				return employeeDao;
+			}
+		}
+
+		for (EmployeeDao employeeDao : result) {
+			if (latestEmployee == null) {
+				latestEmployee = employeeDao;
+				continue;
+			}
+			if (employeeDao.getRgtDttm().isAfter(latestEmployee.getRgtDttm())) {
+				latestEmployee = employeeDao;
+			}
+		}
+
+		return latestEmployee;
 	}
-
-
 }

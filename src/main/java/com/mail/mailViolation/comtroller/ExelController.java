@@ -3,11 +3,9 @@ package com.mail.mailViolation.comtroller;
 import java.util.List;
 
 import com.mail.mailViolation.dto.EmployeeDao;
-import com.mail.mailViolation.mapper.MailMapper;
-import com.mail.mailViolation.service.CreateService;
+import com.mail.mailViolation.service.InitService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -23,7 +21,7 @@ import lombok.RequiredArgsConstructor;
 public class ExelController {
 
 	private final ExelService exelService;
-	private final CreateService createService;
+	private final InitService initService;
 
 	@GetMapping("/upload")
 	public String getMailForm() {
@@ -52,8 +50,8 @@ public class ExelController {
 
 	@ResponseBody
 	@GetMapping("/getEmp")
-	public List<EmployeeDao> getEmp() {
-		List<EmployeeDao> result = createService.getEmp("한상익");
+	public EmployeeDao getEmp() {
+		EmployeeDao result = initService.getEmp("한상익");
 		return result;
 	}
 }

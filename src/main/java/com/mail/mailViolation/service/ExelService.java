@@ -24,7 +24,7 @@ import com.mail.mailViolation.dto.response.ValidationResponse;
 @RequiredArgsConstructor
 public class ExelService {
 
-	private final CreateService createService;
+	private final InitService initService;
 	
 	public List<ValidationResponse> processExcelFile(MultipartFile file){
 
@@ -59,12 +59,13 @@ public class ExelService {
                     continue;   // 행이 비어 있으면 건너뛰기
                 }
 
-                ApprovalMailDao approvalMailDao = createService.createMailDao(currentRow, year);
+                ApprovalMailDao approvalMailDao = initService.createMailDao(currentRow, year);
                 log.info("approvalMail.getDocNumber() = " + approvalMailDao.getDocNumber());
-                log.info(approvalMailDao.getDocNumber() + "--" + approvalMailDao.getDraftsman() + "--" + approvalMailDao.getTitle());
+                log.info("approvalMailDao.getDraftsman = " + approvalMailDao.getDraftsman());
 
+
+//                 db 저장 로직
             }
-            
             workbook.close();
         } catch (Exception e) {
             // 파일 처리 중 오류 발생 시 오류 추가

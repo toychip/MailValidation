@@ -1,8 +1,12 @@
 package com.mail.mailViolation.service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import com.mail.mailViolation.dto.ApprovalMailDao;
+import com.mail.mailViolation.dto.EmployeeDao;
+import com.mail.mailViolation.mapper.MailMapper;
+import lombok.RequiredArgsConstructor;
 import org.apache.poi.ss.usermodel.Row;
 import org.springframework.stereotype.Service;
 
@@ -11,7 +15,10 @@ import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class CreateService {
+
+	private final MailMapper mapper;
 
 	public ApprovalMailDao createMailDao(Row row, String strYear) {
 		// ------------------------------------------------------
@@ -84,5 +91,11 @@ public class CreateService {
 		log.info("------------------------------------------------------return 전호출");
 		return buildApprovalMailDao;
 	}
+
+	public List<EmployeeDao> getEmp(String name) {
+		List<EmployeeDao> result = mapper.findEmployeeByDraftsmanAndApprReferYn(name);
+		return result;
+	}
+
 
 }

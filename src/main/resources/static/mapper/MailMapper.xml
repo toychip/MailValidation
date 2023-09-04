@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mail.mailViolation.mapper.MailMapper">
+
+    <select id="findEmployeeByDraftsmanAndApprReferYn" parameterType="string" resultType="com.mail.mailViolation.dto.EmployeeDao">
+        SELECT EMP_ID, EMP_NAME, DEPT_ID, EMP_EMAIL, APPR_REFER_YN
+        FROM TB_AS_SCRT_EMP
+        WHERE EMP_NAME = #{draftsman}
+        AND APPR_REFER_YN = 'N'
+    </select>
+
+</mapper>

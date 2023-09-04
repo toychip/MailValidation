@@ -2,6 +2,9 @@ package com.mail.mailViolation.comtroller;
 
 import java.util.List;
 
+import com.mail.mailViolation.dto.EmployeeDao;
+import com.mail.mailViolation.mapper.MailMapper;
+import com.mail.mailViolation.service.CreateService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 public class ExelController {
 
 	private final ExelService exelService;
+	private final CreateService createService;
 
 	@GetMapping("/upload")
 	public String getMailForm() {
@@ -45,5 +49,11 @@ public class ExelController {
 		validationResponseList = exelService.processExcelFile(file);
 		return "redirect:/upload";
 	}
-	
+
+	@ResponseBody
+	@GetMapping("/getEmp")
+	public List<EmployeeDao> getEmp() {
+		List<EmployeeDao> result = createService.getEmp("한상익");
+		return result;
+	}
 }

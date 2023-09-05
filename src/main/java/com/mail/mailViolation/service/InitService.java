@@ -3,7 +3,7 @@ package com.mail.mailViolation.service;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import com.mail.mailViolation.dto.ApprovalMailDao;
+import com.mail.mailViolation.dto.request.ApprovalMailRequest;
 import com.mail.mailViolation.dto.EmployeeDao;
 import com.mail.mailViolation.mapper.MailMapper;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +20,7 @@ public class InitService {
 
 	private final MailMapper mapper;
 
-	public ApprovalMailDao createMailDao(Row row, String strYear) {
+	public ApprovalMailRequest createMailDao(Row row, String strYear) {
 		// ------------------------------------------------------
 		log.info("------------------------------------------------------CreateService 호출");
 
@@ -76,7 +76,7 @@ public class InitService {
 		
 		log.info("------------------------------------------------------생성 전호출");
 		
-		ApprovalMailDao buildApprovalMailDao = ApprovalMailDao.builder()
+		ApprovalMailRequest buildApprovalMailRequest = ApprovalMailRequest.builder()
 											.docNumber(strDocNumber)
 											.draftsman(draftsman)
 											.dept(dept)
@@ -89,7 +89,7 @@ public class InitService {
 											.lastApprover(lastApprover)
 											.build();
 		log.info("------------------------------------------------------return 전호출");
-		return buildApprovalMailDao;
+		return buildApprovalMailRequest;
 	}
 
 	// Y, N 등 여러개의 리스트 반환시 가장 최신 것으로 반환하는 메서드

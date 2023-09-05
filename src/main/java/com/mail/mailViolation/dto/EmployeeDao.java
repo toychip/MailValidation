@@ -11,7 +11,7 @@ import java.time.LocalDate;
 public class EmployeeDao {
     private String empId;
     private String empName;
-    private String deptId;
+    private Long deptId;
     private String empEmail;
     private String useYN;
     private LocalDate rgtDttm;

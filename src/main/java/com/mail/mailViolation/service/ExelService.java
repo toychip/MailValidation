@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
-import com.mail.mailViolation.dto.ApprovalMailDao;
+import com.mail.mailViolation.dto.request.ApprovalMailRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.FieldError;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.mail.mailViolation.dto.response.ValidationResponse;
+import com.mail.mailViolation.dto.MailResultDao;
 
 @Slf4j
 @Service
@@ -26,7 +26,7 @@ public class ExelService {
 
 	private final InitService initService;
 	
-	public List<ValidationResponse> processExcelFile(MultipartFile file){
+	public List<MailResultDao> processExcelFile(MultipartFile file){
 
 		
         InputStream inputStream = null;
@@ -59,9 +59,8 @@ public class ExelService {
                     continue;   // 행이 비어 있으면 건너뛰기
                 }
 
-                ApprovalMailDao approvalMailDao = initService.createMailDao(currentRow, year);
-                log.info("approvalMail.getDocNumber() = " + approvalMailDao.getDocNumber());
-                log.info("approvalMailDao.getDraftsman = " + approvalMailDao.getDraftsman());
+                ApprovalMailRequest approvalMailRequest = initService.createMailDao(currentRow, year);
+                Long deptId = initService.getEmp(approvalMailRequest.getDraftsman()).getDeptId();
 
 
 //                 db 저장 로직

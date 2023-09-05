@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.mail.mailViolation.dto.request.FileUploadRequest;
-import com.mail.mailViolation.dto.response.ValidationResponse;
+import com.mail.mailViolation.dto.MailResultDao;
 import com.mail.mailViolation.service.ExelService;
 
 import lombok.RequiredArgsConstructor;
@@ -43,8 +43,8 @@ public class ExelController {
 		
 		// 파일이 비어있을 경우 오류메시지 설정 로직 필요
 		log.info("-------------------------서비스 처리 전 로그");
-		List<ValidationResponse> validationResponseList = null;
-		validationResponseList = exelService.processExcelFile(file);
+		List<MailResultDao> mailResultDaoList = null;
+		mailResultDaoList = exelService.processExcelFile(file);
 		return "redirect:/upload";
 	}
 

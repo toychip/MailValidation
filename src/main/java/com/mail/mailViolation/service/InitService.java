@@ -116,4 +116,21 @@ public class InitService {
 
 		return latestEmployee;
 	}
+
+	public boolean checkApprovalCondition(ApprovalMailRequest approvalMailRequest,
+										  Long validOverLapDeptId) {
+
+		List<EmployeeDao> bosses = mapper.findBossByDeptId(validOverLapDeptId);
+
+		for (EmployeeDao boss : bosses) {
+			System.out.println("InitService.checkApprovalCondition.forloop");
+			System.out.println("------------------------boss = " + boss);
+			if (boss.getEmpName().equals(approvalMailRequest.getLastApprover()) ||
+					approvalMailRequest.getReference().contains(boss.getEmpName()) ||
+					approvalMailRequest.getReference().contains(boss.getEmpEmail())) {
+				return true;
+			}
+		}
+		return false;
+	}
 }

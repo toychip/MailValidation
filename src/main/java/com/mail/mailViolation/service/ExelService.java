@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
+import com.mail.mailViolation.dto.EmployeeDao;
 import com.mail.mailViolation.dto.request.ApprovalMailRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -60,8 +61,16 @@ public class ExelService {
                 }
 
                 ApprovalMailRequest approvalMailRequest = initService.createMailDao(currentRow, year);
-                Long deptId = initService.getEmp(approvalMailRequest.getDraftsman()).getDeptId();
-
+                System.out.println("------------------------approvalMailRequest.getDraftsman() = " + approvalMailRequest.getDraftsman());
+                EmployeeDao validOverLap = initService.getEmp(approvalMailRequest.getDraftsman());
+                System.out.println("------------------------validOverLap.getEmpName() = " + validOverLap.getEmpName());
+                Long validOverLapDeptId = validOverLap.getDeptId();
+                System.out.println("------------------------validOverLapDeptId = " + validOverLapDeptId);
+                boolean condition = initService.checkApprovalCondition(approvalMailRequest, validOverLapDeptId);
+                System.out.println("------------------------condition = " + condition);
+                if (condition) {
+                    System.out.println("보직좌가 포함됨.");
+                }
 
 //                 db 저장 로직
             }

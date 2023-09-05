@@ -10,4 +10,10 @@
         AND APPR_REFER_YN = 'N'
     </select>
 
+    <!-- MyBatis Mapper XML -->
+    <select id="findBossByDeptId" parameterType="Long" resultType="com.mail.mailViolation.dto.EmployeeDao">
+        SELECT * FROM TB_AS_SCRT_EMP WHERE DEPT_ID = #{deptId} AND APPR_REFER_YN = 'Y'
+    </select>
+
+
 </mapper>

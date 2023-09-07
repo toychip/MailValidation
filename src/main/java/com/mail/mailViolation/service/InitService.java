@@ -1,8 +1,7 @@
 package com.mail.mailViolation.service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import com.mail.mailViolation.dto.request.ApprovalMailRequest;
 import com.mail.mailViolation.dto.EmployeeDao;
@@ -99,16 +98,14 @@ public class InitService {
 
 	public String checkApprovalCondition(ApprovalMailRequest approvalMailRequest,
 										 Integer validOverLapDeptId) {
-		if(approvalMailRequest.getDept().equals("IT혁신실")) {
 
+		List<EmployeeDao> bosses = mapper.findBossByDeptId(validOverLapDeptId);
 
-			List<EmployeeDao> bosses = mapper.findBossByDeptId(validOverLapDeptId);
-
-			System.out.println("----------InitService.checkApprovalCondition 시작 \n\n");
-			System.out.println("----------최종 결재자: " + approvalMailRequest.getLastApprover());
-
-			System.out.println("----------참조: " + approvalMailRequest.getReference());
-			System.out.println("----------부서: " + approvalMailRequest.getDept());
+//		System.out.println("----------InitService.checkApprovalCondition 시작 \n\n");
+//		System.out.println("----------최종 결재자: " + approvalMailRequest.getLastApprover());
+//
+//		System.out.println("----------참조: " + approvalMailRequest.getReference());
+//		System.out.println("----------부서: " + approvalMailRequest.getDept());
 
 //		기안자의 부서에서 상위 보직좌가 존재하는지 확인하는 로직
 //		if (bosses.size() == 0) {
@@ -122,26 +119,35 @@ public class InitService {
 //			System.out.println("----------------- 기안자: " + approvalMailRequest.getDraftsman());
 //		}
 
-			for (EmployeeDao boss : bosses) {
-				System.out.println("----------------- 최종 결재자 혹은 포함되는지 확인 중 -----------------");
-				System.out.println("부서 대빵 보스의 아이디 boss.getDeptId() = " + boss.getDeptId());
-				System.out.println("부서 대빵 보스의 이름 boss.getEmpName() = " + boss.getEmpName());
-				System.out.println("부서 대빵 보스의 이메일 boss.getEmpEmail() = " + boss.getEmpEmail());
-				System.out.println("부서 대빵 보스의 부서코드.getDeptId() = " + boss.getDeptId());
-				if (boss.getEmpName().equals(approvalMailRequest.getLastApprover()) ||
-						approvalMailRequest.getReference().contains(boss.getEmpName()) ||
-						approvalMailRequest.getReference().contains(boss.getEmpEmail())) {
-					System.out.println("~~~~~~~~~~~~~~~~~~~~~         적격 조건 탐 InitService.checkApprovalCondition");
-					return "O";
-				}
+		// 중복된 보스 이름을 가진 객체 중 가장 최신의 RGT_DTTM 값을 가진 객체만을 유지
+		Map<String, EmployeeDao> uniqueBosses = new HashMap<>();
+		for (EmployeeDao boss : bosses) {
+			EmployeeDao existingBoss = uniqueBosses.get(boss.getEmpName());
+			if (existingBoss == null || boss.getRgtDttm().isAfter(existingBoss.getRgtDttm())) {
+				uniqueBosses.put(boss.getEmpName(), boss);
 			}
-			return "X";
-
-			// 메일 테스트는 emp 없으니까 예외처리 부적격 적격에는 넣지 않고 y or a 일때
-			// 메일에는 있는데 emp에는 없는 애들은 따로 예외처리 적격 부적격 판단 로직 x
-			// A, T 등
 		}
-		return null;
+
+		for (EmployeeDao boss : uniqueBosses.values()) {
+			System.out.println("----------------- 최종 결재자 혹은 포함되는지 확인 중 -----------------");
+//			System.out.println("부서 대빵 보스의 아이디 boss.getDeptId() = " + boss.getDeptId());
+//			System.out.println("부서 대빵 보스의 이름 boss.getEmpName() = " + boss.getEmpName());
+//			System.out.println("부서 대빵 보스의 이메일 boss.getEmpEmail() = " + boss.getEmpEmail());
+//			System.out.println("부서 대빵 보스의 부서코드.getDeptId() = " + boss.getDeptId());
+			if (boss.getEmpName().equals(approvalMailRequest.getLastApprover()) ||
+					approvalMailRequest.getReference().contains(boss.getEmpName()) ||
+					approvalMailRequest.getReference().contains(boss.getEmpEmail())) {
+//				System.out.println("~~~~~~~~~~~~~~~~~~~~~         적격 조건 탐 InitService.checkApprovalCondition");
+//				System.out.println("----------------- 확인 끝 -----------------");
+				return "O";
+			}
+		}
+//		System.out.println("----------------- 확인 끝 -----------------");
+		return "X";
+
+		// 메일 테스트는 emp 없으니까 예외처리 부적격 적격에는 넣지 않고 y or a 일때
+		// 메일에는 있는데 emp에는 없는 애들은 따로 예외처리 적격 부적격 판단 로직 x
+		// A, T 등
 	}
 
 	public List<Integer> getNoBossDepartments() {

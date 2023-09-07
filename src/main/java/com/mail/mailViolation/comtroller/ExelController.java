@@ -51,6 +51,7 @@ public class ExelController {
 			System.out.println("---------- 문서 번호: " + mailResultDao.getDocNumber());
 			System.out.println("---------- 메일 기안자: " + mailResultDao.getDraftsman());
 			System.out.println("---------- 기안자 부서: " + mailResultDao.getDept());
+			System.out.println("---------- 기안자 부서 코드: " + mailResultDao.getDeptId());
 			System.out.println("---------- 적격 여부: " + mailResultDao.getResult());
 			System.out.println("---------- 최종 결재자: " + mailResultDao.getLastApprover());
 			System.out.println("---------- 결재일: " + mailResultDao.getApprovalDate());

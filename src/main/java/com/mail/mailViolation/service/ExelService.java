@@ -82,6 +82,7 @@ public class ExelService {
                         .docNumber(approvalMailRequest.getDocNumber())	// 문서 번호
                         .draftsman(approvalMailRequest.getDraftsman())	// 기안자
                         .dept(approvalMailRequest.getDept())	// 소속부서
+                        .deptId(validOverLapDeptId)
                         .title(approvalMailRequest.getTitle())	// 제목
                         .approvalDate(approvalMailRequest.getApprovalDate())	// 결재일
                         .mailTitle(approvalMailRequest.getMailTitle())	// 메일 제목

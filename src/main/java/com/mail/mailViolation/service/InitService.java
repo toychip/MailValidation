@@ -129,19 +129,23 @@ public class InitService {
 		}
 
 		for (EmployeeDao boss : uniqueBosses.values()) {
-			System.out.println("----------------- 최종 결재자 혹은 포함되는지 확인 중 -----------------");
+//			System.out.println("----------------- 최종 결재자 혹은 포함되는지 확인 중 -----------------");
 //			System.out.println("부서 대빵 보스의 아이디 boss.getDeptId() = " + boss.getDeptId());
 //			System.out.println("부서 대빵 보스의 이름 boss.getEmpName() = " + boss.getEmpName());
 //			System.out.println("부서 대빵 보스의 이메일 boss.getEmpEmail() = " + boss.getEmpEmail());
 //			System.out.println("부서 대빵 보스의 부서코드.getDeptId() = " + boss.getDeptId());
+
 			if (boss.getEmpName().equals(approvalMailRequest.getLastApprover()) ||
 					approvalMailRequest.getReference().contains(boss.getEmpName()) ||
 					approvalMailRequest.getReference().contains(boss.getEmpEmail())) {
-//				System.out.println("~~~~~~~~~~~~~~~~~~~~~         적격 조건 탐 InitService.checkApprovalCondition");
+				System.out.println("~~~~~~~~~~~~~~~~~~~~~         적격 조건 탐 InitService.checkApprovalCondition");
 //				System.out.println("----------------- 확인 끝 -----------------");
 				return "O";
 			}
 		}
+		System.out.println("~~~~~~~~~~~~~~~~~~~~~         부적격");
+		System.out.println("approvalMailRequest = " + approvalMailRequest.getDept());
+
 //		System.out.println("----------------- 확인 끝 -----------------");
 		return "X";
 

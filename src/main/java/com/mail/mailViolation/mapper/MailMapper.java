@@ -12,5 +12,6 @@ public interface MailMapper {
 
     List<EmployeeDao> findEmployeeByDraftsmanAndApprReferYn(@Param("draftsman") String draftsman);
 
-    List<EmployeeDao> findBossByDeptId(Long validOverLapDeptId);
+    // @Param("deptId")
+    List<EmployeeDao> findBossByDeptId(@Param("deptId") Integer validOverLapDeptId);
 }

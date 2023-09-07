@@ -9,9 +9,9 @@ import java.time.LocalDate;
 @Builder
 @AllArgsConstructor
 public class EmployeeDao {
-    private Long empId;
+    private Integer empId;
     private String empName;
-    private Long deptId;
+    private Integer deptId;
     private String empEmail;
     private String useYN;
     private LocalDate rgtDttm;
@@ -19,9 +19,9 @@ public class EmployeeDao {
 
     public static EmployeeDao getDefault() {
         return EmployeeDao.builder()
-                .empId(-1L)
+                .empId(-1)
                 .empName("-1")
-                .deptId(-1L)
+                .deptId(-1)
                 .empEmail("-1")
                 .useYN("-1")
                 .rgtDttm(LocalDate.now())

@@ -5,14 +5,17 @@
 
     <select id="findEmployeeByDraftsmanAndApprReferYn" parameterType="string" resultType="com.mail.mailViolation.dto.EmployeeDao">
         SELECT EMP_ID, EMP_NAME, DEPT_ID, EMP_EMAIL, USE_YN, RGT_DTTM, APPR_REFER_YN
-        FROM TB_AS_SCRT_EMP
-        WHERE EMP_NAME = #{draftsman}
-        AND APPR_REFER_YN = 'N'
+          FROM TB_AS_SCRT_EMP
+         WHERE EMP_NAME = #{draftsman}
+           AND APPR_REFER_YN = 'N'
     </select>
 
     <!-- MyBatis Mapper XML -->
-    <select id="findBossByDeptId" parameterType="Long" resultType="com.mail.mailViolation.dto.EmployeeDao">
-        SELECT * FROM TB_AS_SCRT_EMP WHERE DEPT_ID = #{deptId} AND APPR_REFER_YN = 'Y'
+    <select id="findBossByDeptId" resultType="com.mail.mailViolation.dto.EmployeeDao">
+        SELECT EMP_ID, EMP_NAME, DEPT_ID, EMP_EMAIL, USE_YN, RGT_DTTM, APPR_REFER_YN
+          FROM TB_AS_SCRT_EMP
+         WHERE DEPT_ID = #{deptId}
+           AND APPR_REFER_YN = 'Y'
     </select>
 
 

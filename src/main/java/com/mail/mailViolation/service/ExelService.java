@@ -46,14 +46,11 @@ public class ExelService {
             String strDate = cell.toString();
             String year = strDate.substring(7, 11);
             
-    		log.info("------------------------- cell 처리 전 로그");
-            log.info("-------------ExelService---------------"+ year + "class() = "+year.getClass());
-            
-            
             // 4번째 행부터 시작.
+//            for (int i = 3; i <= 10; i++) {
             for (int i = 3; i <= sheet.getLastRowNum(); i++) {
+                System.out.println("\n\n");
             	log.info("------------------------------현재 i: " + i);
-                log.info("------------------------------sheet.getLastRowNum() = " + sheet.getLastRowNum());
                 Row currentRow = sheet.getRow(i);
 
                 if (currentRow == null) {
@@ -61,13 +58,10 @@ public class ExelService {
                 }
 
                 ApprovalMailRequest approvalMailRequest = initService.createMailDao(currentRow, year);
-                System.out.println("------------------------approvalMailRequest.getDraftsman() = " + approvalMailRequest.getDraftsman());
                 EmployeeDao validOverLap = initService.getEmp(approvalMailRequest.getDraftsman());
-                System.out.println("------------------------validOverLap.getEmpName() = " + validOverLap.getEmpName());
-                Long validOverLapDeptId = validOverLap.getDeptId();
-                System.out.println("------------------------validOverLapDeptId = " + validOverLapDeptId);
+                Integer validOverLapDeptId = validOverLap.getDeptId();
                 boolean condition = initService.checkApprovalCondition(approvalMailRequest, validOverLapDeptId);
-                System.out.println("------------------------condition = " + condition);
+                System.out.println("------------------------ 결재자 적격 = " + condition);
                 if (condition) {
                     System.out.println("보직좌가 포함됨.");
                 }

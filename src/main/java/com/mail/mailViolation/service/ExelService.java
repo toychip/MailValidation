@@ -111,10 +111,10 @@ public class ExelService {
             }
         }
 
+//      기안자의 부서에서 상위 보직좌가 존재하는지 확인하는 로직
         List<Integer> noBossDepartments = initService.getNoBossDepartments();
         for (Integer dept : noBossDepartments) {
             System.out.println("----------------- 보직좌가 없는 부서: " +dept);
-
         }
 		return mailResultDaoList;
 	}

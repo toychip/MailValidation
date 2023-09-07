@@ -14,20 +14,27 @@
     <select id="findBossByDeptId" resultType="com.mail.mailViolation.dto.EmployeeDao">
 
         -- 현재 부서의 보직좌 조회
+
         SELECT E.EMP_ID, E.EMP_NAME, E.DEPT_ID, E.EMP_EMAIL, E.USE_YN, E.RGT_DTTM, E.APPR_REFER_YN
         FROM TB_AS_SCRT_EMP E
         WHERE E.DEPT_ID = #{deptId}
           AND E.APPR_REFER_YN = 'Y'
         UNION
-
         -- 상위 부서의 보직좌 조회
         SELECT E.EMP_ID, E.EMP_NAME, E.DEPT_ID, E.EMP_EMAIL, E.USE_YN, E.RGT_DTTM, E.APPR_REFER_YN
-          FROM TB_AS_SCRT_EMP E
+        FROM TB_AS_SCRT_EMP E
                  INNER JOIN TB_AS_SCRT_DEPT D ON E.DEPT_ID = D.DEPT_ID
-         WHERE D.UPPER_DEPT = (SELECT UPPER_DEPT FROM TB_AS_SCRT_DEPT WHERE DEPT_ID = #{deptId})
+        WHERE D.DEPT_CODE = (SELECT UPPER_DEPT FROM TB_AS_SCRT_DEPT WHERE DEPT_ID = #{deptId})
           AND E.APPR_REFER_YN = 'Y'
+          AND E.use_yn = 'Y'
 
     </select>
+
+
+
+
+
+
 
 
 

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.mail.mailViolation.mapper.MailMapper">
@@ -30,15 +30,23 @@
 
     </select>
 
+    <insert id="insertValidResult" parameterType="com.mail.mailViolation.dto.MailResultDao">
+        INSERT INTO TEST_VALID_EMAIL
+        (
+            NO, DOC_NUMBER, DRAFTSMAN, DEPT, DEPT_ID, TITLE, APPROVAL_DATE,
+            MAIL_TITLE, RECIPIENT, REFERENCE, BLOCK_CAUSE, LAST_APPROVER, RESULT
+        )
+        VALUES
+            (
+                test_valid_email_seq.NEXTVAL, #{docNumber}, #{draftsman}, #{dept}, #{deptId}, #{title, jdbcType=VARCHAR},
+                #{approvalDate, jdbcType=TIMESTAMP}, #{mailTitle}, #{recipient}, #{reference},
+                #{blockCause}, #{lastApprover}, #{result}
+            )
+    </insert>
 
-
-
-
-
-
-
-
-
-
+    <select id="findValidEmail" resultType="com.mail.mailViolation.dto.MailResultDao">
+        SELECT *
+        FROM TEST_VALID_EMAIL
+    </select>
 
 </mapper>

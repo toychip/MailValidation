@@ -1,6 +1,7 @@
 package com.mail.mailViolation.mapper;
 
 import com.mail.mailViolation.dto.EmployeeDao;
+import com.mail.mailViolation.dto.MailResultDao;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
@@ -14,4 +15,8 @@ public interface MailMapper {
 
     // @Param("deptId")
     List<EmployeeDao> findBossByDeptId(@Param("deptId") Integer validOverLapDeptId);
+
+    void insertValidResult(MailResultDao mailResultDao);
+
+    List<MailResultDao> findValidEmail();
 }

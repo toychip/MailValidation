@@ -53,7 +53,7 @@ public class ExelService {
             // 4번째 행부터 시작.
 //            for (int i = 3; i <= 10; i++) {
             for (int i = 3; i <= sheet.getLastRowNum(); i++) {
-//                System.out.println("\n\n");
+//                log.info("\n\n");
 //            	log.info("------------------------------현재 i: " + i);
                 Row currentRow = sheet.getRow(i);
 
@@ -72,10 +72,15 @@ public class ExelService {
                 } else {
                     condition = initService.checkApprovalCondition(approvalMailRequest, validOverLapDeptId);
                 }
-//                System.out.println("------------------------ 결재자 적격 = " + condition);
+//                log.info("------------------------ 결재자 적격 = " + condition);
 //                if (condition.equals("O")) {
-//                    System.out.println("보직좌가 포함됨.");
+//                    log.info("보직좌가 포함됨.");
 //                }
+
+
+
+                String replaceTitle = approvalMailRequest.getTitle().replace(" ", "newew");
+                String orinTitle = replaceTitle.replace("newew", " ");
 
                 mailResultDaoList.add(
                         MailResultDao.builder()
@@ -83,7 +88,7 @@ public class ExelService {
                         .draftsman(approvalMailRequest.getDraftsman())	// 기안자
                         .dept(approvalMailRequest.getDept())	// 소속부서
                         .deptId(validOverLapDeptId)
-                        .title(approvalMailRequest.getTitle())	// 제목
+                        .title(orinTitle)	// 제목
                         .approvalDate(approvalMailRequest.getApprovalDate())	// 결재일
                         .mailTitle(approvalMailRequest.getMailTitle())	// 메일 제목
                         .recipient(approvalMailRequest.getRecipient())	// 받는 사람
@@ -115,7 +120,7 @@ public class ExelService {
 //      기안자의 부서에서 상위 보직좌가 존재하는지 확인하는 로직
         List<Integer> noBossDepartments = initService.getNoBossDepartments();
         for (Integer dept : noBossDepartments) {
-            System.out.println("----------------- 보직좌가 없는 부서: " +dept);
+            log.info("----------------- 보직좌가 없는 부서: " +dept);
         }
 		return mailResultDaoList;
 	}

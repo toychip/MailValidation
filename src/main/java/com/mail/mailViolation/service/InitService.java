@@ -3,6 +3,7 @@ package com.mail.mailViolation.service;
 import java.time.LocalDateTime;
 import java.util.*;
 
+import com.mail.mailViolation.dto.MailResultDao;
 import com.mail.mailViolation.dto.request.ApprovalMailRequest;
 import com.mail.mailViolation.dto.EmployeeDao;
 import com.mail.mailViolation.mapper.MailMapper;
@@ -138,13 +139,13 @@ public class InitService {
 			if (boss.getEmpName().equals(approvalMailRequest.getLastApprover()) ||
 					approvalMailRequest.getReference().contains(boss.getEmpName()) ||
 					approvalMailRequest.getReference().contains(boss.getEmpEmail())) {
-				System.out.println("~~~~~~~~~~~~~~~~~~~~~         적격 조건 탐 InitService.checkApprovalCondition");
+//				System.out.println("~~~~~~~~~~~~~~~~~~~~~         적격 조건 탐 InitService.checkApprovalCondition");
 //				System.out.println("----------------- 확인 끝 -----------------");
 				return "O";
 			}
 		}
-		System.out.println("~~~~~~~~~~~~~~~~~~~~~         부적격");
-		System.out.println("approvalMailRequest = " + approvalMailRequest.getDept());
+//		System.out.println("~~~~~~~~~~~~~~~~~~~~~         부적격");
+//		System.out.println("approvalMailRequest = " + approvalMailRequest.getDept());
 
 //		System.out.println("----------------- 확인 끝 -----------------");
 		return "X";
@@ -157,4 +158,10 @@ public class InitService {
 	public List<Integer> getNoBossDepartments() {
 		return new ArrayList<>(arrays); // 멤버 변수를 직접 반환하지 않고 복사본을 반환 }
 	}
+
+	public List<MailResultDao> getData() {
+		List<MailResultDao> validEmail = mapper.findValidEmail();
+		return validEmail;
+	}
+
 }

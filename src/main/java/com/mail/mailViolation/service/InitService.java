@@ -72,10 +72,10 @@ public class InitService {
 			return EmployeeDao.getDefault();
 		}
 
+
 		for (EmployeeDao employeeDao : result) {
 
 			char userYN = employeeDao.getUseYN().charAt(0);
-
 			if (userYN == 'Y') {
 				return employeeDao;
 			}
@@ -102,9 +102,10 @@ public class InitService {
 
 		List<EmployeeDao> bosses = mapper.findBossByDeptId(validOverLapDeptId);
 
-		System.out.println("----------최종 결재자: " + approvalMailRequest.getLastApprover());
-		System.out.println("----------참조: " + approvalMailRequest.getReference());
-		System.out.println("----------부서: " + approvalMailRequest.getDept());
+//		System.out.println("----------InitService.checkApprovalCondition 시작 \n\n");
+//		System.out.println("----------최종 결재자: " + approvalMailRequest.getLastApprover());
+//		System.out.println("----------참조: " + approvalMailRequest.getReference());
+//		System.out.println("----------부서: " + approvalMailRequest.getDept());
 
 		if (bosses.size() == 0) {
 			if (arrays.stream().noneMatch(id -> id.equals(validOverLapDeptId))) {
@@ -119,10 +120,10 @@ public class InitService {
 		}
 
 		for (EmployeeDao boss : bosses) {
-			System.out.println("----------------- 최종 결재자 혹은 포함되는지 확인 중 -----------------");
-			System.out.println("부서 대빵 보스의 아이디 boss.getDeptId() = " + boss.getDeptId());
-			System.out.println("부서 대빵 보스의 이름 boss.getEmpName() = " + boss.getEmpName());
-			System.out.println("부서 대빵 보스의 이메일 boss.getEmpEmail() = " + boss.getEmpEmail());
+//			System.out.println("----------------- 최종 결재자 혹은 포함되는지 확인 중 -----------------");
+//			System.out.println("부서 대빵 보스의 아이디 boss.getDeptId() = " + boss.getDeptId());
+//			System.out.println("부서 대빵 보스의 이름 boss.getEmpName() = " + boss.getEmpName());
+//			System.out.println("부서 대빵 보스의 이메일 boss.getEmpEmail() = " + boss.getEmpEmail());
 			if (boss.getEmpName().equals(approvalMailRequest.getLastApprover()) ||
 					approvalMailRequest.getReference().contains(boss.getEmpName()) ||
 					approvalMailRequest.getReference().contains(boss.getEmpEmail())) {

@@ -114,6 +114,7 @@ public class ExelService {
         List<Integer> noBossDepartments = initService.getNoBossDepartments();
         for (Integer dept : noBossDepartments) {
             System.out.println("----------------- 보직좌가 없는 부서: " +dept);
+
         }
 		return mailResultDaoList;
 	}

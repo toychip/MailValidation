@@ -2,9 +2,12 @@ package com.mail.mailViolation.service;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
-import com.mail.mailViolation.dto.ApprovalMailDao;
+import com.mail.mailViolation.dto.EmployeeDao;
+import com.mail.mailViolation.dto.request.ApprovalMailRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -17,19 +20,21 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.FieldError;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.mail.mailViolation.dto.response.ValidationResponse;
+import com.mail.mailViolation.dto.MailResultDao;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class ExelService {
 
-	private final CreateService createService;
-	
-	public List<ValidationResponse> processExcelFile(MultipartFile file){
+	private final InitService initService;
+    private final InsertService insertService;
 
-		
+	public List<MailResultDao> processExcelFile(MultipartFile file){
+
+
         InputStream inputStream = null;
+        List<MailResultDao> mailResultDaoList = new ArrayList<>();
 		log.info("-------------------------엑셀 처리 전 로그");
 		try {
 
@@ -44,27 +49,58 @@ public class ExelService {
             Cell cell = row.getCell(0);
             String strDate = cell.toString();
             String year = strDate.substring(7, 11);
-            
-    		log.info("------------------------- cell 처리 전 로그");
-            log.info("-------------ExelService---------------"+ year + "class() = "+year.getClass());
-            
-            
+
             // 4번째 행부터 시작.
+//            for (int i = 3; i <= 10; i++) {
             for (int i = 3; i <= sheet.getLastRowNum(); i++) {
-            	log.info("------------------------------현재 i: " + i);
-                log.info("------------------------------sheet.getLastRowNum() = " + sheet.getLastRowNum());
+//                log.info("\n\n");
+//            	log.info("------------------------------현재 i: " + i);
                 Row currentRow = sheet.getRow(i);
 
                 if (currentRow == null) {
                     continue;   // 행이 비어 있으면 건너뛰기
                 }
 
-                ApprovalMailDao approvalMailDao = createService.createMailDao(currentRow, year);
-                log.info("approvalMail.getDocNumber() = " + approvalMailDao.getDocNumber());
-                log.info(approvalMailDao.getDocNumber() + "--" + approvalMailDao.getDraftsman() + "--" + approvalMailDao.getTitle());
+                ApprovalMailRequest approvalMailRequest = initService.createMailDao(currentRow, year);
+                EmployeeDao validOverLap = initService.getEmp(approvalMailRequest.getDraftsman());
+                Integer validOverLapDeptId = validOverLap.getDeptId();
+
+                String condition;
+                // 메일 테스트의 경우로, 부서가 그룹웨어관리가 포함될 경우
+                if (approvalMailRequest.getDept().contains("그룹웨어관리")) {
+                    condition = "T";
+                } else {
+                    condition = initService.checkApprovalCondition(approvalMailRequest, validOverLapDeptId);
+                }
+//                log.info("------------------------ 결재자 적격 = " + condition);
+//                if (condition.equals("O")) {
+//                    log.info("보직좌가 포함됨.");
+//                }
+
+
+
+                String replaceTitle = approvalMailRequest.getTitle().replace(" ", "newew");
+                String orinTitle = replaceTitle.replace("newew", " ");
+
+                mailResultDaoList.add(
+                        MailResultDao.builder()
+                        .docNumber(approvalMailRequest.getDocNumber())	// 문서 번호
+                        .draftsman(approvalMailRequest.getDraftsman())	// 기안자
+                        .dept(approvalMailRequest.getDept())	// 소속부서
+                        .deptId(validOverLapDeptId)
+                        .title(orinTitle)	// 제목
+                        .approvalDate(approvalMailRequest.getApprovalDate())	// 결재일
+                        .mailTitle(approvalMailRequest.getMailTitle())	// 메일 제목
+                        .recipient(approvalMailRequest.getRecipient())	// 받는 사람
+                        .reference(approvalMailRequest.getReference())	// 참조
+                        .blockCause(approvalMailRequest.getBlockCause())	// 차단사유
+                        .lastApprover(approvalMailRequest.getLastApprover())	// 최종 결재
+                        .result(condition)		// 적격 여부 적격: O, 부적격: X, 테스트: T
+                        .build()
+                );
 
             }
-            
+
             workbook.close();
         } catch (Exception e) {
             // 파일 처리 중 오류 발생 시 오류 추가
@@ -80,7 +116,13 @@ public class ExelService {
                 }
             }
         }
-		return null;
+
+//      기안자의 부서에서 상위 보직좌가 존재하는지 확인하는 로직
+        List<Integer> noBossDepartments = initService.getNoBossDepartments();
+        for (Integer dept : noBossDepartments) {
+            log.info("----------------- 보직좌가 없는 부서: " +dept);
+        }
+		return mailResultDaoList;
 	}
-	
+
 }

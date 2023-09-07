@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mail.mailViolation.mapper.MailMapper">
+
+    <select id="findEmployeeByDraftsmanAndApprReferYn" parameterType="string" resultType="com.mail.mailViolation.dto.EmployeeDao">
+        SELECT EMP_ID, EMP_NAME, DEPT_ID, EMP_EMAIL, USE_YN, RGT_DTTM, APPR_REFER_YN
+          FROM TB_AS_SCRT_EMP
+         WHERE EMP_NAME = #{draftsman}
+--            AND APPR_REFER_YN = 'N'
+    </select>
+
+    <!-- MyBatis Mapper XML -->
+    <select id="findBossByDeptId" resultType="com.mail.mailViolation.dto.EmployeeDao">
+
+        -- 현재 부서의 보직좌 조회
+
+        SELECT E.EMP_ID, E.EMP_NAME, E.DEPT_ID, E.EMP_EMAIL, E.USE_YN, E.RGT_DTTM, E.APPR_REFER_YN
+        FROM TB_AS_SCRT_EMP E
+        WHERE E.DEPT_ID = #{deptId}
+          AND E.APPR_REFER_YN = 'Y'
+        UNION
+        -- 상위 부서의 보직좌 조회
+        SELECT E.EMP_ID, E.EMP_NAME, E.DEPT_ID, E.EMP_EMAIL, E.USE_YN, E.RGT_DTTM, E.APPR_REFER_YN
+        FROM TB_AS_SCRT_EMP E
+                 INNER JOIN TB_AS_SCRT_DEPT D ON E.DEPT_ID = D.DEPT_ID
+        WHERE D.DEPT_CODE = (SELECT UPPER_DEPT FROM TB_AS_SCRT_DEPT WHERE DEPT_ID = #{deptId})
+          AND E.APPR_REFER_YN = 'Y'
+          AND E.use_yn = 'Y'
+
+    </select>
+
+    <insert id="insertValidResult" parameterType="com.mail.mailViolation.dto.MailResultDao">
+        INSERT INTO TEST_VALID_EMAIL
+        (
+            NO, DOC_NUMBER, DRAFTSMAN, DEPT, DEPT_ID, TITLE, APPROVAL_DATE,
+            MAIL_TITLE, RECIPIENT, REFERENCE, BLOCK_CAUSE, LAST_APPROVER, RESULT
+        )
+        VALUES
+            (
+                test_valid_email_seq.NEXTVAL, #{docNumber}, #{draftsman}, #{dept}, #{deptId}, #{title, jdbcType=VARCHAR},
+                #{approvalDate, jdbcType=TIMESTAMP}, #{mailTitle}, #{recipient}, #{reference},
+                #{blockCause}, #{lastApprover}, #{result}
+            )
+    </insert>
+
+    <select id="findValidEmail" resultType="com.mail.mailViolation.dto.MailResultDao">
+        SELECT *
+        FROM TEST_VALID_EMAIL
+    </select>
+
+</mapper>

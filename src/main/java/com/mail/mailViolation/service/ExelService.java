@@ -26,10 +26,10 @@ import com.mail.mailViolation.dto.MailResultDao;
 public class ExelService {
 
 	private final InitService initService;
-	
+
 	public List<MailResultDao> processExcelFile(MultipartFile file){
 
-		
+
         InputStream inputStream = null;
 		log.info("-------------------------엑셀 처리 전 로그");
 		try {
@@ -45,7 +45,7 @@ public class ExelService {
             Cell cell = row.getCell(0);
             String strDate = cell.toString();
             String year = strDate.substring(7, 11);
-            
+
             // 4번째 행부터 시작.
 //            for (int i = 3; i <= 10; i++) {
             for (int i = 3; i <= sheet.getLastRowNum(); i++) {
@@ -60,9 +60,16 @@ public class ExelService {
                 ApprovalMailRequest approvalMailRequest = initService.createMailDao(currentRow, year);
                 EmployeeDao validOverLap = initService.getEmp(approvalMailRequest.getDraftsman());
                 Integer validOverLapDeptId = validOverLap.getDeptId();
-                boolean condition = initService.checkApprovalCondition(approvalMailRequest, validOverLapDeptId);
+                String condition;
+
+                // 메일 테스트의 경우로, 부서가 그룹웨어관리가 포함될 경우
+                if (approvalMailRequest.getDept().contains("그룹웨어관리")) {
+                    condition = "T";
+                } else {
+                    condition = initService.checkApprovalCondition(approvalMailRequest, validOverLapDeptId);
+                }
                 System.out.println("------------------------ 결재자 적격 = " + condition);
-                if (condition) {
+                if (condition.equals("O")) {
                     System.out.println("보직좌가 포함됨.");
                 }
 
@@ -85,5 +92,5 @@ public class ExelService {
         }
 		return null;
 	}
-	
+
 }

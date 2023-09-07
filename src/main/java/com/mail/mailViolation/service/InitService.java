@@ -94,13 +94,15 @@ public class InitService {
 		return latestEmployee;
 	}
 
-	public boolean checkApprovalCondition(ApprovalMailRequest approvalMailRequest,
+	public String checkApprovalCondition(ApprovalMailRequest approvalMailRequest,
 										  Integer validOverLapDeptId) {
 
 		List<EmployeeDao> bosses = mapper.findBossByDeptId(validOverLapDeptId);
 
 		System.out.println("----------최종 결재자: " + approvalMailRequest.getLastApprover());
 		System.out.println("----------참조: " + approvalMailRequest.getReference());
+		System.out.println("----------부서: " + approvalMailRequest.getDept());
+
 		System.out.println("bosses.size() = " + bosses.size());
 
 		
@@ -113,10 +115,10 @@ public class InitService {
 					approvalMailRequest.getReference().contains(boss.getEmpName()) ||
 					approvalMailRequest.getReference().contains(boss.getEmpEmail())) {
 				System.out.println("~~~~~~~~~~~~~~~~~~~~~         적격 조건 탐 InitService.checkApprovalCondition");
-				return true;
+				return "O";
 			}
 		}
-		return false;
+		return "X";
 
 		// 메일 테스트는 emp 없으니까 예외처리 부적격 적격에는 넣지 않고 y or a 일때
 		// 메일에는 있는데 emp에는 없는 애들은 따로 예외처리 적격 부적격 판단 로직 x

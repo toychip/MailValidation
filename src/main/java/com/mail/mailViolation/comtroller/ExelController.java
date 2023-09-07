@@ -1,6 +1,7 @@
 package com.mail.mailViolation.comtroller;
 
 import java.util.List;
+import java.util.stream.IntStream;
 
 import com.mail.mailViolation.dto.EmployeeDao;
 import com.mail.mailViolation.service.InitService;
@@ -43,8 +44,16 @@ public class ExelController {
 		
 		// 파일이 비어있을 경우 오류메시지 설정 로직 필요
 		log.info("-------------------------서비스 처리 전 로그");
-		List<MailResultDao> mailResultDaoList = null;
-		mailResultDaoList = exelService.processExcelFile(file);
+		List<MailResultDao> mailResultDaoList = exelService.processExcelFile(file);
+
+		for (MailResultDao mailResultDao : mailResultDaoList) {
+//			System.out.println("\n\n");
+//			System.out.println("---------- 메일 기안자: " + mailResultDao.getDraftsman());
+//			System.out.println("---------- 기안자 부서: " + mailResultDao.getDept());
+//			System.out.println("---------- 최종 결재자: " + mailResultDao.getLastApprover());
+//			System.out.println("---------- 결재일: " + mailResultDao.getApprovalDate());
+//			System.out.println("---------- 적격 여부: " + mailResultDao.getResult());
+		}
 		return "redirect:/upload";
 	}
 

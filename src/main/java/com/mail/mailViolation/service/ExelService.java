@@ -2,6 +2,8 @@ package com.mail.mailViolation.service;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.mail.mailViolation.dto.EmployeeDao;
@@ -26,11 +28,13 @@ import com.mail.mailViolation.dto.MailResultDao;
 public class ExelService {
 
 	private final InitService initService;
+    private final InsertService insertService;
 
 	public List<MailResultDao> processExcelFile(MultipartFile file){
 
 
         InputStream inputStream = null;
+        List<MailResultDao> mailResultDaoList = new ArrayList<>();
 		log.info("-------------------------엑셀 처리 전 로그");
 		try {
 
@@ -49,8 +53,8 @@ public class ExelService {
             // 4번째 행부터 시작.
 //            for (int i = 3; i <= 10; i++) {
             for (int i = 3; i <= sheet.getLastRowNum(); i++) {
-                System.out.println("\n\n");
-            	log.info("------------------------------현재 i: " + i);
+//                System.out.println("\n\n");
+//            	log.info("------------------------------현재 i: " + i);
                 Row currentRow = sheet.getRow(i);
 
                 if (currentRow == null) {
@@ -60,21 +64,37 @@ public class ExelService {
                 ApprovalMailRequest approvalMailRequest = initService.createMailDao(currentRow, year);
                 EmployeeDao validOverLap = initService.getEmp(approvalMailRequest.getDraftsman());
                 Integer validOverLapDeptId = validOverLap.getDeptId();
-                String condition;
 
+                String condition;
                 // 메일 테스트의 경우로, 부서가 그룹웨어관리가 포함될 경우
                 if (approvalMailRequest.getDept().contains("그룹웨어관리")) {
                     condition = "T";
                 } else {
                     condition = initService.checkApprovalCondition(approvalMailRequest, validOverLapDeptId);
                 }
-                System.out.println("------------------------ 결재자 적격 = " + condition);
-                if (condition.equals("O")) {
-                    System.out.println("보직좌가 포함됨.");
-                }
+//                System.out.println("------------------------ 결재자 적격 = " + condition);
+//                if (condition.equals("O")) {
+//                    System.out.println("보직좌가 포함됨.");
+//                }
 
-//                 db 저장 로직
+                mailResultDaoList.add(
+                        MailResultDao.builder()
+                        .docNumber(approvalMailRequest.getDocNumber())	// 문서 번호
+                        .draftsman(approvalMailRequest.getDraftsman())	// 기안자
+                        .dept(approvalMailRequest.getDept())	// 소속부서
+                        .title(approvalMailRequest.getTitle())	// 제목
+                        .approvalDate(approvalMailRequest.getApprovalDate())	// 결재일
+                        .mailTitle(approvalMailRequest.getMailTitle())	// 메일 제목
+                        .recipient(approvalMailRequest.getRecipient())	// 받는 사람
+                        .reference(approvalMailRequest.getReference())	// 참조
+                        .blockCause(approvalMailRequest.getBlockCause())	// 차단사유
+                        .lastApprover(approvalMailRequest.getLastApprover())	// 최종 결재
+                        .result(condition)		// 적격 여부 적격: O, 부적격: X, 테스트: T
+                        .build()
+                );
+
             }
+
             workbook.close();
         } catch (Exception e) {
             // 파일 처리 중 오류 발생 시 오류 추가
@@ -90,7 +110,12 @@ public class ExelService {
                 }
             }
         }
-		return null;
+
+        List<Integer> noBossDepartments = initService.getNoBossDepartments();
+        for (Integer dept : noBossDepartments) {
+            System.out.println("----------------- 보직좌가 없는 부서: " +dept);
+        }
+		return mailResultDaoList;
 	}
 
 }

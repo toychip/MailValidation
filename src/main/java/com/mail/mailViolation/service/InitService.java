@@ -1,6 +1,7 @@
 package com.mail.mailViolation.service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.mail.mailViolation.dto.request.ApprovalMailRequest;
@@ -24,9 +25,9 @@ public class InitService {
 
 
 		String strDocNumber = row.getCell(1).toString();
-		String draftsman = row.getCell(2).toString();	// 기안자
-		String dept = row.getCell(3).toString();		// 소속부서
-		String title = row.getCell(4).toString();	// 제목
+		String draftsman = row.getCell(2).toString();    // 기안자
+		String dept = row.getCell(3).toString();        // 소속부서
+		String title = row.getCell(4).toString();    // 제목
 		String temp = row.getCell(5).toString();
 
 		// 년
@@ -41,24 +42,24 @@ public class InitService {
 		int minutes = Integer.valueOf(temp.substring(9, 11));
 
 		LocalDateTime ApprovalDate = LocalDateTime.of(year, month, day, hour, minutes);
-		String mailTitle = row.getCell(6).toString();	// 메일 제목
-		String recipient = row.getCell(7).toString();	// 받는 사람
-		String reference = row.getCell(8).toString();	// 참조
-		String blockCause = row.getCell(9).toString();	// 차단사유
-		String lastApprover = row.getCell(10).toString();	// 최종 결재
+		String mailTitle = row.getCell(6).toString();    // 메일 제목
+		String recipient = row.getCell(7).toString();    // 받는 사람
+		String reference = row.getCell(8).toString();    // 참조
+		String blockCause = row.getCell(9).toString();    // 차단사유
+		String lastApprover = row.getCell(10).toString();    // 최종 결재
 
 		ApprovalMailRequest buildApprovalMailRequest = ApprovalMailRequest.builder()
-											.docNumber(strDocNumber)
-											.draftsman(draftsman)
-											.dept(dept)
-											.title(title)
-											.ApprovalDate(ApprovalDate)
-											.mailTitle(mailTitle)
-											.recipient(recipient)
-											.reference(reference)
-											.blockCause(blockCause)
-											.lastApprover(lastApprover)
-											.build();
+				.docNumber(strDocNumber)
+				.draftsman(draftsman)
+				.dept(dept)
+				.title(title)
+				.ApprovalDate(ApprovalDate)
+				.mailTitle(mailTitle)
+				.recipient(recipient)
+				.reference(reference)
+				.blockCause(blockCause)
+				.lastApprover(lastApprover)
+				.build();
 		return buildApprovalMailRequest;
 	}
 
@@ -75,7 +76,7 @@ public class InitService {
 
 			char userYN = employeeDao.getUseYN().charAt(0);
 
-			if(userYN == 'Y'){
+			if (userYN == 'Y') {
 				return employeeDao;
 			}
 		}
@@ -94,8 +95,10 @@ public class InitService {
 		return latestEmployee;
 	}
 
+	List<Integer> arrays = new ArrayList<>();
+
 	public String checkApprovalCondition(ApprovalMailRequest approvalMailRequest,
-										  Integer validOverLapDeptId) {
+										 Integer validOverLapDeptId) {
 
 		List<EmployeeDao> bosses = mapper.findBossByDeptId(validOverLapDeptId);
 
@@ -103,9 +106,18 @@ public class InitService {
 		System.out.println("----------참조: " + approvalMailRequest.getReference());
 		System.out.println("----------부서: " + approvalMailRequest.getDept());
 
-		System.out.println("bosses.size() = " + bosses.size());
+		if (bosses.size() == 0) {
+			if (arrays.stream().noneMatch(id -> id.equals(validOverLapDeptId))) {
+				arrays.add(validOverLapDeptId);
+			}
 
-		
+			System.out.println("----------------- boss 사이즈가 0입니다. 심각한 사항입니다.");
+			System.out.println("----------------- 문서번호: " + approvalMailRequest.getDocNumber());
+			System.out.println("----------------- 기안자 부서번호: " + validOverLapDeptId);
+			System.out.println("----------------- 부서: " + approvalMailRequest.getDept());
+			System.out.println("----------------- 기안자: " + approvalMailRequest.getDraftsman());
+		}
+
 		for (EmployeeDao boss : bosses) {
 			System.out.println("----------------- 최종 결재자 혹은 포함되는지 확인 중 -----------------");
 			System.out.println("부서 대빵 보스의 아이디 boss.getDeptId() = " + boss.getDeptId());
@@ -123,6 +135,9 @@ public class InitService {
 		// 메일 테스트는 emp 없으니까 예외처리 부적격 적격에는 넣지 않고 y or a 일때
 		// 메일에는 있는데 emp에는 없는 애들은 따로 예외처리 적격 부적격 판단 로직 x
 		// A, T 등
-		//
+	}
+
+	public List<Integer> getNoBossDepartments() {
+		return new ArrayList<>(arrays); // 멤버 변수를 직접 반환하지 않고 복사본을 반환 }
 	}
 }

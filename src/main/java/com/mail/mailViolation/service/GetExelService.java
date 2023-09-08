@@ -2,12 +2,12 @@ package com.mail.mailViolation.service;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.mail.mailViolation.dto.EmployeeDao;
 import com.mail.mailViolation.dto.request.ApprovalMailRequest;
+import com.mail.mailViolation.dto.response.ReturnDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -25,17 +25,20 @@ import com.mail.mailViolation.dto.MailResultDao;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class ExelService {
+public class GetExelService {
 
 	private final InitService initService;
     private final InsertService insertService;
 
-	public List<MailResultDao> processExcelFile(MultipartFile file){
+	public ReturnDto processExcelFile(MultipartFile file){
 
 
         InputStream inputStream = null;
-        List<MailResultDao> mailResultDaoList = new ArrayList<>();
-		log.info("-------------------------엑셀 처리 전 로그");
+        List<MailResultDao> conditionXList = new ArrayList<>();
+        List<MailResultDao> conditionOList = new ArrayList<>();
+//        ReturnDto returnDto = new ReturnDto();
+
+//		log.info("-------------------------엑셀 처리 전 로그");
 		try {
 
             // ------------------------- 엑셀 처리 로직 시작
@@ -66,29 +69,46 @@ public class ExelService {
                 Integer validOverLapDeptId = validOverLap.getDeptId();
 
                 String condition;
+
+                String title = approvalMailRequest.getTitle();
+
                 // 메일 테스트의 경우로, 부서가 그룹웨어관리가 포함될 경우
                 if (approvalMailRequest.getDept().contains("그룹웨어관리")) {
                     condition = "T";
                 } else {
                     condition = initService.checkApprovalCondition(approvalMailRequest, validOverLapDeptId);
+
+                    if (condition == "X") {
+                        conditionXList.add(
+                                MailResultDao.builder()
+                                        .docNumber(approvalMailRequest.getDocNumber())	// 문서 번호
+                                        .draftsman(approvalMailRequest.getDraftsman())	// 기안자
+                                        .dept(approvalMailRequest.getDept())	// 소속부서
+                                        .deptId(validOverLapDeptId)
+                                        .title(title)	// 제목
+                                        .approvalDate(approvalMailRequest.getApprovalDate())	// 결재일
+                                        .mailTitle(approvalMailRequest.getMailTitle())	// 메일 제목
+                                        .recipient(approvalMailRequest.getRecipient())	// 받는 사람
+                                        .reference(approvalMailRequest.getReference())	// 참조
+                                        .blockCause(approvalMailRequest.getBlockCause())	// 차단사유
+                                        .lastApprover(approvalMailRequest.getLastApprover())	// 최종 결재
+                                        .result(condition)		// 적격 여부 적격: O, 부적격: X, 테스트: T
+                                        .build()
+                        );
+
+//                        ReturnDto.ReturnDtoBuilder returnDtoBuilder = ReturnDto.builder()
+//                                .conditionXList(conditionXList);
+
+                    }
                 }
-//                log.info("------------------------ 결재자 적격 = " + condition);
-//                if (condition.equals("O")) {
-//                    log.info("보직좌가 포함됨.");
-//                }
 
-
-
-                String replaceTitle = approvalMailRequest.getTitle().replace(" ", "newew");
-                String orinTitle = replaceTitle.replace("newew", " ");
-
-                mailResultDaoList.add(
+                conditionOList.add(
                         MailResultDao.builder()
                         .docNumber(approvalMailRequest.getDocNumber())	// 문서 번호
                         .draftsman(approvalMailRequest.getDraftsman())	// 기안자
                         .dept(approvalMailRequest.getDept())	// 소속부서
                         .deptId(validOverLapDeptId)
-                        .title(orinTitle)	// 제목
+                        .title(title)	// 제목
                         .approvalDate(approvalMailRequest.getApprovalDate())	// 결재일
                         .mailTitle(approvalMailRequest.getMailTitle())	// 메일 제목
                         .recipient(approvalMailRequest.getRecipient())	// 받는 사람
@@ -98,7 +118,6 @@ public class ExelService {
                         .result(condition)		// 적격 여부 적격: O, 부적격: X, 테스트: T
                         .build()
                 );
-
             }
 
             workbook.close();
@@ -117,12 +136,10 @@ public class ExelService {
             }
         }
 
-//      기안자의 부서에서 상위 보직좌가 존재하는지 확인하는 로직
-        List<Integer> noBossDepartments = initService.getNoBossDepartments();
-        for (Integer dept : noBossDepartments) {
-            log.info("----------------- 보직좌가 없는 부서: " +dept);
-        }
-		return mailResultDaoList;
+		return ReturnDto.builder()
+                .conditionXList(conditionXList.isEmpty() ? null:conditionXList)
+                .conditionOList(conditionOList)
+                .build();
 	}
 
 }

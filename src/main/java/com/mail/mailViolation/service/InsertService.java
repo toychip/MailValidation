@@ -19,7 +19,6 @@ public class InsertService {
 
         for (MailResultDao mailResultDao : mailResultDaoList) {
             mapper.insertValidResult(mailResultDao);
-            System.out.println("mailResultDao.getTitle() = " + mailResultDao.getTitle());
         }
         return null;
     }

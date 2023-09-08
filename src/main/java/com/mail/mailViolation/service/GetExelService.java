@@ -2,7 +2,6 @@ package com.mail.mailViolation.service;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +25,7 @@ import com.mail.mailViolation.dto.MailResultDao;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class ExelService {
+public class GetExelService {
 
 	private final InitService initService;
     private final InsertService insertService;
@@ -39,7 +38,7 @@ public class ExelService {
         List<MailResultDao> conditionOList = new ArrayList<>();
 //        ReturnDto returnDto = new ReturnDto();
 
-		log.info("-------------------------엑셀 처리 전 로그");
+//		log.info("-------------------------엑셀 처리 전 로그");
 		try {
 
             // ------------------------- 엑셀 처리 로직 시작

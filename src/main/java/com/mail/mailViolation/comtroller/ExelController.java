@@ -18,6 +18,7 @@ import com.mail.mailViolation.dto.MailResultDao;
 import com.mail.mailViolation.service.ExelService;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Slf4j
 @Controller
@@ -37,7 +38,7 @@ public class ExelController {
 	}
 	
 	@PostMapping("/upload")
-	public String handleFileUpload(FileUploadRequest form, Model model) {
+	public String handleFileUpload(FileUploadRequest form, Model model, RedirectAttributes redirectAttributes) {
 		
 		log.info("------------------------- 업로드 중");
 
@@ -81,9 +82,9 @@ public class ExelController {
 		insertService.insertData(conditionOList);
 		insertService.insertData(conditionXList);
 
-		model.addAttribute("conditionXList", conditionXList);
+		redirectAttributes.addFlashAttribute("conditionXList", conditionXList);
 		System.out.println("안전하게 저장 성공");
-		return "redirect:/upload";
+		return "redirect:/validResult";
 	}
 
 	@ResponseBody

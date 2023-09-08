@@ -44,7 +44,22 @@
             )
     </insert>
 
-    <select id="findValidEmail" resultType="com.mail.mailViolation.dto.MailResultDao">
+    <resultMap id="mailResultMap" type="com.mail.mailViolation.dto.MailResultDao">
+        <result property="docNumber" column="DOC_NUMBER"/>
+        <result property="draftsman" column="DRAFTSMAN"/>
+        <result property="dept" column="DEPT"/>
+        <result property="deptId" column="DEPT_ID"/>
+        <result property="title" column="TITLE"/>
+        <result property="approvalDate" column="APPROVAL_DATE"/>
+        <result property="mailTitle" column="MAIL_TITLE"/>
+        <result property="recipient" column="RECIPIENT"/>
+        <result property="reference" column="REFERENCE"/>
+        <result property="blockCause" column="BLOCK_CAUSE"/>
+        <result property="lastApprover" column="LAST_APPROVER"/>
+        <result property="result" column="RESULT"/>
+    </resultMap>
+
+    <select id="findValidEmail" resultMap="mailResultMap">
         SELECT *
         FROM TEST_VALID_EMAIL
     </select>

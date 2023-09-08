@@ -31,18 +31,34 @@
     </select>
 
     <insert id="insertValidResult" parameterType="com.mail.mailViolation.dto.MailResultDao">
-        INSERT INTO TEST_VALID_EMAIL
-        (
-            NO, DOC_NUMBER, DRAFTSMAN, DEPT, DEPT_ID, TITLE, APPROVAL_DATE,
-            MAIL_TITLE, RECIPIENT, REFERENCE, BLOCK_CAUSE, LAST_APPROVER, RESULT
-        )
-        VALUES
-            (
-                test_valid_email_seq.NEXTVAL, #{docNumber}, #{draftsman}, #{dept}, #{deptId}, #{title, jdbcType=VARCHAR},
-                #{approvalDate, jdbcType=TIMESTAMP}, #{mailTitle}, #{recipient}, #{reference},
-                #{blockCause}, #{lastApprover}, #{result}
-            )
+        MERGE INTO TEST_EMAIL_VALID T
+            USING (SELECT #{docNumber} AS temp FROM dual) S
+            ON (T.DOC_NUMBER = S.temp)
+            WHEN MATCHED THEN
+                UPDATE SET
+                    T.DRAFTSMAN = #{draftsman},
+                    T.DEPT = #{dept},
+                    T.DEPT_ID = #{deptId},
+                    T.TITLE = #{title, jdbcType=VARCHAR},
+                    T.APPROVAL_DATE = #{approvalDate, jdbcType=TIMESTAMP},
+                    T.MAIL_TITLE = #{mailTitle},
+                    T.RECIPIENT = #{recipient},
+                    T.REFERENCE = #{reference},
+                    T.BLOCK_CAUSE = #{blockCause},
+                    T.LAST_APPROVER = #{lastApprover},
+                    T.RESULT = #{result}
+            WHEN NOT MATCHED THEN
+                INSERT (
+                        NO, DOC_NUMBER, DRAFTSMAN, DEPT, DEPT_ID, TITLE, APPROVAL_DATE,
+                        MAIL_TITLE, RECIPIENT, REFERENCE, BLOCK_CAUSE, LAST_APPROVER, RESULT
+                    )
+                    VALUES (
+                               TEST_EMAIL_VALID_seq.NEXTVAL, #{docNumber}, #{draftsman}, #{dept}, #{deptId}, #{title},
+                               #{approvalDate, jdbcType=TIMESTAMP}, #{mailTitle}, #{recipient}, #{reference},
+                               #{blockCause}, #{lastApprover}, #{result}
+                           )
     </insert>
+
 
     <resultMap id="mailResultMap" type="com.mail.mailViolation.dto.MailResultDao">
         <result property="docNumber" column="DOC_NUMBER"/>
@@ -61,7 +77,7 @@
 
     <select id="findValidEmail" resultMap="mailResultMap">
         SELECT *
-        FROM TEST_VALID_EMAIL
+        FROM TEST_EMAIL_VALID
     </select>
 
 </mapper>

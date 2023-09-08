@@ -36,7 +36,7 @@ public class ExelController {
 	@PostMapping("/upload")
 	public String handleFileUpload(FileUploadRequest form) {
 		
-//		log.info("-------------------------파일 처리 전 로그");
+		log.info("------------------------- 업로드 중");
 
 		// 파일 유효성 검사 및 처리 로직
         MultipartFile file = null;
@@ -65,10 +65,9 @@ public class ExelController {
 	}
 
 	@ResponseBody
-	@GetMapping("/getEmp")
+	@GetMapping("/getList")
 	public List<MailResultDao> getEmp() {
 		List<MailResultDao> data = initService.getData();
 		return data;
-
 	}
 }

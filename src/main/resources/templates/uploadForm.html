@@ -44,6 +44,8 @@
 	</style>
 </head>
 <body>
+<div id="errors" th:attr="data-errors=${errors}" style="display:none;"></div>
+
 <div class="container text-center">
 	<h1>Excel File Upload 📁</h1>
 	<!-- "multipart/form-data"은 파일 업로드를 위해 필요합니다. -->
@@ -77,5 +79,13 @@
 	});
 </script>
 
+<script th:inline="javascript">
+	var uploadErrors = /*[[${errors}]]*/ null;
+
+	if (uploadErrors && uploadErrors.length > 0) {
+		var errorMessages = uploadErrors.join('\n');
+		alert("파일 업로드 에러:\n" + errorMessages);
+	}
+</script>
 </body>
 </html>

@@ -15,6 +15,7 @@
 		h1 {
 			color: #333;
 		}
+
 		/* 로딩 스피너 스타일 */
 		#loadingSpinner {
 			display: none;
@@ -24,10 +25,21 @@
 			left: 0;
 			height: 100%;
 			width: 100%;
-			background: rgba( 255, 255, 255, .8 )
-			url('https://i.stack.imgur.com/FhHRx.gif')
-			50% 50%
-			no-repeat;
+			background: rgba( 255, 255, 255, .8 );
+		}
+
+		.spinner-content {
+			position: fixed;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			text-align: center;
+			z-index: 1001;
+		}
+
+		.spinner-content p {
+			font-size: 18px;
+			font-weight: bold;
 		}
 	</style>
 </head>
@@ -45,7 +57,12 @@
 </div>
 
 <!-- 로딩 스피너 -->
-<div id="loadingSpinner"></div>
+<div id="loadingSpinner">
+	<div class="spinner-content">
+		<img src='https://i.stack.imgur.com/FhHRx.gif' alt="Loading...">
+		<p>검사중... 잠시만 기다려주세요</p>
+	</div>
+</div>
 
 <!-- 부트스트랩 JS (필요하면 추가) -->
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>

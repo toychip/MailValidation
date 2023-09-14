@@ -4,13 +4,40 @@
 <head>
 	<title>Excel Upload 📊</title>
 	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-	<!-- 여기에 추가 스타일 -->
+	<style>
+		/* 화면 잠금 처리를 위한 스타일 */
+		body.loading {
+			overflow: hidden;
+			pointer-events: none;
+			opacity: 0.4;
+		}
+
+		/* 로딩 스피너 스타일 */
+		#loadingSpinner {
+			display: none;
+			position: fixed;
+			z-index: 10000;
+			top: 0;
+			left: 0;
+			height: 100%;
+			width: 100%;
+			background: rgba(255, 255, 255, .8);
+		}
+
+		.spinner-content {
+			position: fixed;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			text-align: center;
+			z-index: 10001;
+		}
+	</style>
 </head>
 <body>
 
 <%
 	// 서버에서 설정한 에러 메시지를 가져옵니다.
-	// 이 부분은 컨트롤러에서 `request.setAttribute("errors", errors);` 형태로 설정해야 합니다.
 	String errors = (String) request.getAttribute("errors");
 %>
 
@@ -31,18 +58,20 @@
 <div id="loadingSpinner">
 	<div class="spinner-content">
 		<img src='https://i.stack.imgur.com/FhHRx.gif' alt="Loading...">
-		<p>검사중... 잠시만 기다려주세요</p>
+		<p>검사중... 잠시만 기다려주세요</p>  <!-- 이 부분이 추가된 문구입니다. -->
 	</div>
 </div>
 
-<!-- 자바스크립트와 추가 스크립트 -->
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
 <script type="text/javascript">
 	document.getElementById("uploadForm").addEventListener("submit", function() {
+		// 로딩 스피너 보이기
 		document.getElementById("loadingSpinner").style.display = "block";
+		// 화면 잠금
+		document.body.classList.add("loading");
 	});
 
 	var uploadErrors = '<%= errors %>';

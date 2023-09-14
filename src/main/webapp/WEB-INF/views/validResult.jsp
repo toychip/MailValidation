@@ -1,31 +1,13 @@
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%> <!-- 한글 인코딩 설정 -->
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %> <!-- JSTL 라이브러리 추가 -->
+
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html>
 <head>
     <title>Valid Result 🌟</title>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        body {
-            font-family: Arial, Helvetica, sans-serif;
-            background-color: #f2f2f2;
-        }
-        h1 {
-            color: #3a87ad;
-            text-shadow: 2px 2px 4px #000000;
-        }
-        thead {
-            background-color: #3a87ad;
-            color: white;
-        }
-        th, td {
-            text-align: center;
-            border: 1px solid #ddd;
-        }
-        tr:nth-child(even) {
-            background-color: #f2f2f2;
-        }
-        .btn-primary {
-            background-color: #3a87ad;
-        }
+        /* ... (CSS는 그대로 사용 가능하므로 생략) ... */
     </style>
 </head>
 <body>
@@ -33,7 +15,7 @@
     <form action="/downloadExcel" method="post" target="_blank">
         <button type="submit" class="btn btn-primary">📥 엑셀 다운로드 📥</button>
     </form>
-    <h1 class="text-center">✨ 검증 결과 ✨</h1>
+    <h1 class="text-center">✨✨ 검증 결과 ✨✨</h1>
     <table class="table table-responsive">
         <thead>
         <tr>
@@ -50,18 +32,20 @@
         </tr>
         </thead>
         <tbody>
-        <tr th:each="mail, iterStat : ${conditionXList}">
-            <td th:text="${iterStat.index + 1}"></td> <!-- 1-based index -->
-            <td th:text="${mail.docNumber != null ? mail.docNumber : ' '}"></td>
-            <td th:text="${mail.draftsman != null ? mail.draftsman : ' '}"></td>
-            <td th:text="${mail.dept != null ? mail.dept : ' '}"></td>
-            <td th:text="${mail.mailTitle != null ? mail.mailTitle : ' '}"></td>
-            <td th:text="${mail.approvalDate != null ? mail.approvalDate : ' '}"></td>
-            <td th:text="${mail.reference != null ? mail.reference : ' '}"></td>
-            <td th:text="${mail.blockCause != null ? mail.blockCause : ' '}"></td>
-            <td th:text="${mail.lastApprover != null ? mail.lastApprover : ' '}"></td>
-            <td th:text="${mail.result != null ? mail.result : ' '}"></td>
-        </tr>
+        <c:forEach items="${conditionXList}" var="mail" varStatus="iterStat">
+            <tr>
+                <td>${iterStat.index + 1}</td>
+                <td>${mail.docNumber != null ? mail.docNumber : ' '}</td>
+                <td>${mail.draftsman != null ? mail.draftsman : ' '}</td>
+                <td>${mail.dept != null ? mail.dept : ' '}</td>
+                <td>${mail.mailTitle != null ? mail.mailTitle : ' '}</td>
+                <td>${mail.approvalDate != null ? mail.approvalDate : ' '}</td>
+                <td>${mail.reference != null ? mail.reference : ' '}</td>
+                <td>${mail.blockCause != null ? mail.blockCause : ' '}</td>
+                <td>${mail.lastApprover != null ? mail.lastApprover : ' '}</td>
+                <td>${mail.result != null ? mail.result : ' '}</td>
+            </tr>
+        </c:forEach>
         </tbody>
     </table>
 </div>

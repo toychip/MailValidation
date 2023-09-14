@@ -70,12 +70,18 @@
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
 <script type="text/javascript">
+	document.getElementById("file").addEventListener('change', function() {
+		var maxSize = 5 * 1024 * 1024; // 5MB
+		if (this.files[0].size > maxSize) {
+			alert('파일 크기가 너무 큽니다. 최대 5MB까지 업로드 가능합니다.');
+			this.value = "";
+		}
+	}, false);
+
 	document.getElementById("uploadForm").addEventListener("submit", function() {
 		// 로딩 스피너 보이기
 		document.getElementById("loadingSpinner").style.display = "block";
-
 		document.body.classList.add("loading");
 	});
 
@@ -86,6 +92,7 @@
 		alert("파일 업로드 에러\n" + uploadErrors);
 	}
 </script>
+
 
 
 </body>

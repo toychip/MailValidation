@@ -43,10 +43,10 @@
 	String errorMessages = errors != null ? String.join("\n", errors) : "";
 %>
 
-<div id="errors" style="display:none;"><%= errorMessages %></div>
-
-
 <div id="errors" style="display:none;"><%= errors %></div>
+
+
+<%--<div id="errors" style="display:none;"><%= errors %></div>--%>
 
 <div class="container text-center">
 	<h1>Excel File Upload 📁</h1>
@@ -75,15 +75,15 @@
 	document.getElementById("uploadForm").addEventListener("submit", function() {
 		// 로딩 스피너 보이기
 		document.getElementById("loadingSpinner").style.display = "block";
-		// 화면 잠금
+
 		document.body.classList.add("loading");
 	});
 
 	// JSP에서 생성한 errorMessages 변수를 사용
-	var uploadErrors = '<%= errorMessages %>';
+	var uploadErrors = '<%= errors %>';
 
 	if (uploadErrors && uploadErrors.length > 0) {
-		alert("파일 업로드 에러:\n" + uploadErrors);
+		alert("파일 업로드 에러\n" + uploadErrors);
 	}
 </script>
 

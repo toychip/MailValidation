@@ -1,5 +1,6 @@
 package com.mail.mailViolation.comtroller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,14 +34,17 @@ public class UploadController {
 	private final InsertService insertService;
 
 	@GetMapping("/upload")
-	public String getMailForm() {
+	public String getMailForm(Model model, @ModelAttribute ArrayList<String> errors) {
+		if (errors != null && !errors.isEmpty()) {
+			model.addAttribute("errors", errors);
+		}
 		return "uploadForm";
 	}
 
 	@PostMapping("/upload")
 	public String handleFileUpload(@Validated FileUploadRequest form, BindingResult bindingResult,
 								   HttpSession session, Model model) {
-
+		log.info("------------redirect???????????????????");
 		log.info("------------------------- 업로드 중");
 
 		// 파일 유효성 검사 및 처리 로직

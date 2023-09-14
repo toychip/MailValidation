@@ -1,54 +1,23 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html>
 <head>
 	<title>Excel Upload 📊</title>
-	<!-- 부트스트랩 CSS 추가 -->
 	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-	<style>
-		body {
-			font-family: Arial, Helvetica, sans-serif;
-			background-color: #f2f2f2;
-		}
-		.container {
-			margin-top: 50px;
-		}
-		h1 {
-			color: #333;
-		}
-
-		/* 로딩 스피너 스타일 */
-		#loadingSpinner {
-			display: none;
-			position: fixed;
-			z-index: 1000;
-			top: 0;
-			left: 0;
-			height: 100%;
-			width: 100%;
-			background: rgba( 255, 255, 255, .8 );
-		}
-
-		.spinner-content {
-			position: fixed;
-			top: 50%;
-			left: 50%;
-			transform: translate(-50%, -50%);
-			text-align: center;
-			z-index: 1001;
-		}
-
-		.spinner-content p {
-			font-size: 18px;
-			font-weight: bold;
-		}
-	</style>
+	<!-- 여기에 추가 스타일 -->
 </head>
 <body>
-<div id="errors" th:attr="data-errors=${errors}" style="display:none;"></div>
+
+<%
+	// 서버에서 설정한 에러 메시지를 가져옵니다.
+	// 이 부분은 컨트롤러에서 `request.setAttribute("errors", errors);` 형태로 설정해야 합니다.
+	String errors = (String) request.getAttribute("errors");
+%>
+
+<div id="errors" style="display:none;"><%= errors %></div>
 
 <div class="container text-center">
 	<h1>Excel File Upload 📁</h1>
-	<!-- "multipart/form-data"은 파일 업로드를 위해 필요합니다. -->
 	<form id="uploadForm" action="/upload" method="post" enctype="multipart/form-data">
 		<div class="form-group">
 			<label for="file">Choose Excel file to upload:</label>
@@ -66,26 +35,22 @@
 	</div>
 </div>
 
-<!-- 부트스트랩 JS (필요하면 추가) -->
+<!-- 자바스크립트와 추가 스크립트 -->
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
-<!-- 자바스크립트로 로딩 스피너 보이기 -->
 <script type="text/javascript">
 	document.getElementById("uploadForm").addEventListener("submit", function() {
-		// 로딩 스피너 보이기
 		document.getElementById("loadingSpinner").style.display = "block";
 	});
-</script>
 
-<script th:inline="javascript">
-	var uploadErrors = /*[[${errors}]]*/ null;
+	var uploadErrors = '<%= errors %>';
 
 	if (uploadErrors && uploadErrors.length > 0) {
-		var errorMessages = uploadErrors.join('\n');
-		alert("파일 업로드 에러:\n" + errorMessages);
+		alert("파일 업로드 에러:\n" + uploadErrors);
 	}
 </script>
+
 </body>
 </html>

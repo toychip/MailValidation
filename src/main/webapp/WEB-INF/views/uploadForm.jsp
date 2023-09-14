@@ -1,3 +1,4 @@
+<%@ page import="java.util.ArrayList" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
@@ -38,8 +39,12 @@
 
 <%
 	// 서버에서 설정한 에러 메시지를 가져옵니다.
-	String errors = (String) request.getAttribute("errors");
+	ArrayList<String> errors = (ArrayList<String>) request.getAttribute("errors");
+	String errorMessages = errors != null ? String.join("\n", errors) : "";
 %>
+
+<div id="errors" style="display:none;"><%= errorMessages %></div>
+
 
 <div id="errors" style="display:none;"><%= errors %></div>
 
@@ -74,12 +79,14 @@
 		document.body.classList.add("loading");
 	});
 
-	var uploadErrors = '<%= errors %>';
+	// JSP에서 생성한 errorMessages 변수를 사용
+	var uploadErrors = '<%= errorMessages %>';
 
 	if (uploadErrors && uploadErrors.length > 0) {
 		alert("파일 업로드 에러:\n" + uploadErrors);
 	}
 </script>
+
 
 </body>
 </html>

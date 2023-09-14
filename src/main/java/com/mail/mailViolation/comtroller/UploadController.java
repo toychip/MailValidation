@@ -20,14 +20,13 @@ import com.mail.mailViolation.dto.MailResultDao;
 import com.mail.mailViolation.service.GetExelService;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
 
 @Slf4j
 @Controller
 @RequiredArgsConstructor
-public class ExelController {
+public class UploadController {
 
 	private final GetExelService getExelService;
 	private final InitService initService;

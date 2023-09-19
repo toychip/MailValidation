@@ -14,12 +14,12 @@ public class InsertService {
 
     private final MailMapper mapper;
 
+    // 데이터 삽입
     @Transactional
-    public String insertData(List<MailResultDao> mailResultDaoList) {
+    public void insertData(List<MailResultDao> mailResultDaoList) {
 
         for (MailResultDao mailResultDao : mailResultDaoList) {
             mapper.insertValidResult(mailResultDao);
         }
-        return null;
     }
 }

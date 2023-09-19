@@ -30,7 +30,6 @@ import javax.servlet.http.HttpSession;
 public class UploadController {
 
 	private final GetExelService getExelService;
-	private final InitService initService;
 	private final InsertService insertService;
 
 	@GetMapping("/upload")
@@ -44,7 +43,6 @@ public class UploadController {
 	@PostMapping("/upload")
 	public String handleFileUpload(@Validated FileUploadRequest form, BindingResult bindingResult,
 								   HttpSession session, Model model) {
-		log.info("------------redirect???????????????????");
 		log.info("------------------------- 업로드 중");
 
 		// 파일 유효성 검사 및 처리 로직
@@ -61,8 +59,8 @@ public class UploadController {
 			if (contentType == null ||
 					!(contentType.equals("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet") ||
 							contentType.equals("application/vnd.ms-excel") ||
-							contentType.equals("application/vnd.ms-excel.sheet.macroEnabled.12") || // for .xlsm
-							contentType.equals("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))) { // for .xlsx
+							contentType.equals("application/vnd.ms-excel.sheet.macroEnabled.12") || // .xlsm
+							contentType.equals("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))) { // .xlsx
 				bindingResult.rejectValue("file", "error.file", "엑셀 파일만 업로드 가능합니다.");
 			}
 		}
@@ -77,7 +75,7 @@ public class UploadController {
 			insertService.insertData(conditionXList);
 
 			session.setAttribute("conditionXList", conditionXList);
-			System.out.println("안전하게 저장 성공");
+			log.info("안전하게 저장 성공");
 			return "redirect:/validResult";
 		} else {
 			List<String> errors = bindingResult.getAllErrors().stream()
@@ -88,7 +86,7 @@ public class UploadController {
 			return "uploadForm";
 		}
 
-
+//		적격 리스트 출력
 //		for (MailResultDao mailResultDao : conditionOList) {
 //			log.info("\n\n");
 //			log.info("---------- conditionOList 문서 번호: " + mailResultDao.getDocNumber());
@@ -99,7 +97,8 @@ public class UploadController {
 //			log.info("---------- conditionOList 최종 결재자: " + mailResultDao.getLastApprover());
 //			log.info("---------- conditionOList 결재일: " + mailResultDao.getApprovalDate());
 //		}
-//
+
+//		부적격 리스트 출력
 //		for (MailResultDao mailResultDao : conditionXList) {
 //			log.info("\n\n");
 //			log.info("---------- conditionXList 문서 번호: " + mailResultDao.getDocNumber());
@@ -112,10 +111,11 @@ public class UploadController {
 //		}
 	}
 
-	@ResponseBody
-	@GetMapping("/getList")
-	public List<MailResultDao> getEmp() {
-		List<MailResultDao> data = initService.getData();
-		return data;
-	}
+//	DB연결 및 조회 테스트
+//	@ResponseBody
+//	@GetMapping("/getList")
+//	public List<MailResultDao> getEmp() {
+//		List<MailResultDao> data = initService.getData();
+//		return data;
+//	}
 }

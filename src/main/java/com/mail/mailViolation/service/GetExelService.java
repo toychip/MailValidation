@@ -28,7 +28,6 @@ import com.mail.mailViolation.dto.MailResultDao;
 public class GetExelService {
 
 	private final InitService initService;
-    private final InsertService insertService;
 
 	public ReturnDto processExcelFile(MultipartFile file){
 

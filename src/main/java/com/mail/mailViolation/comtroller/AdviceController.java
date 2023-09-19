@@ -11,7 +11,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.ArrayList;
 
 @Slf4j
-@ControllerAdvice
+@ControllerAdvice(assignableTypes = {
+        UploadController.class, ValidResultController.class
+})
 public class AdviceController {
 
     @ResponseStatus(HttpStatus.OK)

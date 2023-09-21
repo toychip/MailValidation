@@ -73,8 +73,7 @@ public class UploadController {
 			List<MailResultDao> conditionXList = returnDto.getConditionXList();
 
 			// 데이터 삽입
-			insertService.insertData(conditionOList);
-			insertService.insertData(conditionXList);
+			insertService.insertData(conditionOList, conditionXList);
 
 			// 검사 진행시 부적격 리스트 조회
 			session.setAttribute("conditionXList", conditionXList);

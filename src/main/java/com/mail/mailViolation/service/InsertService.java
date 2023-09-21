@@ -16,9 +16,14 @@ public class InsertService {
 
     // 데이터 삽입
     @Transactional
-    public void insertData(List<MailResultDao> mailResultDaoList) {
+    public void insertData(List<MailResultDao> conditionOList,
+                           List<MailResultDao> conditionXList) {
 
-        for (MailResultDao mailResultDao : mailResultDaoList) {
+        for (MailResultDao mailResultDao : conditionOList) {
+            mapper.insertValidResult(mailResultDao);
+        }
+
+        for (MailResultDao mailResultDao : conditionXList) {
             mapper.insertValidResult(mailResultDao);
         }
     }

@@ -3,9 +3,9 @@ package com.mail.mailViolation.service;
 import java.time.LocalDateTime;
 import java.util.*;
 
-import com.mail.mailViolation.dto.MailResultDao;
-import com.mail.mailViolation.dto.request.ApprovalMailRequest;
-import com.mail.mailViolation.dto.EmployeeDao;
+import com.mail.mailViolation.dto.dao.MailResultDao;
+import com.mail.mailViolation.dto.dto.ApprovalMailDto;
+import com.mail.mailViolation.dto.dao.EmployeeDao;
 import com.mail.mailViolation.mapper.MailMapper;
 import lombok.RequiredArgsConstructor;
 import org.apache.poi.ss.usermodel.Row;
@@ -21,7 +21,7 @@ public class InitService {
 
 	private final MailMapper mapper;
 
-	public ApprovalMailRequest createMailDao(Row row, String strYear) {
+	public ApprovalMailDto createMailDao(Row row, String strYear) {
 
 
 		String strDocNumber = row.getCell(1).toString();
@@ -48,7 +48,7 @@ public class InitService {
 		String blockCause = row.getCell(9).toString();    // 차단사유
 		String lastApprover = row.getCell(10).toString();    // 최종 결재
 
-		ApprovalMailRequest buildApprovalMailRequest = ApprovalMailRequest.builder()
+		ApprovalMailDto buildApprovalMailDto = ApprovalMailDto.builder()
 				.docNumber(strDocNumber)
 				.draftsman(draftsman)
 				.dept(dept)
@@ -60,7 +60,7 @@ public class InitService {
 				.blockCause(blockCause)
 				.lastApprover(lastApprover)
 				.build();
-		return buildApprovalMailRequest;
+		return buildApprovalMailDto;
 	}
 
 	// Y, N 등 여러개의 리스트 반환시 가장 최신 것으로 반환하는 메서드
@@ -97,7 +97,7 @@ public class InitService {
 
 	List<Integer> arrays = new ArrayList<>();
 
-	public String checkApprovalCondition(ApprovalMailRequest approvalMailRequest,
+	public String checkApprovalCondition(ApprovalMailDto approvalMailDto,
 										 Integer validOverLapDeptId) {
 
 		List<EmployeeDao> bosses = mapper.findBossByDeptId(validOverLapDeptId);
@@ -136,9 +136,9 @@ public class InitService {
 //			System.out.println("부서 대빵 보스의 이메일 boss.getEmpEmail() = " + boss.getEmpEmail());
 //			System.out.println("부서 대빵 보스의 부서코드.getDeptId() = " + boss.getDeptId());
 
-			if (boss.getEmpName().equals(approvalMailRequest.getLastApprover()) ||
-					approvalMailRequest.getReference().contains(boss.getEmpName()) ||
-					approvalMailRequest.getReference().contains(boss.getEmpEmail())) {
+			if (boss.getEmpName().equals(approvalMailDto.getLastApprover()) ||
+					approvalMailDto.getReference().contains(boss.getEmpName()) ||
+					approvalMailDto.getReference().contains(boss.getEmpEmail())) {
 //				System.out.println("~~~~~~~~~~~~~~~~~~~~~         적격 조건 탐 InitService.checkApprovalCondition");
 //				System.out.println("----------------- 확인 끝 -----------------");
 				return "O";

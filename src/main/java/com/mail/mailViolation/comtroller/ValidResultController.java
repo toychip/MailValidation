@@ -1,6 +1,6 @@
 package com.mail.mailViolation.comtroller;
 
-import com.mail.mailViolation.dto.MailResultDao;
+import com.mail.mailViolation.dto.dao.MailResultDao;
 import com.mail.mailViolation.service.SaveExelService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

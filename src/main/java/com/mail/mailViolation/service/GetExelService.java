@@ -5,9 +5,9 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.mail.mailViolation.dto.EmployeeDao;
-import com.mail.mailViolation.dto.request.ApprovalMailRequest;
-import com.mail.mailViolation.dto.response.ReturnDto;
+import com.mail.mailViolation.dto.dao.EmployeeDao;
+import com.mail.mailViolation.dto.dto.ApprovalMailDto;
+import com.mail.mailViolation.dto.dto.ReturnDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -20,7 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.FieldError;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.mail.mailViolation.dto.MailResultDao;
+import com.mail.mailViolation.dto.dao.MailResultDao;
 
 @Slf4j
 @Service
@@ -63,34 +63,34 @@ public class GetExelService {
                     continue;   // 행이 비어 있으면 건너뛰기
                 }
 
-                ApprovalMailRequest approvalMailRequest = initService.createMailDao(currentRow, year);
-                EmployeeDao validOverLap = initService.getEmp(approvalMailRequest.getDraftsman());
+                ApprovalMailDto approvalMailDto = initService.createMailDao(currentRow, year);
+                EmployeeDao validOverLap = initService.getEmp(approvalMailDto.getDraftsman());
                 Integer validOverLapDeptId = validOverLap.getDeptId();
 
                 String condition;
 
-                String title = approvalMailRequest.getTitle();
+                String title = approvalMailDto.getTitle();
 
                 // 메일 테스트의 경우로, 부서가 그룹웨어관리가 포함될 경우
-                if (approvalMailRequest.getDept().contains("그룹웨어관리")) {
+                if (approvalMailDto.getDept().contains("그룹웨어관리")) {
                     condition = "T";
                 } else {
-                    condition = initService.checkApprovalCondition(approvalMailRequest, validOverLapDeptId);
+                    condition = initService.checkApprovalCondition(approvalMailDto, validOverLapDeptId);
 
                     if (condition == "X") {
                         conditionXList.add(
                                 MailResultDao.builder()
-                                        .docNumber(approvalMailRequest.getDocNumber())	// 문서 번호
-                                        .draftsman(approvalMailRequest.getDraftsman())	// 기안자
-                                        .dept(approvalMailRequest.getDept())	// 소속부서
+                                        .docNumber(approvalMailDto.getDocNumber())	// 문서 번호
+                                        .draftsman(approvalMailDto.getDraftsman())	// 기안자
+                                        .dept(approvalMailDto.getDept())	// 소속부서
                                         .deptId(validOverLapDeptId)
                                         .title(title)	// 제목
-                                        .approvalDate(approvalMailRequest.getApprovalDate())	// 결재일
-                                        .mailTitle(approvalMailRequest.getMailTitle())	// 메일 제목
-                                        .recipient(approvalMailRequest.getRecipient())	// 받는 사람
-                                        .reference(approvalMailRequest.getReference())	// 참조
-                                        .blockCause(approvalMailRequest.getBlockCause())	// 차단사유
-                                        .lastApprover(approvalMailRequest.getLastApprover())	// 최종 결재
+                                        .approvalDate(approvalMailDto.getApprovalDate())	// 결재일
+                                        .mailTitle(approvalMailDto.getMailTitle())	// 메일 제목
+                                        .recipient(approvalMailDto.getRecipient())	// 받는 사람
+                                        .reference(approvalMailDto.getReference())	// 참조
+                                        .blockCause(approvalMailDto.getBlockCause())	// 차단사유
+                                        .lastApprover(approvalMailDto.getLastApprover())	// 최종 결재
                                         .result(condition)		// 적격 여부 적격: O, 부적격: X, 테스트: T
                                         .build()
                         );
@@ -103,17 +103,17 @@ public class GetExelService {
 
                 conditionOList.add(
                         MailResultDao.builder()
-                        .docNumber(approvalMailRequest.getDocNumber())	// 문서 번호
-                        .draftsman(approvalMailRequest.getDraftsman())	// 기안자
-                        .dept(approvalMailRequest.getDept())	// 소속부서
+                        .docNumber(approvalMailDto.getDocNumber())	// 문서 번호
+                        .draftsman(approvalMailDto.getDraftsman())	// 기안자
+                        .dept(approvalMailDto.getDept())	// 소속부서
                         .deptId(validOverLapDeptId)
                         .title(title)	// 제목
-                        .approvalDate(approvalMailRequest.getApprovalDate())	// 결재일
-                        .mailTitle(approvalMailRequest.getMailTitle())	// 메일 제목
-                        .recipient(approvalMailRequest.getRecipient())	// 받는 사람
-                        .reference(approvalMailRequest.getReference())	// 참조
-                        .blockCause(approvalMailRequest.getBlockCause())	// 차단사유
-                        .lastApprover(approvalMailRequest.getLastApprover())	// 최종 결재
+                        .approvalDate(approvalMailDto.getApprovalDate())	// 결재일
+                        .mailTitle(approvalMailDto.getMailTitle())	// 메일 제목
+                        .recipient(approvalMailDto.getRecipient())	// 받는 사람
+                        .reference(approvalMailDto.getReference())	// 참조
+                        .blockCause(approvalMailDto.getBlockCause())	// 차단사유
+                        .lastApprover(approvalMailDto.getLastApprover())	// 최종 결재
                         .result(condition)		// 적격 여부 적격: O, 부적격: X, 테스트: T
                         .build()
                 );

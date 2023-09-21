@@ -1,4 +1,4 @@
-package com.mail.mailViolation.dto.request;
+package com.mail.mailViolation.dto.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,6 +8,8 @@ import org.springframework.web.multipart.MultipartFile;
 @Getter
 @Builder
 @AllArgsConstructor
-public class FileUploadRequest {
+
+// 엑셀을 받는 DTO
+public class FileUploadDto {
 	private MultipartFile file;
 }

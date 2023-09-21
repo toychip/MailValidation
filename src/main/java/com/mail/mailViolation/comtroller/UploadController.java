@@ -4,8 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.mail.mailViolation.dto.response.ReturnDto;
-import com.mail.mailViolation.service.InitService;
+import com.mail.mailViolation.dto.dto.ReturnDto;
 import com.mail.mailViolation.service.InsertService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -16,8 +15,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.mail.mailViolation.dto.request.FileUploadRequest;
-import com.mail.mailViolation.dto.MailResultDao;
+import com.mail.mailViolation.dto.dto.FileUploadDto;
+import com.mail.mailViolation.dto.dao.MailResultDao;
 import com.mail.mailViolation.service.GetExelService;
 
 import lombok.RequiredArgsConstructor;
@@ -41,7 +40,7 @@ public class UploadController {
 	}
 
 	@PostMapping("/upload")
-	public String handleFileUpload(@Validated FileUploadRequest form, BindingResult bindingResult,
+	public String handleFileUpload(@Validated FileUploadDto form, BindingResult bindingResult,
 								   HttpSession session, Model model) {
 		log.info("------------------------- 업로드 중");
 

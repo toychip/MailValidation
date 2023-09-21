@@ -1,6 +1,6 @@
 package com.mail.mailViolation.service;
 
-import com.mail.mailViolation.dto.MailResultDao;
+import com.mail.mailViolation.dto.dao.MailResultDao;
 import com.mail.mailViolation.mapper.MailMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

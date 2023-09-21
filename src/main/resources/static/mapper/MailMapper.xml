@@ -3,7 +3,7 @@
 
 <mapper namespace="com.mail.mailViolation.mapper.MailMapper">
 
-    <select id="findEmployeeByDraftsmanAndApprReferYn" parameterType="string" resultType="com.mail.mailViolation.dto.EmployeeDao">
+    <select id="findEmployeeByDraftsmanAndApprReferYn" parameterType="string" resultType="com.mail.mailViolation.dto.dao.EmployeeDao">
         SELECT EMP_ID, EMP_NAME, DEPT_ID, EMP_EMAIL, USE_YN, RGT_DTTM, APPR_REFER_YN
           FROM TB_AS_SCRT_EMP
          WHERE EMP_NAME = #{draftsman}
@@ -11,7 +11,7 @@
     </select>
 
     <!-- MyBatis Mapper XML -->
-    <select id="findBossByDeptId" resultType="com.mail.mailViolation.dto.EmployeeDao">
+    <select id="findBossByDeptId" resultType="com.mail.mailViolation.dto.dao.EmployeeDao">
 
         -- 현재 부서의 보직좌 조회
 
@@ -30,7 +30,7 @@
 
     </select>
 
-    <insert id="insertValidResult" parameterType="com.mail.mailViolation.dto.MailResultDao">
+    <insert id="insertValidResult" parameterType="com.mail.mailViolation.dto.dao.MailResultDao">
         MERGE INTO TEST_EMAIL_VALID T
             USING (SELECT #{docNumber} AS temp FROM dual) S
             ON (T.DOC_NUMBER = S.temp)
@@ -60,7 +60,7 @@
     </insert>
 
 
-    <resultMap id="mailResultMap" type="com.mail.mailViolation.dto.MailResultDao">
+    <resultMap id="mailResultMap" type="com.mail.mailViolation.dto.dao.MailResultDao">
         <result property="docNumber" column="DOC_NUMBER"/>
         <result property="draftsman" column="DRAFTSMAN"/>
         <result property="dept" column="DEPT"/>

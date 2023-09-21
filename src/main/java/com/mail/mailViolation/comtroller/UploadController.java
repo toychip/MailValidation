@@ -32,7 +32,7 @@ public class UploadController {
 	private final GetExelService getExelService;
 	private final InsertService insertService;
 
-	@GetMapping("/upload")
+	@GetMapping("/upload")	// 업로드 페이지 VIEW 렌더링
 	public String getMailForm(Model model, @ModelAttribute ArrayList<String> errors) {
 		if (errors != null && !errors.isEmpty()) {
 			model.addAttribute("errors", errors);
@@ -68,16 +68,23 @@ public class UploadController {
 
 		if (!bindingResult.hasErrors()) {
 			ReturnDto returnDto = getExelService.processExcelFile(file);
+			// 검증 로직
+
+			// 적격 리스트, 부적격 리스트 분리
 			List<MailResultDao> conditionOList = returnDto.getConditionOList();
 			List<MailResultDao> conditionXList = returnDto.getConditionXList();
 
+			// 데이터 삽입
 			insertService.insertData(conditionOList);
 			insertService.insertData(conditionXList);
 
+			// 검사 진행시 부적격 리스트 조회
 			session.setAttribute("conditionXList", conditionXList);
 			log.info("안전하게 저장 성공");
 			return "redirect:/validResult";
 		} else {
+
+			// 에러가 있을 경우 model에 담아서 return
 			List<String> errors = bindingResult.getAllErrors().stream()
 					.map(ObjectError::getDefaultMessage)
 					.collect(Collectors.toList());

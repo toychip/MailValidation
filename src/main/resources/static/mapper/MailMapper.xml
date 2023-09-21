@@ -3,24 +3,22 @@
 
 <mapper namespace="com.mail.mailViolation.mapper.MailMapper">
 
+    <!-- 기안자 이름으로 TB_AS_SCRT_EMP 테이블에서 직원 정보를 조회 -->
     <select id="findEmployeeByDraftsmanAndApprReferYn" parameterType="string" resultType="com.mail.mailViolation.dto.dao.EmployeeDao">
         SELECT EMP_ID, EMP_NAME, DEPT_ID, EMP_EMAIL, USE_YN, RGT_DTTM, APPR_REFER_YN
           FROM TB_AS_SCRT_EMP
          WHERE EMP_NAME = #{draftsman}
---            AND APPR_REFER_YN = 'N'
     </select>
 
-    <!-- MyBatis Mapper XML -->
+    <!-- 부서 ID를 활용하여 현재 부서와 상위 부서의 보직좌를 조회 -->
     <select id="findBossByDeptId" resultType="com.mail.mailViolation.dto.dao.EmployeeDao">
-
-        -- 현재 부서의 보직좌 조회
-
+        <!-- 현재 부서의 보직좌 조회 -->
         SELECT E.EMP_ID, E.EMP_NAME, E.DEPT_ID, E.EMP_EMAIL, E.USE_YN, E.RGT_DTTM, E.APPR_REFER_YN
         FROM TB_AS_SCRT_EMP E
         WHERE E.DEPT_ID = #{deptId}
           AND E.APPR_REFER_YN = 'Y'
         UNION
-        -- 상위 부서의 보직좌 조회
+        <!-- 상위 부서의 보직좌 조회 -->
         SELECT E.EMP_ID, E.EMP_NAME, E.DEPT_ID, E.EMP_EMAIL, E.USE_YN, E.RGT_DTTM, E.APPR_REFER_YN
         FROM TB_AS_SCRT_EMP E
                  INNER JOIN TB_AS_SCRT_DEPT D ON E.DEPT_ID = D.DEPT_ID
@@ -30,6 +28,7 @@
 
     </select>
 
+    <!-- TEST_EMAIL_VALID 테이블에 메일 결과를 삽입 또는 업데이트 -->
     <insert id="insertValidResult" parameterType="com.mail.mailViolation.dto.dao.MailResultDao">
         MERGE INTO TEST_EMAIL_VALID T
             USING (SELECT #{docNumber} AS temp FROM dual) S
@@ -59,7 +58,7 @@
                            )
     </insert>
 
-
+    <!-- 메일 결과 매핑 설정 -->
     <resultMap id="mailResultMap" type="com.mail.mailViolation.dto.dao.MailResultDao">
         <result property="docNumber" column="DOC_NUMBER"/>
         <result property="draftsman" column="DRAFTSMAN"/>
@@ -75,6 +74,7 @@
         <result property="result" column="RESULT"/>
     </resultMap>
 
+    <!-- TEST_EMAIL_VALID 테이블에서 모든 메일 결과를 조회 -->
     <select id="findValidEmail" resultMap="mailResultMap">
         SELECT *
         FROM TEST_EMAIL_VALID

@@ -20,5 +20,6 @@ public interface MailMapper {
     void insertValidResult(MailResultDao mailResultDao);
 
     // 유효한 이메일에 대한 결과(MailResultDao 객체 리스트)를 데이터베이스에서 찾아 반환하는 메서드
-    List<MailResultDao> findValidEmail();
+    List<MailResultDao> searchDate(Integer fromYear, Integer fromMonth,
+                                   Integer toYear, Integer toMonth);
 }

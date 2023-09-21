@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.mail.mailViolation.dto.dto.ReturnDto;
+import com.mail.mailViolation.service.InitService;
 import com.mail.mailViolation.service.InsertService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -30,6 +31,7 @@ public class UploadController {
 
 	private final GetExelService getExelService;
 	private final InsertService insertService;
+	private final InitService initService;
 
 	@GetMapping("/upload")	// 업로드 페이지 VIEW 렌더링
 	public String getMailForm(Model model, @ModelAttribute ArrayList<String> errors) {
@@ -116,10 +118,12 @@ public class UploadController {
 	}
 
 //	DB연결 및 조회 테스트
-//	@ResponseBody
-//	@GetMapping("/getList")
-//	public List<MailResultDao> getEmp() {
-//		List<MailResultDao> data = initService.getData();
-//		return data;
-//	}
+	@ResponseBody
+	@GetMapping("/getList")
+	public List<MailResultDao> getEmp(@RequestParam Integer fromYear, @RequestParam Integer fromMonth,
+									  @RequestParam Integer toYear, @RequestParam Integer toMonth
+	) {
+		List<MailResultDao> data = initService.getData(fromYear, fromMonth, toYear, toMonth);
+		return data;
+	}
 }

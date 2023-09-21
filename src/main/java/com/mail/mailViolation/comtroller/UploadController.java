@@ -21,6 +21,7 @@ import com.mail.mailViolation.dto.dao.MailResultDao;
 import com.mail.mailViolation.service.GetExelService;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
 
@@ -43,7 +44,7 @@ public class UploadController {
 
 	@PostMapping("/upload")
 	public String handleFileUpload(@Validated FileUploadDto form, BindingResult bindingResult,
-								   HttpSession session, Model model) {
+								   RedirectAttributes redirectAttributes, Model model) {
 		log.info("------------------------- 업로드 중");
 
 		// 파일 유효성 검사 및 처리 로직
@@ -78,7 +79,7 @@ public class UploadController {
 			insertService.insertData(conditionOList, conditionXList);
 
 			// 검사 진행시 부적격 리스트 조회
-			session.setAttribute("conditionXList", conditionXList);
+			redirectAttributes.addFlashAttribute("conditionXList", conditionXList);
 			log.info("안전하게 저장 성공");
 			return "redirect:/validResult";
 		} else {

@@ -161,7 +161,7 @@ public class InitService {
 	// 전체 결과 조회 - 테스트 용
 	public List<MailResultDao> getData(Integer fromYear, Integer fromMonth,
 									   Integer toYear, Integer toMonth) {
-		List<MailResultDao> validEmail = mapper.searchDate(fromYear, fromMonth, toYear, toMonth);
+		List<MailResultDao> validEmail = mapper.searchDateConditionX(fromYear, fromMonth, toYear, toMonth);
 		return validEmail;
 	}
 

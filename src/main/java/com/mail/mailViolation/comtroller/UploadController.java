@@ -118,12 +118,19 @@ public class UploadController {
 	}
 
 //	DB연결 및 조회 테스트
-	@ResponseBody
+//	@ResponseBody
 	@GetMapping("/getList")
 	public List<MailResultDao> getEmp(@RequestParam Integer fromYear, @RequestParam Integer fromMonth,
-									  @RequestParam Integer toYear, @RequestParam Integer toMonth
+									  @RequestParam Integer toYear, @RequestParam Integer toMonth,
+									  Model model
 	) {
+		System.out.println("fromYear = " + fromYear);
+		System.out.println("fromYear.getClass() = " + fromYear.getClass());
+		System.out.println("fromMonth = " + fromMonth);
+		System.out.println("toYear = " + toYear);
+		System.out.println("toMonth = " + toMonth);
 		List<MailResultDao> data = initService.getData(fromYear, fromMonth, toYear, toMonth);
+		model.addAttribute("con");
 		return data;
 	}
 }

@@ -57,6 +57,18 @@
 		</div>
 		<button type="submit" class="btn btn-primary btn-lg">검사하기 🔍</button>
 	</form>
+
+	<!-- 추가된 검색창 부분 -->
+	<h2>Search By Date 📅</h2>
+	<form id="searchForm">
+		<div class="form-group">
+			<label>From:</label>
+			<input type="month" id="currentMonth" name="startMonth">
+			<label>To:</label>
+			<input type="month" id="nextMonth" name="finishMonth">
+		</div>
+		<button type="submit" class="btn btn-secondary">Search 🔍</button>
+	</form>
 </div>
 
 <!-- 로딩 스피너 -->
@@ -91,9 +103,24 @@
 	if (uploadErrors && uploadErrors.length > 0) {
 		alert("파일 업로드 에러\n" + uploadErrors);
 	}
+
+	// 추가된 검색창 관련 코드
+	document.getElementById("searchForm").addEventListener("submit", function(event) {
+		event.preventDefault();
+
+		var fromDate = document.getElementById("currentMonth").value;
+		var toDate = document.getElementById("nextMonth").value;
+
+		var fromParts = fromDate.split("-");
+		var toParts = toDate.split("-");
+
+		var fromYear = fromParts[0];
+		var fromMonth = fromParts[1];
+		var toYear = toParts[0];
+		var toMonth = toParts[1];
+
+		window.location.href = "/getList?fromYear=" + fromYear + "&fromMonth=" + fromMonth + "&toYear=" + toYear + "&toMonth=" + toMonth;
+	});
 </script>
-
-
-
 </body>
 </html>

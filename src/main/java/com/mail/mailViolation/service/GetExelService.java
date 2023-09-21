@@ -29,22 +29,23 @@ public class GetExelService {
 
 	private final InitService initService;
 
+    // 엑셀 파일 처리 메서드
 	public ReturnDto processExcelFile(MultipartFile file){
 
 
         InputStream inputStream = null;
         List<MailResultDao> conditionXList = new ArrayList<>();
         List<MailResultDao> conditionOList = new ArrayList<>();
-//        ReturnDto returnDto = new ReturnDto();
 
 //		log.info("-------------------------엑셀 처리 전 로그");
 		try {
 
-            // ------------------------- 엑셀 처리 로직 시작
+            // log.info("------------------------- 엑셀 파일을 읽기 위한 스트림 생성 ");
             inputStream = file.getInputStream();
+            // Apache POI 라이브러리를 사용하여 Workbook 객체 생성
             Workbook workbook = WorkbookFactory.create(inputStream);
-            Sheet sheet = workbook.getSheetAt(0); // 첫 번째 시트
-            // ------------------------- 엑셀 처리 로직 끝
+            // 첫 번째 시트
+            Sheet sheet = workbook.getSheetAt(0);
 
             // 년도 추출
             Row row = sheet.getRow(1);
@@ -52,7 +53,7 @@ public class GetExelService {
             String strDate = cell.toString();
             String year = strDate.substring(7, 11);
 
-            // 4번째 행부터 시작.
+            // 엑셀 파일의 4번째 행부터 값 추출.
 //            for (int i = 3; i <= 10; i++) {
             for (int i = 3; i <= sheet.getLastRowNum(); i++) {
 //                log.info("\n\n");
@@ -63,20 +64,25 @@ public class GetExelService {
                     continue;   // 행이 비어 있으면 건너뛰기
                 }
 
+                // 엑셀 행을 DTO로 변환
                 ApprovalMailDto approvalMailDto = initService.createMailDao(currentRow, year);
+
+                // DTO를 기반으로 직원 정보 가져옴
                 EmployeeDao validOverLap = initService.getEmp(approvalMailDto.getDraftsman());
                 Integer validOverLapDeptId = validOverLap.getDeptId();
-
                 String condition;
-
                 String title = approvalMailDto.getTitle();
 
+                // 결재 조건 확인
                 // 메일 테스트의 경우로, 부서가 그룹웨어관리가 포함될 경우
                 if (approvalMailDto.getDept().contains("그룹웨어관리")) {
                     condition = "T";
                 } else {
+
+                    // initService의 검사 로직탐
                     condition = initService.checkApprovalCondition(approvalMailDto, validOverLapDeptId);
 
+                    // condition이 "X"일 경우, 부적격 리스트에 추가
                     if (condition == "X") {
                         conditionXList.add(
                                 MailResultDao.builder()
@@ -100,7 +106,7 @@ public class GetExelService {
 
                     }
                 }
-
+                // condition이 "O" 또는 "T"일 경우, 적격 리스트에 추가
                 conditionOList.add(
                         MailResultDao.builder()
                         .docNumber(approvalMailDto.getDocNumber())	// 문서 번호
@@ -124,6 +130,8 @@ public class GetExelService {
             // 파일 처리 중 오류 발생 시 오류 추가
             FieldError error = new FieldError("file", "file", "파일 처리 중 오류가 발생했습니다: " + e.getMessage());
 //            bindingResult.addError(error);
+
+            throw new RuntimeException();
         } finally {
             if (inputStream != null) {
                 try {
@@ -135,6 +143,7 @@ public class GetExelService {
             }
         }
 
+        // 최종 결과 반환
 		return ReturnDto.builder()
                 .conditionXList(conditionXList.isEmpty() ? null:conditionXList)
                 .conditionOList(conditionOList)

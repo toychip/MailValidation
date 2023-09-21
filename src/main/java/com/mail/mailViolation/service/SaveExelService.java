@@ -1,6 +1,6 @@
 package com.mail.mailViolation.service;
 
-import com.mail.mailViolation.dto.MailResultDao;
+import com.mail.mailViolation.dto.dao.MailResultDao;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;

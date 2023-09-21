@@ -1,4 +1,4 @@
-package com.mail.mailViolation.dto;
+package com.mail.mailViolation.dto.dao;
 
 import lombok.*;
 
@@ -8,6 +8,8 @@ import java.time.LocalDate;
 @Getter
 @Builder
 @AllArgsConstructor
+
+// 보직좌를 확인하기 위해 DB에서 데이터를 꺼내오는 과정에서 필요한 객체
 public class EmployeeDao {
     private Integer empId;
     private String empName;

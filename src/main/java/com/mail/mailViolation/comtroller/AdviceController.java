@@ -11,11 +11,13 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.ArrayList;
 
 @Slf4j
-@ControllerAdvice
+@ControllerAdvice(assignableTypes = {
+        UploadController.class, ValidResultController.class
+})
 public class AdviceController {
 
-    @ResponseStatus(HttpStatus.OK)
-    @ExceptionHandler(Exception.class)
+    @ResponseStatus(HttpStatus.OK) // 예외 발생 시 200
+    @ExceptionHandler(Exception.class)  // 전체 예외로 잡음
     public String resolveEx(Exception e,Model model) {
         log.info(" ------------------------------------------------------------- ");
         e.printStackTrace();
@@ -24,7 +26,7 @@ public class AdviceController {
         log.info("AdviceController.resolveEx");
         ArrayList<String> errors = new ArrayList<>();
         errors.add("올바른 exel이 아닙니다. 템플릿에 맞게 등록해주세요.");
-        model.addAttribute("errors", errors);
+        model.addAttribute("errors", errors);  // 모델에 에러 메시지 리스트 추가
         return "uploadForm";
     }
 }

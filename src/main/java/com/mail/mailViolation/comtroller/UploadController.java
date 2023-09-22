@@ -79,6 +79,8 @@ public class UploadController {
 			insertService.insertData(conditionOList, conditionXList);
 
 			// 검사 진행시 부적격 리스트 조회
+			System.out.println("---------------------" + conditionXList.size());
+
 			redirectAttributes.addFlashAttribute("conditionXList", conditionXList);
 			log.info("안전하게 저장 성공");
 			return "redirect:/validResult";

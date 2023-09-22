@@ -5,14 +5,18 @@ import com.mail.mailViolation.dto.dto.ConditionListWrapper;
 import com.mail.mailViolation.service.SaveExelService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -27,9 +31,9 @@ public class ValidResultController {
 
     // 검사 후 검증 결과 페이지 렌더링
     @GetMapping("/validResult")
-    public String showValidResult(@ModelAttribute ConditionListWrapper conditionListWrapper, Model model) {
+    public String showValidResult(Model model) {
 
-        List<MailResultDao> conditionXList = conditionListWrapper.getConditionXList();
+        List<MailResultDao> conditionXList = (List<MailResultDao>) model.getAttribute("conditionXList");
 
         if (conditionXList != null && !conditionXList.isEmpty()) {
             model.addAttribute("conditionXList", conditionXList);
@@ -41,10 +45,16 @@ public class ValidResultController {
     }
 
     @PostMapping("/downloadExcel")
-    public void downloadExcel(HttpServletResponse response, Model model){
+    public void downloadExcel(HttpServletResponse response,
+                              @RequestBody List<MailResultDao> conditionXList
+    ){
         System.out.println("ValidResultController.downloadExcel");
         // 세션에 있는 부적격 리스트 추출
-        List<MailResultDao> conditionXList = (List<MailResultDao>) model.getAttribute("conditionXList");
+
+        for (MailResultDao mailResultDao : conditionXList) {
+            System.out.println("mailResultDao.getMailTitle() = " + mailResultDao.getMailTitle());
+        }
+
         if (conditionXList != null && !conditionXList.isEmpty()) {
             try {
                 // Excel 파일 생성 로직 호출
@@ -76,4 +86,5 @@ public class ValidResultController {
             }
         }
     }
+    
 }

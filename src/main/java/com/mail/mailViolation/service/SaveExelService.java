@@ -50,9 +50,8 @@ public class SaveExelService {
                 row.createCell(8).setCellValue(data.getLastApprover());
                 row.createCell(9).setCellValue(data.getResult());
             }
-
-            workbook.write(out);
             return new ByteArrayInputStream(out.toByteArray());
+
         }
     }
 }

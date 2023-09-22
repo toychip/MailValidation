@@ -9,10 +9,13 @@
     <style>
         /* ... (CSS는 그대로 사용 가능하므로 생략) ... */
     </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
 <div class="container-fluid mt-5">
-    <form action="/downloadExcel" method="post" target="_blank">
+    <form id="excelDownloadForm" action="/downloadExcel" method="post" target="_blank">
+        <!-- Hidden field to store the JSON string -->
+        <input type="hidden" id="hiddenField" name="conditionXListJson">
         <button type="submit" class="btn btn-primary">📥 엑셀 다운로드 📥</button>
     </form>
     <h1 class="text-center">✨✨ 검증 결과 ✨✨</h1>
@@ -49,8 +52,38 @@
         </tbody>
     </table>
 </div>
+
+<script type="text/javascript">
+    // 서버에서 내려받은 conditionXList를 JavaScript 객체로 할당 (이 부분은 서버에서 자바스크립트 객체로 변환할 수 있도록 해야 합니다.)
+    var conditionXList = '${conditionXList}';
+
+    $(document).ready(function() {
+        $('#excelDownloadForm').submit(function(e) {
+            e.preventDefault();  // 폼의 기본 제출 동작을 막습니다.
+
+
+        console.log(conditionXList)
+            // AJAX 요청으로 /downloadExcel 엔드포인트에 데이터 전송
+            $.ajax({
+                url: '/downloadExcel',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(conditionXList),
+                success: function(response) {
+                    // console.log('Success:', response);
+                },
+                error: function(error) {
+                    // console.log('Error:', error);
+                }
+            });
+        });
+    });
+</script>
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 </body>
 </html>

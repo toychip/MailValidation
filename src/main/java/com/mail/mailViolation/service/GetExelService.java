@@ -54,8 +54,8 @@ public class GetExelService {
             String year = strDate.substring(7, 11);
 
             // 엑셀 파일의 4번째 행부터 값 추출.
-//            for (int i = 3; i <= 10; i++) {
-            for (int i = 3; i <= sheet.getLastRowNum(); i++) {
+            for (int i = 3; i <= 100; i++) {
+//            for (int i = 3; i <= sheet.getLastRowNum(); i++) {
 //                log.info("\n\n");
 //            	log.info("------------------------------현재 i: " + i);
                 Row currentRow = sheet.getRow(i);

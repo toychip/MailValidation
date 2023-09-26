@@ -133,6 +133,17 @@ public class UploadController {
 									  Model model, HttpServletRequest request
 	) {
 
+		if (fromYear.equals(9999) && fromMonth.equals(99)) {
+			fromYear = 1900;
+			fromMonth = 01;
+		}
+
+		if (toYear.equals(9999) && toMonth.equals(99)) {
+			LocalDate now = LocalDate.now();
+			toYear = now.getYear();
+			toMonth = now.getMonthValue();
+		}
+
 		// 검증 로직
 		if (fromYear > toYear || (fromYear.equals(toYear) && fromMonth > toMonth)) {
 			ArrayList<String> errors = new ArrayList<>();
@@ -147,16 +158,7 @@ public class UploadController {
 		log.info("toYear = " + toYear);
 		log.info("toMonth = " + toMonth);
 
-		if (fromYear.equals(9999) && fromMonth.equals(99)) {
-			fromYear = 1900;
-			fromMonth = 01;
-		}
 
-		if (toYear.equals(9999) && toMonth.equals(99)) {
-			LocalDate now = LocalDate.now();
-			toYear = now.getYear();
-			toMonth = now.getMonthValue();
-		}
 
 		List<MailResultDao> data = initService.getData(fromYear, fromMonth, toYear, toMonth);
 

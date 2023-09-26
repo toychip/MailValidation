@@ -79,7 +79,7 @@ public class UploadController {
 			insertService.insertData(conditionOList, conditionXList);
 
 			// 검사 진행시 부적격 리스트 조회
-			System.out.println("---------------------" + conditionXList.size());
+			log.info("---------------------" + conditionXList.size());
 
 			redirectAttributes.addFlashAttribute("conditionXList", conditionXList);
 			log.info("안전하게 저장 성공");
@@ -123,17 +123,18 @@ public class UploadController {
 //	DB연결 및 조회 테스트
 //	@ResponseBody
 	@GetMapping("/getList")
-	public List<MailResultDao> getEmp(@RequestParam Integer fromYear, @RequestParam Integer fromMonth,
+	public String getEmp(@RequestParam Integer fromYear, @RequestParam Integer fromMonth,
 									  @RequestParam Integer toYear, @RequestParam Integer toMonth,
 									  Model model
 	) {
-		System.out.println("fromYear = " + fromYear);
-		System.out.println("fromYear.getClass() = " + fromYear.getClass());
-		System.out.println("fromMonth = " + fromMonth);
-		System.out.println("toYear = " + toYear);
-		System.out.println("toMonth = " + toMonth);
+		log.info("fromYear = " + fromYear);
+		log.info("fromYear.getClass() = " + fromYear.getClass());
+		log.info("fromMonth = " + fromMonth);
+		log.info("toYear = " + toYear);
+		log.info("toMonth = " + toMonth);
 		List<MailResultDao> data = initService.getData(fromYear, fromMonth, toYear, toMonth);
-		model.addAttribute("con");
-		return data;
+		model.addAttribute("conditionXList", data);
+
+		return "validResult";
 	}
 }

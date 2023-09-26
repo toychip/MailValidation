@@ -1,5 +1,7 @@
 package com.mail.mailViolation.comtroller;
 
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -145,10 +147,19 @@ public class UploadController {
 		log.info("toYear = " + toYear);
 		log.info("toMonth = " + toMonth);
 
+		if (fromYear.equals(9999) && fromMonth.equals(99)) {
+			fromYear = 1900;
+			fromMonth = 01;
+		}
 
-
+		if (toYear.equals(9999) && toMonth.equals(99)) {
+			LocalDate now = LocalDate.now();
+			toYear = now.getYear();
+			toMonth = now.getMonthValue();
+		}
 
 		List<MailResultDao> data = initService.getData(fromYear, fromMonth, toYear, toMonth);
+
 		model.addAttribute("conditionXList", data);
 
 		return "validResult";

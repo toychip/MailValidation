@@ -8,6 +8,26 @@
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         /* ... (CSS는 그대로 사용 가능하므로 생략) ... */
+        .limit-text {
+            max-width: 400px;  /* 최대 너비 설정 */
+            overflow: hidden;  /* 넘치는 부분은 숨김 */
+            text-overflow: ellipsis;  /* 넘치는 텍스트를 "..."로 표시 */
+            white-space: nowrap;  /* 텍스트를 한 줄로 표시 */
+        }
+
+        .limit-title {
+            max-width: 300px;  /* 최대 너비 설정 */
+            overflow: hidden;  /* 넘치는 부분은 숨김 */
+            text-overflow: ellipsis;  /* 넘치는 텍스트를 "..."로 표시 */
+            white-space: nowrap;  /* 텍스트를 한 줄로 표시 */
+        }
+
+        .limit-reason {
+            max-width: 300px;  /* 최대 너비 설정 */
+            overflow: hidden;  /* 넘치는 부분은 숨김 */
+            text-overflow: ellipsis;  /* 넘치는 텍스트를 "..."로 표시 */
+            white-space: nowrap;  /* 텍스트를 한 줄로 표시 */
+        }
     </style>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
@@ -41,15 +61,25 @@
         </thead>
         <tbody>
         <c:forEach items="${conditionXList}" var="mail" varStatus="iterStat">
+            <c:set var="approvalDate" value="${mail.approvalDate}" scope="page"/>
             <tr>
+                <%
+                    java.time.LocalDateTime approvalDate = (java.time.LocalDateTime)pageContext.getAttribute("approvalDate");
+                    String formattedDate = " ";
+                    if (approvalDate != null) {
+                        java.time.format.DateTimeFormatter formatter = java.time.format.DateTimeFormatter.ofPattern("yyyy년 MM월 HH시 mm분");
+                        formattedDate = approvalDate.format(formatter);
+                    }
+                %>
                 <td>${iterStat.index + 1}</td>
                 <td>${mail.docNumber != null ? mail.docNumber : ' '}</td>
                 <td>${mail.draftsman != null ? mail.draftsman : ' '}</td>
                 <td>${mail.dept != null ? mail.dept : ' '}</td>
-                <td>${mail.mailTitle != null ? mail.mailTitle : ' '}</td>
-                <td>${mail.approvalDate != null ? mail.approvalDate : ' '}</td>
-                <td>${mail.reference != null ? mail.reference : ' '}</td>
-                <td>${mail.blockCause != null ? mail.blockCause : ' '}</td>
+                <td class="limit-title">${mail.mailTitle != null ? mail.mailTitle : ' '}</td>
+<%--                <td>${mail.approvalDate != null ? mail.approvalDate : ' '}</td>--%>
+                <td><%= formattedDate %></td>
+                <td class="limit-text">${mail.reference != null ? mail.reference : ' '}</td>
+                <td class="limit-reason">${mail.blockCause != null ? mail.blockCause : ' '}</td>
                 <td>${mail.lastApprover != null ? mail.lastApprover : ' '}</td>
                 <td>${mail.result != null ? mail.result : ' '}</td>
             </tr>

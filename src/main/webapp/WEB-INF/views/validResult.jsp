@@ -28,6 +28,44 @@
             text-overflow: ellipsis;  /* 넘치는 텍스트를 "..."로 표시 */
             white-space: nowrap;  /* 텍스트를 한 줄로 표시 */
         }
+
+        body {
+            background: linear-gradient(90deg, rgba(255, 0, 150, 1) 0%, rgba(0, 204, 255, 1) 100%);
+        }
+
+        h1, h3 {
+            color: white;
+            text-shadow: 2px 2px 4px #000000;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #ff0066, #ffcc00);
+            border: none;
+            box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .table {
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        th {
+            background: linear-gradient(45deg, #00ffaa, #ff00cc);
+            color: white;
+        }
+
+        td {
+            color: #333;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        tr:hover {
+            background-color: #ddd;
+        }
     </style>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>

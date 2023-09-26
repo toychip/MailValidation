@@ -23,6 +23,7 @@ import com.mail.mailViolation.service.GetExelService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 @Slf4j
@@ -123,10 +124,22 @@ public class UploadController {
 //	DB연결 및 조회 테스트
 //	@ResponseBody
 	@GetMapping("/getList")
-	public String getEmp(@RequestParam Integer fromYear, @RequestParam Integer fromMonth,
-									  @RequestParam Integer toYear, @RequestParam Integer toMonth,
-									  Model model
+	public String getEmp(@RequestParam(required = false) Integer fromYear,
+						 @RequestParam(required = false) Integer fromMonth,
+						 @RequestParam(required = false) Integer toYear,
+						 @RequestParam(required = false) Integer toMonth,
+									  Model model, HttpServletRequest request
 	) {
+
+		// 검증 로직
+		if (fromYear > toYear || (fromYear.equals(toYear) && fromMonth > toMonth)) {
+			System.out.println("12312312312312312312                UploadController.getEmp");
+			ArrayList<String> errors = new ArrayList<>();
+			errors.add("시작 날짜는 종료 날짜보다 이후일 수 없습니다.");
+			request.setAttribute("errors", errors);
+			return "uploadForm"; // 현재 페이지로 리다이렉트
+		}
+
 		log.info("fromYear = " + fromYear);
 		log.info("fromYear.getClass() = " + fromYear.getClass());
 		log.info("fromMonth = " + fromMonth);

@@ -43,7 +43,7 @@
 	String errorMessages = errors != null ? String.join("\n", errors) : "";
 %>
 
-<div id="errors" style="display:none;"><%= errors %></div>
+<div id="errors" style="display:none;"><%= errorMessages %></div>
 
 
 <%--<div id="errors" style="display:none;"><%= errors %></div>--%>
@@ -98,7 +98,7 @@
 	});
 
 	// JSP에서 생성한 errorMessages 변수를 사용
-	var uploadErrors = '<%= errors %>';
+	var uploadErrors = '<%= errorMessages %>';
 
 	if (uploadErrors && uploadErrors.length > 0) {
 		alert("파일 업로드 에러\n" + uploadErrors);

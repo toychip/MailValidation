@@ -124,16 +124,15 @@ public class UploadController {
 //	DB연결 및 조회 테스트
 //	@ResponseBody
 	@GetMapping("/getList")
-	public String getEmp(@RequestParam(required = false) Integer fromYear,
-						 @RequestParam(required = false) Integer fromMonth,
-						 @RequestParam(required = false) Integer toYear,
-						 @RequestParam(required = false) Integer toMonth,
+	public String getEmp(@RequestParam(required = false, defaultValue = "9999") Integer fromYear,
+						 @RequestParam(required = false, defaultValue = "99") Integer fromMonth,
+						 @RequestParam(required = false, defaultValue = "9999") Integer toYear,
+						 @RequestParam(required = false, defaultValue = "99") Integer toMonth,
 									  Model model, HttpServletRequest request
 	) {
 
 		// 검증 로직
 		if (fromYear > toYear || (fromYear.equals(toYear) && fromMonth > toMonth)) {
-			System.out.println("12312312312312312312                UploadController.getEmp");
 			ArrayList<String> errors = new ArrayList<>();
 			errors.add("시작 날짜는 종료 날짜보다 이후일 수 없습니다.");
 			request.setAttribute("errors", errors);
@@ -145,6 +144,10 @@ public class UploadController {
 		log.info("fromMonth = " + fromMonth);
 		log.info("toYear = " + toYear);
 		log.info("toMonth = " + toMonth);
+
+
+
+
 		List<MailResultDao> data = initService.getData(fromYear, fromMonth, toYear, toMonth);
 		model.addAttribute("conditionXList", data);
 

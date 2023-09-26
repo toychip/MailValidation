@@ -108,16 +108,16 @@
 	document.getElementById("searchForm").addEventListener("submit", function(event) {
 		event.preventDefault();
 
-		var fromDate = document.getElementById("currentMonth").value;
-		var toDate = document.getElementById("nextMonth").value;
+		var fromDate = document.getElementById("currentMonth").value || '9999-99';
+		var toDate = document.getElementById("nextMonth").value || '9999-99';
 
 		var fromParts = fromDate.split("-");
 		var toParts = toDate.split("-");
 
-		var fromYear = fromParts[0];
-		var fromMonth = fromParts[1];
-		var toYear = toParts[0];
-		var toMonth = toParts[1];
+		var fromYear = parseInt(fromParts[0]) || 9999;
+		var fromMonth = parseInt(fromParts[1]) || 99;
+		var toYear = parseInt(toParts[0]) || 9999;
+		var toMonth = parseInt(toParts[1]) || 99;
 
 		window.location.href = "/getList?fromYear=" + fromYear + "&fromMonth=" + fromMonth + "&toYear=" + toYear + "&toMonth=" + toMonth;
 	});

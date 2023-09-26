@@ -12,6 +12,11 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
+<div id="searchInfo" class="text-center mb-4">
+    <c:if test="${not empty fromYear and not empty fromMonth and not empty toYear and not empty toMonth}">
+        <h3>${fromYear}년 ${fromMonth}월부터 ${toYear}년 ${toMonth}월까지의 검색 결과</h3>
+    </c:if>
+</div>
 <div class="container-fluid mt-5">
     <form id="excelDownloadForm" action="/downloadExcel" method="post" target="_blank">
         <!-- Hidden field to store the JSON string -->
@@ -52,6 +57,7 @@
         </tbody>
     </table>
 </div>
+<!-- 검색 결과 날짜 정보를 표시하는 섹션 -->
 
 <script type="text/javascript">
     // 서버에서 내려받은 conditionXList를 JavaScript 객체로 할당 (이 부분은 서버에서 자바스크립트 객체로 변환할 수 있도록 해야 합니다.)

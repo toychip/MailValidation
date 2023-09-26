@@ -160,6 +160,11 @@ public class UploadController {
 
 		List<MailResultDao> data = initService.getData(fromYear, fromMonth, toYear, toMonth);
 
+		model.addAttribute("fromYear", fromYear);
+		model.addAttribute("fromMonth", fromMonth);
+		model.addAttribute("toYear", toYear);
+		model.addAttribute("toMonth", toMonth);
+
 		model.addAttribute("conditionXList", data);
 
 		return "validResult";

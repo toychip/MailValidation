@@ -8,6 +8,7 @@ import java.util.List;
 import com.mail.mailViolation.dto.dao.EmployeeDao;
 import com.mail.mailViolation.dto.dto.ApprovalMailDto;
 import com.mail.mailViolation.dto.dto.ReturnDto;
+import com.mail.mailViolation.exception.ExelUploadException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -54,7 +55,7 @@ public class GetExelService {
             String year = strDate.substring(7, 11);
 
             // 엑셀 파일의 4번째 행부터 값 추출.
-//            for (int i = 3; i <= 10; i++) {
+//            for (int i = 3; i <= 100; i++) {
             for (int i = 3; i <= sheet.getLastRowNum(); i++) {
 //                log.info("\n\n");
 //            	log.info("------------------------------현재 i: " + i);
@@ -127,18 +128,14 @@ public class GetExelService {
 
             workbook.close();
         } catch (Exception e) {
-            // 파일 처리 중 오류 발생 시 오류 추가
-            FieldError error = new FieldError("file", "file", "파일 처리 중 오류가 발생했습니다: " + e.getMessage());
-//            bindingResult.addError(error);
 
-            throw new RuntimeException();
+            throw new ExelUploadException();
         } finally {
             if (inputStream != null) {
                 try {
                     inputStream.close();     // 스트림 닫기
                 } catch (IOException e) {
-                    FieldError error = new FieldError("file", "file", "파일 스트림 닫기 중 오류가 발생했습니다: " + e.getMessage());
-//                    bindingResult.addError(error);
+                    throw new ExelUploadException();
                 }
             }
         }

@@ -1,10 +1,13 @@
 package com.mail.mailViolation.comtroller;
 
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import com.mail.mailViolation.dto.dto.ReturnDto;
+import com.mail.mailViolation.service.InitService;
 import com.mail.mailViolation.service.InsertService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -20,7 +23,9 @@ import com.mail.mailViolation.dto.dao.MailResultDao;
 import com.mail.mailViolation.service.GetExelService;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 @Slf4j
@@ -30,6 +35,7 @@ public class UploadController {
 
 	private final GetExelService getExelService;
 	private final InsertService insertService;
+	private final InitService initService;
 
 	@GetMapping("/upload")	// 업로드 페이지 VIEW 렌더링
 	public String getMailForm(Model model, @ModelAttribute ArrayList<String> errors) {
@@ -41,7 +47,7 @@ public class UploadController {
 
 	@PostMapping("/upload")
 	public String handleFileUpload(@Validated FileUploadDto form, BindingResult bindingResult,
-								   HttpSession session, Model model) {
+								   RedirectAttributes redirectAttributes, Model model) {
 		log.info("------------------------- 업로드 중");
 
 		// 파일 유효성 검사 및 처리 로직
@@ -76,7 +82,9 @@ public class UploadController {
 			insertService.insertData(conditionOList, conditionXList);
 
 			// 검사 진행시 부적격 리스트 조회
-			session.setAttribute("conditionXList", conditionXList);
+			log.info("---------------------" + conditionXList.size());
+
+			redirectAttributes.addFlashAttribute("conditionXList", conditionXList);
 			log.info("안전하게 저장 성공");
 			return "redirect:/validResult";
 		} else {
@@ -117,9 +125,50 @@ public class UploadController {
 
 //	DB연결 및 조회 테스트
 //	@ResponseBody
-//	@GetMapping("/getList")
-//	public List<MailResultDao> getEmp() {
-//		List<MailResultDao> data = initService.getData();
-//		return data;
-//	}
+	@GetMapping("/getList")
+	public String getEmp(@RequestParam(required = false, defaultValue = "9999") Integer fromYear,
+						 @RequestParam(required = false, defaultValue = "99") Integer fromMonth,
+						 @RequestParam(required = false, defaultValue = "9999") Integer toYear,
+						 @RequestParam(required = false, defaultValue = "99") Integer toMonth,
+									  Model model, HttpServletRequest request
+	) {
+
+		if (fromYear.equals(9999) && fromMonth.equals(99)) {
+			fromYear = 1900;
+			fromMonth = 01;
+		}
+
+		if (toYear.equals(9999) && toMonth.equals(99)) {
+			LocalDate now = LocalDate.now();
+			toYear = now.getYear();
+			toMonth = now.getMonthValue();
+		}
+
+		// 검증 로직
+		if (fromYear > toYear || (fromYear.equals(toYear) && fromMonth > toMonth)) {
+			ArrayList<String> errors = new ArrayList<>();
+			errors.add("시작 날짜는 종료 날짜보다 이후일 수 없습니다.");
+			request.setAttribute("errors", errors);
+			return "uploadForm"; // 현재 페이지로 리다이렉트
+		}
+
+		log.info("fromYear = " + fromYear);
+		log.info("fromYear.getClass() = " + fromYear.getClass());
+		log.info("fromMonth = " + fromMonth);
+		log.info("toYear = " + toYear);
+		log.info("toMonth = " + toMonth);
+
+
+
+		List<MailResultDao> data = initService.getData(fromYear, fromMonth, toYear, toMonth);
+
+		model.addAttribute("fromYear", fromYear);
+		model.addAttribute("fromMonth", fromMonth);
+		model.addAttribute("toYear", toYear);
+		model.addAttribute("toMonth", toMonth);
+
+		model.addAttribute("conditionXList", data);
+
+		return "validResult";
+	}
 }

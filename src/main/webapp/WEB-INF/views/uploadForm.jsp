@@ -43,7 +43,7 @@
 	String errorMessages = errors != null ? String.join("\n", errors) : "";
 %>
 
-<div id="errors" style="display:none;"><%= errors %></div>
+<div id="errors" style="display:none;"><%= errorMessages %></div>
 
 
 <%--<div id="errors" style="display:none;"><%= errors %></div>--%>
@@ -56,6 +56,18 @@
 			<input type="file" id="file" name="file" class="form-control">
 		</div>
 		<button type="submit" class="btn btn-primary btn-lg">검사하기 🔍</button>
+	</form>
+
+	<!-- 추가된 검색창 부분 -->
+	<h2>Search By Date 📅</h2>
+	<form id="searchForm">
+		<div class="form-group">
+			<label>From:</label>
+			<input type="month" id="currentMonth" name="startMonth">
+			<label>To:</label>
+			<input type="month" id="nextMonth" name="finishMonth">
+		</div>
+		<button type="submit" class="btn btn-secondary">Search 🔍</button>
 	</form>
 </div>
 
@@ -86,14 +98,29 @@
 	});
 
 	// JSP에서 생성한 errorMessages 변수를 사용
-	var uploadErrors = '<%= errors %>';
+	var uploadErrors = '<%= errorMessages %>';
 
 	if (uploadErrors && uploadErrors.length > 0) {
 		alert("파일 업로드 에러\n" + uploadErrors);
 	}
+
+	// 추가된 검색창 관련 코드
+	document.getElementById("searchForm").addEventListener("submit", function(event) {
+		event.preventDefault();
+
+		var fromDate = document.getElementById("currentMonth").value || '9999-99';
+		var toDate = document.getElementById("nextMonth").value || '9999-99';
+
+		var fromParts = fromDate.split("-");
+		var toParts = toDate.split("-");
+
+		var fromYear = parseInt(fromParts[0]) || 9999;
+		var fromMonth = parseInt(fromParts[1]) || 99;
+		var toYear = parseInt(toParts[0]) || 9999;
+		var toMonth = parseInt(toParts[1]) || 99;
+
+		window.location.href = "/getList?fromYear=" + fromYear + "&fromMonth=" + fromMonth + "&toYear=" + toYear + "&toMonth=" + toMonth;
+	});
 </script>
-
-
-
 </body>
 </html>

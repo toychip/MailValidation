@@ -1,12 +1,13 @@
-package com.mail.mailViolation.comtroller;
+package com.mail.mailViolation.exception;
 
+import com.mail.mailViolation.comtroller.UploadController;
+import com.mail.mailViolation.comtroller.ValidResultController;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.ArrayList;
 
@@ -17,9 +18,9 @@ import java.util.ArrayList;
 public class AdviceController {
 
     @ResponseStatus(HttpStatus.OK) // 예외 발생 시 200
-    @ExceptionHandler(Exception.class)  // 전체 예외로 잡음
-    public String resolveEx(Exception e,Model model) {
-        log.info(" ------------------------------------------------------------- ");
+    @ExceptionHandler(ExelUploadException.class)  // 전체 예외로 잡음
+    public String resolveEx(ExelUploadException e,Model model) {
+        log.info(" ------------------------에러 사유----------------------------- ");
         e.printStackTrace();
         log.info(" ------------------------------------------------------------- ");
 

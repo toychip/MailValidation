@@ -16,6 +16,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @Slf4j
@@ -55,6 +58,16 @@ public class ValidResultController {
     ){
         System.out.println("ValidResultController.downloadExcel");
         // 세션에 있는 부적격 리스트 추출
+
+        try {
+            conditionXList = URLDecoder.decode(conditionXList, StandardCharsets.UTF_8.name());
+            // 여기서 이후 로직을 수행하면 됩니다.
+        } catch (UnsupportedEncodingException e) {
+            // 이 부분은 일반적으로 실행되지 않아야 합니다.
+            // 적절한 예외 처리 로직을 넣어주세요.
+            System.out.println("------ 에러남 ------");
+            e.printStackTrace();
+        }
 
         System.out.println("=============== conditionXList = \n" + conditionXList);
 

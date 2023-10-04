@@ -13,10 +13,4 @@ public class MailViolationApplication {
 		SpringApplication.run(MailViolationApplication.class, args);
 	}
 
-	@Bean
-	public ObjectMapper objectMapper() {
-		ObjectMapper objectMapper = new ObjectMapper();
-		objectMapper.registerModule(new JavaTimeModule());
-		return objectMapper;
-	}
 }

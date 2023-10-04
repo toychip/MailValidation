@@ -97,60 +97,51 @@
             <th>✔️ 적격 여부</th>
         </tr>
         </thead>
-        <tbody>
-        <c:forEach items="${conditionXList}" var="mail" varStatus="iterStat">
-            <c:set var="approvalDate" value="${mail.approvalDate}" scope="page"/>
-            <tr>
-                <%
-                    java.time.LocalDateTime approvalDate = (java.time.LocalDateTime)pageContext.getAttribute("approvalDate");
-                    String formattedDate = " ";
-                    if (approvalDate != null) {
-                        java.time.format.DateTimeFormatter formatter = java.time.format.DateTimeFormatter.ofPattern("yyyy년 MM월 HH시 mm분");
-                        formattedDate = approvalDate.format(formatter);
-                    }
-                %>
-                <td>${iterStat.index + 1}</td>
-                <td>${mail.docNumber != null ? mail.docNumber : ' '}</td>
-                <td>${mail.draftsman != null ? mail.draftsman : ' '}</td>
-                <td>${mail.dept != null ? mail.dept : ' '}</td>
-                <td class="limit-title">${mail.mailTitle != null ? mail.mailTitle : ' '}</td>
-<%--                <td>${mail.approvalDate != null ? mail.approvalDate : ' '}</td>--%>
-                <td><%= formattedDate %></td>
-                <td class="limit-text">${mail.reference != null ? mail.reference : ' '}</td>
-                <td class="limit-reason">${mail.blockCause != null ? mail.blockCause : ' '}</td>
-                <td>${mail.lastApprover != null ? mail.lastApprover : ' '}</td>
-                <td>${mail.result != null ? mail.result : ' '}</td>
-            </tr>
-        </c:forEach>
+        <tbody id="dynamicTbody">
+        <!-- 동적으로 생성될 테이블 로우 -->
         </tbody>
     </table>
 </div>
 <!-- 검색 결과 날짜 정보를 표시하는 섹션 -->
 
 <script type="text/javascript">
-    // 서버에서 내려받은 conditionXList를 JavaScript 객체로 할당 (이 부분은 서버에서 자바스크립트 객체로 변환할 수 있도록 해야 합니다.)
-    var conditionXList = '${conditionXList}';
+
+    var jsonTemp = ${conditionXList};
+
+    console.log(jsonTemp)
+
+    // 엑셀 다운로드 버튼 클릭 이벤트
+    $("#excelDownloadForm").submit(function(event) {
+        event.preventDefault(); // 기본 이벤트(페이지 리로드 등)를 막음
+        $("#hiddenField").val(JSON.stringify(jsonTemp)); // jsonTemp 값을 hiddenField에 설정
+
+        this.submit(); // 폼 제출
+    });
+
 
     $(document).ready(function() {
-        $('#excelDownloadForm').submit(function(e) {
-            e.preventDefault();  // 폼의 기본 제출 동작을 막습니다.
+        // 서버에서 전달받은 JSON 문자열을 JavaScript 객체로 변환
+        <%--var conditionXList = JSON.parse('<c:out value="${conditionXList}" />');--%>
 
-
-        console.log(conditionXList)
-            // AJAX 요청으로 /downloadExcel 엔드포인트에 데이터 전송
-            $.ajax({
-                url: '/downloadExcel',
-                type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify(conditionXList),
-                success: function(response) {
-                    // console.log('Success:', response);
-                },
-                error: function(error) {
-                    // console.log('Error:', error);
-                }
-            });
+        // 동적으로 테이블 로우 생성
+        var tbodyHtml = "";
+        jsonTemp.forEach(function(item, index) {
+            tbodyHtml += "<tr>";
+            tbodyHtml += "<td>" + (index + 1) + "</td>";
+            tbodyHtml += "<td>" + item.docNumber + "</td>";
+            tbodyHtml += "<td>" + item.draftsman + "</td>";
+            tbodyHtml += "<td>" + item.dept + "</td>";
+            tbodyHtml += "<td>" + item.title + "</td>";
+            tbodyHtml += "<td>" + item.approvalDate + "</td>";
+            tbodyHtml += "<td>" + (item.reference || 'N/A') + "</td>";
+            tbodyHtml += "<td>" + item.blockCause + "</td>";
+            tbodyHtml += "<td>" + item.lastApprover + "</td>";
+            tbodyHtml += "<td>" + item.result + "</td>";
+            tbodyHtml += "</tr>";
         });
+
+        // 생성된 HTML을 tbody에 추가
+        $('#dynamicTbody').html(tbodyHtml);
     });
 </script>
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>

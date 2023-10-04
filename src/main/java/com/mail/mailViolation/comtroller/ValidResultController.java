@@ -34,7 +34,7 @@ public class ValidResultController {
             List<MailResultDao> conditionXList = (List<MailResultDao>) model.getAttribute("conditionXList");
             String jsonConditionXList = objectMapper.writeValueAsString(conditionXList);
 
-            System.out.println(" 컨트롤러에서 jsonConditionXList = " + jsonConditionXList);
+//            System.out.println(" 컨트롤러에서 jsonConditionXList = " + jsonConditionXList);
 
             if (conditionXList != null && !conditionXList.isEmpty()) {
                 model.addAttribute("conditionXList", jsonConditionXList);
@@ -56,7 +56,7 @@ public class ValidResultController {
         System.out.println("ValidResultController.downloadExcel");
         // 세션에 있는 부적격 리스트 추출
 
-        System.out.println("conditionXList = " + conditionXList);
+        System.out.println("=============== conditionXList = \n" + conditionXList);
 
         if (conditionXList != null && !conditionXList.isEmpty()) {
             try {

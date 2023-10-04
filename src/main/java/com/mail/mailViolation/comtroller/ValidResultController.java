@@ -37,7 +37,7 @@ public class ValidResultController {
             List<MailResultDao> conditionXList = (List<MailResultDao>) model.getAttribute("conditionXList");
             String jsonConditionXList = objectMapper.writeValueAsString(conditionXList);
 
-//            System.out.println(" 컨트롤러에서 jsonConditionXList = " + jsonConditionXList);
+//            log.info(" 컨트롤러에서 jsonConditionXList = " + jsonConditionXList);
 
             if (conditionXList != null && !conditionXList.isEmpty()) {
                 model.addAttribute("conditionXList", jsonConditionXList);
@@ -54,27 +54,19 @@ public class ValidResultController {
 
     @PostMapping("/downloadExcel")
     public void downloadExcel(HttpServletResponse response,
-                              @RequestBody String conditionXList
+                              @RequestBody List<MailResultDao> conditionXList
     ){
-        System.out.println("ValidResultController.downloadExcel");
-        // 세션에 있는 부적격 리스트 추출
 
-        try {
-            conditionXList = URLDecoder.decode(conditionXList, StandardCharsets.UTF_8.name());
-            // 여기서 이후 로직을 수행하면 됩니다.
-        } catch (UnsupportedEncodingException e) {
-            // 이 부분은 일반적으로 실행되지 않아야 합니다.
-            // 적절한 예외 처리 로직을 넣어주세요.
-            System.out.println("------ 에러남 ------");
-            e.printStackTrace();
+        for (MailResultDao mailResultDao : conditionXList) {
+            log.info("mailResultDao.getDocNumber() = " + mailResultDao.getDocNumber());
+            log.info("mailResultDao.getDraftsman() = " + mailResultDao.getDraftsman());
+            
         }
-
-        System.out.println("=============== conditionXList = \n" + conditionXList);
-
+        
         if (conditionXList != null && !conditionXList.isEmpty()) {
             try {
                 // Excel 파일 생성 로직 호출
-                System.out.println("try try try ValidResultController.downloadExcel");
+                log.info("try try try ValidResultController.downloadExcel");
 
                 // saveExelService의 createExcelFile 메서드를 호출하여 Excel 파일 생성
                 // 이 메서드는 ByteArrayInputStream 객체를 반환

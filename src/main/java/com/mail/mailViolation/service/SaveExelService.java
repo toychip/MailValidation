@@ -14,7 +14,7 @@ import java.util.List;
 
 @Service
 public class SaveExelService {
-    public ByteArrayInputStream createExcelFile(String dataList) throws IOException {
+    public ByteArrayInputStream createExcelFile(List<MailResultDao> dataList) throws IOException {
         try (
                 Workbook workbook = new XSSFWorkbook();
                 ByteArrayOutputStream out = new ByteArrayOutputStream()
@@ -34,22 +34,22 @@ public class SaveExelService {
             headerRow.createCell(8).setCellValue("최종 결재자");
             headerRow.createCell(9).setCellValue("적격 여부");
 
-//            // 데이터 삽입
-//            for (int i = 0; i < dataList.size(); i++) {
-//                MailResultDao data = dataList.get(i);
-//                Row row = sheet.createRow(i + 1);
-//
-//                row.createCell(0).setCellValue(i + 1);
-//                row.createCell(1).setCellValue(data.getDocNumber());
-//                row.createCell(2).setCellValue(data.getDraftsman());
-//                row.createCell(3).setCellValue(data.getDept());
-//                row.createCell(4).setCellValue(data.getMailTitle());
-//                row.createCell(5).setCellValue(data.getApprovalDate().toString());
-//                row.createCell(6).setCellValue(data.getReference());
-//                row.createCell(7).setCellValue(data.getBlockCause());
-//                row.createCell(8).setCellValue(data.getLastApprover());
-//                row.createCell(9).setCellValue(data.getResult());
-//            }
+            // 데이터 삽입
+            for (int i = 0; i < dataList.size(); i++) {
+                MailResultDao data = dataList.get(i);
+                Row row = sheet.createRow(i + 1);
+
+                row.createCell(0).setCellValue(i + 1);
+                row.createCell(1).setCellValue(data.getDocNumber());
+                row.createCell(2).setCellValue(data.getDraftsman());
+                row.createCell(3).setCellValue(data.getDept());
+                row.createCell(4).setCellValue(data.getMailTitle());
+                row.createCell(5).setCellValue(data.getApprovalDate().toString());
+                row.createCell(6).setCellValue(data.getReference());
+                row.createCell(7).setCellValue(data.getBlockCause());
+                row.createCell(8).setCellValue(data.getLastApprover());
+                row.createCell(9).setCellValue(data.getResult());
+            }
             return new ByteArrayInputStream(out.toByteArray());
 
         }

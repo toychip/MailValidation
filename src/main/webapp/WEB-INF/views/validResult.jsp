@@ -110,14 +110,44 @@
 
     console.log(jsonTemp)
 
-    // 엑셀 다운로드 버튼 클릭 이벤트
-    $("#excelDownloadForm").submit(function(event) {
+    // undefined 값을 null로 변환
+    function replaceUndefinedOrNull(obj) {
+        let newObj = Array.isArray(obj) ? [] : {};
+        for (let key in obj) {
+            if (obj[key] === undefined) {
+                newObj[key] = null;
+            } else if (obj[key] === Object(obj[key])) {
+                newObj[key] = replaceUndefinedOrNull(obj[key]);
+            } else {
+                newObj[key] = obj[key];
+            }
+        }
+        return newObj;
+    }
+
+    // 이 부분은 변경할 필요가 없습니다.
+    var jsonTemp = ${conditionXList};
+
+    // 새로운 객체를 생성하여 undefined를 null로 변환
+    var jsonResult = replaceUndefinedOrNull(jsonTemp);
+
+    // Ajax 호출 부분
+    $("#excelDownloadForm button[type='submit']").click(function(event) {
         event.preventDefault(); // 기본 이벤트(페이지 리로드 등)를 막음
-        $("#hiddenField").val(JSON.stringify(jsonTemp)); // jsonTemp 값을 hiddenField에 설정
 
-        this.submit(); // 폼 제출
+        $.ajax({
+            url: '/downloadExcel',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(jsonResult), // JavaScript 객체를 JSON 문자열로 변환
+            success: function(response) {
+                // 성공적으로 요청이 완료된 후 실행할 코드
+            },
+            error: function(error) {
+                // 요청이 실패한 경우 실행할 코드
+            }
+        });
     });
-
 
     $(document).ready(function() {
         // 서버에서 전달받은 JSON 문자열을 JavaScript 객체로 변환

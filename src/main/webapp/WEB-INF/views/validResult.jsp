@@ -139,9 +139,15 @@
             url: '/downloadExcel',
             type: 'POST',
             contentType: 'application/json',
+            // dataType: 'arraybuffer',
             data: JSON.stringify(jsonResult), // JavaScript 객체를 JSON 문자열로 변환
             success: function(response) {
                 // 성공적으로 요청이 완료된 후 실행할 코드
+                var blob = new Blob([response], { type: 'application/vnd.ms-excel' });
+                var link = document.createElement('a');
+                link.href = window.URL.createObjectURL(blob);
+                link.download = 'ValidResult.xlsx';
+                link.click();
             },
             error: function(error) {
                 // 요청이 실패한 경우 실행할 코드

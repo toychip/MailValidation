@@ -57,39 +57,32 @@ public class ValidResultController {
                               @RequestBody List<MailResultDao> conditionXList
     ){
 
-        for (MailResultDao mailResultDao : conditionXList) {
-            log.info("mailResultDao.getDocNumber() = " + mailResultDao.getDocNumber());
-            log.info("mailResultDao.getDraftsman() = " + mailResultDao.getDraftsman());
-            
-        }
-        
+//        for (MailResultDao mailResultDao : conditionXList) {
+//            log.info("mailResultDao.getDocNumber() = " + mailResultDao.getDocNumber());
+//            log.info("mailResultDao.getDraftsman() = " + mailResultDao.getDraftsman());
+//
+//        }
+
         if (conditionXList != null && !conditionXList.isEmpty()) {
-            try {
-                // Excel 파일 생성 로직 호출
-                log.info("try try try ValidResultController.downloadExcel");
-
-                // saveExelService의 createExcelFile 메서드를 호출하여 Excel 파일 생성
-                // 이 메서드는 ByteArrayInputStream 객체를 반환
-                ByteArrayInputStream stream = saveExelService.createExcelFile(conditionXList);
-
+            try (
+                    ByteArrayInputStream stream = saveExelService.createExcelFile(conditionXList);
+                    OutputStream os = response.getOutputStream()
+            ) {
                 // HTTP Response 설정
                 response.setContentType("application/vnd.ms-excel");
 
                 // 다운로드될 파일의 이름을 설정
                 response.setHeader("Content-Disposition", "attachment; filename=ValidResult.xlsx");
 
-                // OutputStream을 사용하여 클라이언트에게 파일을 전송
-                try (OutputStream os = response.getOutputStream()) {
-                    byte[] buffer = new byte[1024];
-                    int bytesRead;
+                byte[] buffer = new byte[1024];
+                int bytesRead;
 
-                    // 스트림으로부터 데이터를 읽어 OutputStream에 쓴다
-                    while ((bytesRead = stream.read(buffer)) != -1) {
-                        os.write(buffer, 0, bytesRead);
-                    }
-                    os.flush(); // 버퍼를 비움
+                // 스트림으로부터 데이터를 읽어 OutputStream에 쓴다
+                while ((bytesRead = stream.read(buffer)) != -1) {
+                    os.write(buffer, 0, bytesRead);
                 }
-            } catch (IOException e) {
+                os.flush(); // 버퍼를 비움
+            }  catch (IOException e) {
                 e.printStackTrace();
             }
         }

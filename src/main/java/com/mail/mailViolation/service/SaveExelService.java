@@ -19,6 +19,7 @@ public class SaveExelService {
                 Workbook workbook = new XSSFWorkbook();
                 ByteArrayOutputStream out = new ByteArrayOutputStream()
         ) {
+            System.out.println("--------------------------------//////////////////////-------------");
             Sheet sheet = workbook.createSheet("Mail Results");
 
             // 헤더 생성
@@ -35,23 +36,54 @@ public class SaveExelService {
             headerRow.createCell(9).setCellValue("적격 여부");
 
             // 데이터 삽입
-            for (int i = 0; i < dataList.size(); i++) {
+//            for (int i = 0; i < dataList.size(); i++) {
+            for (int i = 0; i < 3; i++) {
                 MailResultDao data = dataList.get(i);
                 Row row = sheet.createRow(i + 1);
 
+                System.out.println("i = " + i);
                 row.createCell(0).setCellValue(i + 1);
-                row.createCell(1).setCellValue(data.getDocNumber());
-                row.createCell(2).setCellValue(data.getDraftsman());
-                row.createCell(3).setCellValue(data.getDept());
-                row.createCell(4).setCellValue(data.getMailTitle());
-                row.createCell(5).setCellValue(data.getApprovalDate().toString());
-                row.createCell(6).setCellValue(data.getReference());
-                row.createCell(7).setCellValue(data.getBlockCause());
-                row.createCell(8).setCellValue(data.getLastApprover());
-                row.createCell(9).setCellValue(data.getResult());
-            }
-            return new ByteArrayInputStream(out.toByteArray());
 
+                String docNumber = data.getDocNumber();
+                row.createCell(1).setCellValue(docNumber);
+                System.out.println("----- docNumber = " + docNumber);
+
+                String draftsman = data.getDraftsman();
+                row.createCell(2).setCellValue(draftsman);
+                System.out.println("----- draftsman = " + draftsman);
+
+                String dept = data.getDept();
+                row.createCell(3).setCellValue(dept);
+                System.out.println("----- dept = " + dept);
+
+                String mailTitle = data.getMailTitle();
+                row.createCell(4).setCellValue(mailTitle);
+                System.out.println("----- mailTitle = " + mailTitle);
+
+                String approvalDateString = data.getApprovalDate().toString();
+                row.createCell(5).setCellValue(approvalDateString);
+                System.out.println("----- approvalDateString = " + approvalDateString);
+
+                String reference = data.getReference();
+                row.createCell(6).setCellValue(reference);
+                System.out.println("----- reference = " + reference);
+
+                String blockCause = data.getBlockCause();
+                row.createCell(7).setCellValue(blockCause);
+                System.out.println("----- blockCause = " + blockCause);
+
+                String lastApprover = data.getLastApprover();
+                row.createCell(8).setCellValue(lastApprover);
+                System.out.println("----- lastApprover = " + lastApprover);
+
+                String result = data.getResult();
+                row.createCell(9).setCellValue(result);
+                System.out.println("----- result = " + result);
+
+
+            }
+            workbook.write(out);
+            return new ByteArrayInputStream(out.toByteArray());
         }
     }
 }

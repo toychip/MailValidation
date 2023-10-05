@@ -132,25 +132,27 @@
     var jsonResult = replaceUndefinedOrNull(jsonTemp);
 
     // Ajax 호출 부분
-    $("#excelDownloadForm button[type='submit']").click(function(event) {
-        event.preventDefault(); // 기본 이벤트(페이지 리로드 등)를 막음
+    $("#excelDownloadForm").submit(function(event) {
+        event.preventDefault();
 
         $.ajax({
             url: '/downloadExcel',
             type: 'POST',
             contentType: 'application/json',
-            // dataType: 'arraybuffer',
-            data: JSON.stringify(jsonResult), // JavaScript 객체를 JSON 문자열로 변환
-            success: function(response) {
-                // 성공적으로 요청이 완료된 후 실행할 코드
+            data: JSON.stringify(jsonResult),
+            xhrFields: {
+                responseType: 'blob'
+            },
+            success: function(response, status, xhr) {
                 var blob = new Blob([response], { type: 'application/vnd.ms-excel' });
                 var link = document.createElement('a');
                 link.href = window.URL.createObjectURL(blob);
-                link.download = 'ValidResult.xlsx';
+                link.download = 'mail_results.xlsx';
                 link.click();
+                window.URL.revokeObjectURL(link.href);
             },
-            error: function(error) {
-                // 요청이 실패한 경우 실행할 코드
+            error: function(xhr, status, error) {
+                alert('Excel download failed.');
             }
         });
     });

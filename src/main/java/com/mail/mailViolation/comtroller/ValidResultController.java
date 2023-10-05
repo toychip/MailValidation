@@ -54,38 +54,11 @@ public class ValidResultController {
 
     @PostMapping("/downloadExcel")
     public void downloadExcel(HttpServletResponse response,
-                              @RequestBody List<MailResultDao> conditionXList
-    ){
+                              @RequestBody List<MailResultDao> conditionXList) throws IOException {
 
-//        for (MailResultDao mailResultDao : conditionXList) {
-//            log.info("mailResultDao.getDocNumber() = " + mailResultDao.getDocNumber());
-//            log.info("mailResultDao.getDraftsman() = " + mailResultDao.getDraftsman());
-//
-//        }
-
-        if (conditionXList != null && !conditionXList.isEmpty()) {
-            try (
-                    ByteArrayInputStream stream = saveExelService.createExcelFile(conditionXList);
-                    OutputStream os = response.getOutputStream()
-            ) {
-                // HTTP Response 설정
-                response.setContentType("application/vnd.ms-excel");
-
-                // 다운로드될 파일의 이름을 설정
-                response.setHeader("Content-Disposition", "attachment; filename=ValidResult.xlsx");
-
-                byte[] buffer = new byte[1024];
-                int bytesRead;
-
-                // 스트림으로부터 데이터를 읽어 OutputStream에 쓴다
-                while ((bytesRead = stream.read(buffer)) != -1) {
-                    os.write(buffer, 0, bytesRead);
-                }
-                os.flush(); // 버퍼를 비움
-            }  catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+        response.setContentType("application/vnd.ms-excel");
+        response.setHeader("Content-Disposition", "attachment; filename=mail_results.xlsx");
+        saveExelService.exportToExcel(response, conditionXList);
     }
     
 }

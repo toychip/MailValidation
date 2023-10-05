@@ -130,7 +130,7 @@ public class UploadController {
 						 @RequestParam(required = false, defaultValue = "99") Integer fromMonth,
 						 @RequestParam(required = false, defaultValue = "9999") Integer toYear,
 						 @RequestParam(required = false, defaultValue = "99") Integer toMonth,
-									  Model model, HttpServletRequest request
+									  RedirectAttributes redirectAttributes, HttpServletRequest request
 	) {
 
 		if (fromYear.equals(9999) && fromMonth.equals(99)) {
@@ -162,13 +162,13 @@ public class UploadController {
 
 		List<MailResultDao> data = initService.getData(fromYear, fromMonth, toYear, toMonth);
 
-		model.addAttribute("fromYear", fromYear);
-		model.addAttribute("fromMonth", fromMonth);
-		model.addAttribute("toYear", toYear);
-		model.addAttribute("toMonth", toMonth);
+		redirectAttributes.addFlashAttribute("fromYear", fromYear);
+		redirectAttributes.addFlashAttribute("fromMonth", fromMonth);
+		redirectAttributes.addFlashAttribute("toYear", toYear);
+		redirectAttributes.addFlashAttribute("toMonth", toMonth);
 
-		model.addAttribute("conditionXList", data);
+		redirectAttributes.addFlashAttribute("conditionXList", data);
 
-		return "validResult";
+		return "redirect:/validResult";
 	}
 }

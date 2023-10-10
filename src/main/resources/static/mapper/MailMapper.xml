@@ -10,23 +10,38 @@
           AND USE_YN = 'Y'
     </select>
 
-    <!-- 부서 ID를 활용하여 현재 부서와 상위 부서의 보직좌를 조회 -->
-    <select id="findBossByDeptId" resultType="com.mail.mailViolation.dto.dao.EmployeeDao">
-        <!-- 현재 부서의 보직좌 조회 -->
-        SELECT E.EMP_ID, E.EMP_NAME, E.DEPT_ID, E.EMP_EMAIL, E.USE_YN, E.RGT_DTTM, E.APPR_REFER_YN
-        FROM TB_AS_SCRT_EMP E
-        WHERE E.DEPT_ID = #{deptId}
-          AND E.APPR_REFER_YN = 'Y'
-        UNION
-        <!-- 상위 부서의 보직좌 조회 -->
-        SELECT E.EMP_ID, E.EMP_NAME, E.DEPT_ID, E.EMP_EMAIL, E.USE_YN, E.RGT_DTTM, E.APPR_REFER_YN
-        FROM TB_AS_SCRT_EMP E
-                 INNER JOIN TB_AS_SCRT_DEPT D ON E.DEPT_ID = D.DEPT_ID
-        WHERE D.DEPT_CODE = (SELECT UPPER_DEPT FROM TB_AS_SCRT_DEPT WHERE DEPT_ID = #{deptId})
-          AND E.APPR_REFER_YN = 'Y'
-          AND E.use_yn = 'Y'
 
+    <!--  실장 조회  -->
+    <select id="findSBoss" resultType="com.mail.mailViolation.dto.dao.EmployeeDao">
+        SELECT * FROM TB_AS_SCRT_EMP
+        WHERE deptId = #{deptId}
+          AND USE_YN = 'Y'
+          AND APPR_REFER_YN = 'S'
     </select>
+
+    <!-- 팀장 리스트 조회 -->
+    <select id="findTBoss" resultType="com.mail.mailViolation.dto.dao.EmployeeDao">
+        SELECT * FROM TB_AS_SCRT_EMP
+        WHERE deptId = #{deptId}
+          AND USE_YN = 'Y'
+          AND APPR_REFER_YN = 'T'
+    </select>
+
+    <!-- 본부장을 찾는 쿼리 -->
+    <select id="findBBoss" resultType="com.yourpackage.EmployeeDao">
+        SELECT E.*
+        FROM tb_as_scrt_emp E
+                 JOIN tb_as_scrt_dept D ON E.dept_id = D.dept_id
+        WHERE D.dept_code IN (
+            SELECT D1.upper_dept
+            FROM tb_as_scrt_dept D1
+            WHERE D1.dept_id = #{deptId}
+        )
+          AND E.USE_YN = 'Y'
+          AND E.APPR_REFER_YN = 'B'
+    </select>
+
+
 
     <!-- TEST_EMAIL_VALID 테이블에 메일 결과를 삽입 또는 업데이트 -->
     <insert id="insertValidResult" parameterType="com.mail.mailViolation.dto.dao.MailResultDao">

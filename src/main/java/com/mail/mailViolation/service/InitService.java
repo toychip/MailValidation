@@ -71,8 +71,33 @@ public class InitService {
 
 	List<Integer> arrays = new ArrayList<>();
 
+	public String validateForMember(ApprovalMailDto approvalMailDto, Integer deptId) {
+
+
+		return null;
+	}
+
+	public EmployeeDao findBBoss(ApprovalMailDto approvalMailDto, Integer deptId){
+		return mapper.findBBoss(deptId)
+				.orElseThrow(() -> new RuntimeException("본부장을 찾을 수 없음"));
+	}
+
+	public EmployeeDao findSBoss(ApprovalMailDto approvalMailDto, Integer deptId) {
+		return mapper.findSBoss(deptId)
+				.orElseThrow(() -> new RuntimeException("실장을 찾을 수 없음"));
+	}
+
+	public List<EmployeeDao> findTBoss(ApprovalMailDto approvalMailDto, Integer deptId) {
+		return mapper.findTBoss(deptId)
+				.orElseThrow(() -> new RuntimeException("실장을 찾을 수 없음"));
+	}
+
+
+
 	public String checkApprovalCondition(ApprovalMailDto approvalMailDto,
 										 Integer validOverLapDeptId) {
+
+
 
 		List<EmployeeDao> bosses = mapper.findBossByDeptId(validOverLapDeptId);
 

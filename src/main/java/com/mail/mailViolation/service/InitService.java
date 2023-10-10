@@ -71,20 +71,26 @@ public class InitService {
 
 	List<Integer> arrays = new ArrayList<>();
 
-	// 일반 직원일 경우
-	public String validateForMember(ApprovalMailDto approvalMailDto, Integer deptId) {
+	// 본부장이 결재했는가?
+	public String validateBBoss(String lastApprover,
+								String referencer,
+								Integer deptId) {
 
 		return null;
 	}
 
-	// 팀장일 경우
-	public String validateForTBoss(ApprovalMailDto approvalMailDto, Integer deptId) {
+	// 팀장이 결재 했는가?
+	public String validateTBoss(String lastApprover,
+								String referencer,
+								Integer deptId) {
 
 		return null;
 	}
 
-	// 실장일 경우
-	public String validateForSBoss(ApprovalMailDto approvalMailDto, Integer deptId) {
+	// 실장이 결재 했는가?
+	public String validateSBoss(String lastApprover,
+								String referencer,
+								Integer deptId) {
 
 		return null;
 	}

@@ -77,26 +77,32 @@ public class GetExelService {
 
                 String apprReferYn = findEmp.getApprReferYn();
 
+                // 결재
+                String lastApprover = approvalMailDto.getLastApprover();
+
+                // 참조
+                String referencer = approvalMailDto.getReference();
+
+                // 실장
+                EmployeeDao sBoss = initService.findSBoss(empDeptId);
+
+                // 본부장
+                EmployeeDao bBoss = initService.findBBoss(empDeptId);
+
                 if (approvalMailDto.getDept().contains("그룹웨어관리")) {
                     condition = "T";
                 }
 
                 if (apprReferYn == "Y") {
-                    condition = initService.validateForMember(approvalMailDto, empDeptId);
+                    List<EmployeeDao> tBoss = initService.findTBoss(empDeptId);
                 }
 
                 if (apprReferYn == "T") {
-                    condition = initService.validateForTBoss(approvalMailDto, empDeptId);
+
                 }
 
                 if (apprReferYn == "S") {
-                    condition = initService.validateForSBoss(approvalMailDto, empDeptId);
-                }
 
-                // 결재 조건 확인
-                // 메일 테스트의 경우로, 부서가 그룹웨어관리가 포함될 경우
-                if (approvalMailDto.getDept().contains("그룹웨어관리")) {
-                    condition = "T";
                 } else {
 
                     // initService의 검사 로직탐

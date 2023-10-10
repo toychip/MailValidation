@@ -4,10 +4,10 @@
 <mapper namespace="com.mail.mailViolation.mapper.MailMapper">
 
     <!-- 기안자 이름으로 TB_AS_SCRT_EMP 테이블에서 직원 정보를 조회 -->
-    <select id="findEmployeeByDraftsmanAndApprReferYn" parameterType="string" resultType="com.mail.mailViolation.dto.dao.EmployeeDao">
-        SELECT EMP_ID, EMP_NAME, DEPT_ID, EMP_EMAIL, USE_YN, RGT_DTTM, APPR_REFER_YN
-          FROM TB_AS_SCRT_EMP
-         WHERE EMP_NAME = #{draftsman}
+    <select id="findByNameAndUseYn" resultType="com.mail.mailViolation.dto.dao.EmployeeDao">
+        SELECT * FROM your_table_name
+        WHERE name = #{name}
+          AND USE_YN = 'Y'
     </select>
 
     <!-- 부서 ID를 활용하여 현재 부서와 상위 부서의 보직좌를 조회 -->

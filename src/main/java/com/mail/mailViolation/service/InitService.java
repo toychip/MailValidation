@@ -65,33 +65,8 @@ public class InitService {
 
 	// Y, N 등 여러개의 리스트 반환시 가장 최신 것으로 반환하는 메서드
 	public EmployeeDao getEmp(String name) {
-		List<EmployeeDao> result = mapper.findEmployeeByDraftsmanAndApprReferYn(name);
-		EmployeeDao latestEmployee = null;
-
-		if (result.isEmpty()) {
-			return EmployeeDao.getDefault();
-		}
-
-		for (EmployeeDao employeeDao : result) {
-
-			char userYN = employeeDao.getUseYN().charAt(0);
-			if (userYN == 'Y') {
-				return employeeDao;
-			}
-		}
-
-		// DB에 없는 사람이 기안자일 수 없으므로 DB에 없는 경우 생각 안함
-		for (EmployeeDao employeeDao : result) {
-			if (latestEmployee == null) {
-				latestEmployee = employeeDao;
-				continue;
-			}
-			if (employeeDao.getRgtDttm().isAfter(latestEmployee.getRgtDttm())) {
-				latestEmployee = employeeDao;
-			}
-		}
-
-		return latestEmployee;
+		return mapper.findByNameAndUseYn(name)
+				.orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없음"));
 	}
 
 	List<Integer> arrays = new ArrayList<>();
@@ -164,5 +139,6 @@ public class InitService {
 		List<MailResultDao> validEmail = mapper.searchDateConditionX(fromYear, fromMonth, toYear, toMonth);
 		return validEmail;
 	}
+
 
 }

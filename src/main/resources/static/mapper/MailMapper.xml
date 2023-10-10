@@ -28,7 +28,7 @@
     </select>
 
     <!-- 본부장을 찾는 쿼리 -->
-    <select id="findBBoss" resultType="com.yourpackage.EmployeeDao">
+    <select id="findBBoss" resultType="com.mail.mailViolation.dto.dao.EmployeeDao">
         SELECT E.*
         FROM tb_as_scrt_emp E
                  JOIN tb_as_scrt_dept D ON E.dept_id = D.dept_id

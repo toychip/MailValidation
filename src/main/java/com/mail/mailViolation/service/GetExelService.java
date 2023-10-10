@@ -69,8 +69,9 @@ public class GetExelService {
                 ApprovalMailDto approvalMailDto = initService.createMailDao(currentRow, year);
 
                 // DTO를 기반으로 직원 정보 가져옴
-                EmployeeDao validOverLap = initService.getEmp(approvalMailDto.getDraftsman());
-                Integer validOverLapDeptId = validOverLap.getDeptId();
+                EmployeeDao findEmp = initService.getEmp(approvalMailDto.getDraftsman());
+                Integer empDeptId = findEmp.getDeptId();
+
                 String condition;
                 String title = approvalMailDto.getTitle();
 
@@ -81,7 +82,7 @@ public class GetExelService {
                 } else {
 
                     // initService의 검사 로직탐
-                    condition = initService.checkApprovalCondition(approvalMailDto, validOverLapDeptId);
+                    condition = initService.checkApprovalCondition(approvalMailDto, empDeptId);
 
                     // condition이 "X"일 경우, 부적격 리스트에 추가
                     if (condition == "X") {
@@ -90,7 +91,7 @@ public class GetExelService {
                                         .docNumber(approvalMailDto.getDocNumber())	// 문서 번호
                                         .draftsman(approvalMailDto.getDraftsman())	// 기안자
                                         .dept(approvalMailDto.getDept())	// 소속부서
-                                        .deptId(validOverLapDeptId)
+                                        .deptId(empDeptId)
                                         .title(title)	// 제목
                                         .approvalDate(approvalMailDto.getApprovalDate())	// 결재일
                                         .mailTitle(approvalMailDto.getMailTitle())	// 메일 제목
@@ -113,7 +114,7 @@ public class GetExelService {
                         .docNumber(approvalMailDto.getDocNumber())	// 문서 번호
                         .draftsman(approvalMailDto.getDraftsman())	// 기안자
                         .dept(approvalMailDto.getDept())	// 소속부서
-                        .deptId(validOverLapDeptId)
+                        .deptId(empDeptId)
                         .title(title)	// 제목
                         .approvalDate(approvalMailDto.getApprovalDate())	// 결재일
                         .mailTitle(approvalMailDto.getMailTitle())	// 메일 제목

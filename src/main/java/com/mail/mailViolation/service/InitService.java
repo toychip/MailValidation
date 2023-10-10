@@ -71,33 +71,45 @@ public class InitService {
 
 	List<Integer> arrays = new ArrayList<>();
 
+	// 일반 직원일 경우
 	public String validateForMember(ApprovalMailDto approvalMailDto, Integer deptId) {
-
 
 		return null;
 	}
 
-	public EmployeeDao findBBoss(ApprovalMailDto approvalMailDto, Integer deptId){
-		return mapper.findBBoss(deptId)
-				.orElseThrow(() -> new RuntimeException("본부장을 찾을 수 없음"));
+	// 팀장일 경우
+	public String validateForTBoss(ApprovalMailDto approvalMailDto, Integer deptId) {
+
+		return null;
 	}
 
-	public EmployeeDao findSBoss(ApprovalMailDto approvalMailDto, Integer deptId) {
+	// 실장일 경우
+	public String validateForSBoss(ApprovalMailDto approvalMailDto, Integer deptId) {
+
+		return null;
+	}
+
+	// deptId로 팀장 찾기
+	public List<EmployeeDao> findTBoss(Integer deptId) {
+		return mapper.findTBoss(deptId)
+				.orElseThrow(() -> new RuntimeException("팀장을 찾을 수 없음"));
+	}
+
+	// deptId로 실장 찾기
+	public EmployeeDao findSBoss(Integer deptId) {
 		return mapper.findSBoss(deptId)
 				.orElseThrow(() -> new RuntimeException("실장을 찾을 수 없음"));
 	}
 
-	public List<EmployeeDao> findTBoss(ApprovalMailDto approvalMailDto, Integer deptId) {
-		return mapper.findTBoss(deptId)
-				.orElseThrow(() -> new RuntimeException("실장을 찾을 수 없음"));
+	// deptId로 본부장 찾기
+	public EmployeeDao findBBoss(Integer deptId){
+		return mapper.findBBoss(deptId)
+				.orElseThrow(() -> new RuntimeException("본부장을 찾을 수 없음"));
 	}
-
 
 
 	public String checkApprovalCondition(ApprovalMailDto approvalMailDto,
 										 Integer validOverLapDeptId) {
-
-
 
 		List<EmployeeDao> bosses = mapper.findBossByDeptId(validOverLapDeptId);
 

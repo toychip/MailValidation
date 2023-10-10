@@ -18,11 +18,11 @@ public interface MailMapper {
     // 지정된 deptId를 기반으로 상사(EmployeeDao)의 리스트를 반환하는 메서드
     List<EmployeeDao> findBossByDeptId(@Param("deptId") Integer validOverLapDeptId);
 
-    Optional<EmployeeDao> findSBoss(@Param("deptId") Integer deptId);
+    Optional<String> findSBoss(@Param("deptId") Integer deptId);
 
-    Optional<EmployeeDao> findBBoss(@Param("deptId") Integer deptId);
+    String findBBoss(@Param("deptId") Integer deptId);
 
-    Optional<List<EmployeeDao>> findTBoss(@Param("deptId") Integer deptId);
+    Optional<List<String>> findTBoss(@Param("deptId") Integer deptId);
 
 
 

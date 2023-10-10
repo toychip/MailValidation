@@ -71,6 +71,34 @@ public class InitService {
 
 	List<Integer> arrays = new ArrayList<>();
 
+
+
+	// 팀장이 결재 했는가?
+	public boolean approvalTBoss(String lastApprover,
+								Integer deptId) {
+		// 팀장 이름 리스트
+		List<String> tBossEmpNameList = findTBoss(deptId);
+
+		// 하나라도 존재하는가?
+		return tBossEmpNameList.stream()
+				.anyMatch(empName -> empName.equals(lastApprover));
+	}
+
+	// 실장이 결재 했는가?
+	public boolean approvalSBoss(String currentLastApprover,
+								Integer deptId) {
+		String sBossEmpName = findSBoss(deptId);
+		return currentLastApprover.equals(sBossEmpName) ? true : false;
+	}
+
+	// 실장을 참조 했는가?
+	public boolean referenceSBoss(String referencer,
+								Integer deptId) {
+
+		String sBossEmpName = findSBoss(deptId);
+		return referencer.equals(sBossEmpName) ? true : false;
+	}
+
 	// 본부장이 결재했는가?
 	public String validateBBoss(String lastApprover,
 								String referencer,
@@ -79,38 +107,24 @@ public class InitService {
 		return null;
 	}
 
-	// 팀장이 결재 했는가?
-	public String validateTBoss(String lastApprover,
-								String referencer,
-								Integer deptId) {
 
-		return null;
-	}
 
-	// 실장이 결재 했는가?
-	public String validateSBoss(String lastApprover,
-								String referencer,
-								Integer deptId) {
-
-		return null;
-	}
 
 	// deptId로 팀장 찾기
-	public List<EmployeeDao> findTBoss(Integer deptId) {
+	public List<String> findTBoss(Integer deptId) {
 		return mapper.findTBoss(deptId)
 				.orElseThrow(() -> new RuntimeException("팀장을 찾을 수 없음"));
 	}
 
 	// deptId로 실장 찾기
-	public EmployeeDao findSBoss(Integer deptId) {
+	public String findSBoss(Integer deptId) {
 		return mapper.findSBoss(deptId)
 				.orElseThrow(() -> new RuntimeException("실장을 찾을 수 없음"));
 	}
 
 	// deptId로 본부장 찾기
-	public EmployeeDao findBBoss(Integer deptId){
-		return mapper.findBBoss(deptId)
-				.orElseThrow(() -> new RuntimeException("본부장을 찾을 수 없음"));
+	public String findBBoss(Integer deptId){
+		return mapper.findBBoss(deptId);
 	}
 
 

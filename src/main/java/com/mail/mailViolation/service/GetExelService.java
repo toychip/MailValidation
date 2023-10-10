@@ -84,17 +84,27 @@ public class GetExelService {
                 String referencer = approvalMailDto.getReference();
 
                 // 실장
-                EmployeeDao sBoss = initService.findSBoss(empDeptId);
+                String sBossEmpName = initService.findSBoss(empDeptId);
 
                 // 본부장
-                EmployeeDao bBoss = initService.findBBoss(empDeptId);
+                String bBossEmpName = initService.findBBoss(empDeptId);
 
                 if (approvalMailDto.getDept().contains("그룹웨어관리")) {
                     condition = "T";
                 }
 
                 if (apprReferYn == "Y") {
-                    List<EmployeeDao> tBoss = initService.findTBoss(empDeptId);
+                    // 팀장이 결재했는가?
+                    boolean isApprovalTBoss = initService.approvalTBoss(lastApprover, empDeptId);
+                    boolean isReferenceSBoss = initService.referenceSBoss(lastApprover, empDeptId);
+
+                    if (isApprovalTBoss && isReferenceSBoss) {
+                        condition = "O";
+                    }
+
+                    // todo 실장, 본부장 결재 검증 / 특수팀 결재 검증 후 참조
+
+
                 }
 
                 if (apprReferYn == "T") {

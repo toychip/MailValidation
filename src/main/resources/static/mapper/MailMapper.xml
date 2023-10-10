@@ -4,32 +4,32 @@
 <mapper namespace="com.mail.mailViolation.mapper.MailMapper">
 
     <!-- 기안자 이름으로 TB_AS_SCRT_EMP 테이블에서 직원 정보를 조회 -->
-    <select id="findByNameAndUseYn" resultType="com.mail.mailViolation.dto.dao.EmployeeDao">
-        SELECT * FROM your_table_name
+    <select id="findByNameAndUseYn" resultType="string">
+        SELECT EMP_NAME FROM your_table_name
         WHERE name = #{name}
           AND USE_YN = 'Y'
     </select>
 
 
     <!--  실장 조회  -->
-    <select id="findSBoss" resultType="com.mail.mailViolation.dto.dao.EmployeeDao">
-        SELECT * FROM TB_AS_SCRT_EMP
+    <select id="findSBoss" resultType="string">
+        SELECT EMP_NAME FROM TB_AS_SCRT_EMP
         WHERE deptId = #{deptId}
           AND USE_YN = 'Y'
           AND APPR_REFER_YN = 'S'
     </select>
 
     <!-- 팀장 리스트 조회 -->
-    <select id="findTBoss" resultType="com.mail.mailViolation.dto.dao.EmployeeDao">
-        SELECT * FROM TB_AS_SCRT_EMP
+    <select id="findTBoss" resultType="string">
+        SELECT EMP_NAME FROM TB_AS_SCRT_EMP
         WHERE deptId = #{deptId}
           AND USE_YN = 'Y'
           AND APPR_REFER_YN = 'T'
     </select>
 
-    <!-- 본부장을 찾는 쿼리 -->
-    <select id="findBBoss" resultType="com.mail.mailViolation.dto.dao.EmployeeDao">
-        SELECT E.*
+    <!-- 본부장의 이름을 찾는 쿼리 -->
+    <select id="findBBoss" resultType="string">
+        SELECT E.emp_name
         FROM tb_as_scrt_emp E
                  JOIN tb_as_scrt_dept D ON E.dept_id = D.dept_id
         WHERE D.dept_code IN (

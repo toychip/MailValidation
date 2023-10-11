@@ -79,24 +79,31 @@ public class GetExelService {
                 // DTO를 기반으로 직원 정보 가져옴
                 EmployeeDao findEmp = checkValidate.getEmp(approvalMailDto.getDraftsman());
                 Integer empDeptId = findEmp.getDeptId();
+                System.out.println("-------------------- empDeptId = " + empDeptId);
 
                 String condition = "X";
                 String title = approvalMailDto.getTitle();
+                System.out.println("--------------------  title = " + title);
 
                 // 기안자 등급
                 String apprReferYn = findEmp.getApprReferYn();
+                System.out.println("--------------------  apprReferYn = " + apprReferYn);
 
                 // 결재자
                 String lastApprover = approvalMailDto.getLastApprover();
+                System.out.println("-------------------- lastApprover = " + lastApprover);
 
                 // 참조
                 String referencer = approvalMailDto.getReference();
+                System.out.println("-------------------- referencer = " + referencer);
 
                 // 실장
                 String sBossEmpName = checkValidate.findSBoss(empDeptId);
+                System.out.println("-------------------- 기안자의 실장: = " + sBossEmpName);
 
                 // 본부장
                 String bBossEmpName = checkValidate.findBBoss(empDeptId);
+                System.out.println("-------------------- 기안자의 본부장: = " + bBossEmpName);
 
                 if (approvalMailDto.getDept().contains("그룹웨어관리")) {
                     condition = "T";
@@ -104,11 +111,13 @@ public class GetExelService {
 
                 // 결재를 받으려는 사람이 일반 사원일 경우
                 if (apprReferYn == "N") {
+                    System.out.println("나는 일반 사원입니다 내 이름은 " + findEmp.getEmpName());
                     condition = checkValidate.basicEmployee(lastApprover, empDeptId, referencer, sBossEmpName, bBossEmpName);
                 }
 
                 // 결재를 받으려는 사람이 팀장일 경우
                 if (apprReferYn == "T") {
+                    System.out.println("나는 팀장입니다 내 이름은 " + findEmp.getEmpName());
                     boolean approvalSBBoss = checkValidate.matchSBBoss(lastApprover, sBossEmpName, bBossEmpName);
                     condition = checkValidate.checkCondition(approvalSBBoss);
                 }
@@ -116,6 +125,7 @@ public class GetExelService {
                 // 결재를 받으려는 사람이 실장일 경우
                 if (apprReferYn == "S") {
                     // 본부장이 결재한 경우
+                    System.out.println("나는 실장입니다 내 이름은 " + findEmp.getEmpName());
                     boolean isApprovalBBoss = checkValidate.matchBoss(lastApprover, bBossEmpName);
                     condition = checkValidate.checkCondition(isApprovalBBoss);
                 }
@@ -174,6 +184,7 @@ public class GetExelService {
             workbook.close();
         } catch (Exception e) {
 
+            e.printStackTrace();
             throw new ExelUploadException();
         } finally {
             if (inputStream != null) {
@@ -181,6 +192,7 @@ public class GetExelService {
                     inputStream.close();     // 스트림 닫기
                 } catch (IOException e) {
                     throw new ExelUploadException();
+
                 }
             }
         }

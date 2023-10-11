@@ -12,7 +12,7 @@ import java.util.Optional;
 public interface MailMapper {
 
     // 지정된 draftsman과 ApprReferYn을 기반으로 EmployeeDao 객체 리스트를 반환하는 메서드
-    Optional<EmployeeDao> findByNameAndUseYn(@Param("draftsman") String draftsman);
+    Optional<EmployeeDao> findByNameAndUseYn(@Param("name") String name);
 
 
     // 지정된 deptId를 기반으로 상사(EmployeeDao)의 리스트를 반환하는 메서드

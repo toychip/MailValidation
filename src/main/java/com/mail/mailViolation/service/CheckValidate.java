@@ -15,6 +15,7 @@ public class CheckValidate {
 
     // Y, N 등 여러개의 리스트 반환시 가장 최신 것으로 반환하는 메서드
     public EmployeeDao getEmp(String name) {
+
         return mapper.findByNameAndUseYn(name)
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없음"));
     }

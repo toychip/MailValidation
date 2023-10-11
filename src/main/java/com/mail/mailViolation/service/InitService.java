@@ -71,7 +71,10 @@ public class InitService {
 
 	List<Integer> arrays = new ArrayList<>();
 
-
+	// 팀장이 결재 후 실장 혹은 본부장이을 참초 or 결재 했는가?
+	public boolean matchSBBoss(String exelEmpName, String sBossEmpName, String bBossEmpName) {
+		return matchBoss(exelEmpName, sBossEmpName) || matchBoss(exelEmpName, bBossEmpName);
+	}
 
 	// 팀장이 결재 했는가?
 	public boolean approvalTBoss(String lastApprover,
@@ -84,31 +87,15 @@ public class InitService {
 				.anyMatch(empName -> empName.equals(lastApprover));
 	}
 
-	// 실장이 결재 했는가?
-	public boolean approvalSBoss(String currentLastApprover,
-								Integer deptId) {
-		String sBossEmpName = findSBoss(deptId);
-		return currentLastApprover.equals(sBossEmpName) ? true : false;
+	// 실장, 본부장 - 결재 혹은 참조로 match 확인
+	public boolean matchBoss(String exelEmpName,
+								String realEmpName) {
+
+		if (exelEmpName.equals(realEmpName)) {
+			return true;
+		}
+		return false;
 	}
-
-	// 실장을 참조 했는가?
-	public boolean referenceSBoss(String referencer,
-								Integer deptId) {
-
-		String sBossEmpName = findSBoss(deptId);
-		return referencer.equals(sBossEmpName) ? true : false;
-	}
-
-	// 본부장이 결재했는가?
-	public String validateBBoss(String lastApprover,
-								String referencer,
-								Integer deptId) {
-
-		return null;
-	}
-
-
-
 
 	// deptId로 팀장 찾기
 	public List<String> findTBoss(Integer deptId) {
@@ -128,62 +115,62 @@ public class InitService {
 	}
 
 
-	public String checkApprovalCondition(ApprovalMailDto approvalMailDto,
-										 Integer validOverLapDeptId) {
-
-		List<EmployeeDao> bosses = mapper.findBossByDeptId(validOverLapDeptId);
-
-//		log.info("----------InitService.checkApprovalCondition 시작 \n\n");
-//		log.info("----------최종 결재자: " + approvalMailRequest.getLastApprover());
+//	public String checkApprovalCondition(ApprovalMailDto approvalMailDto,
+//										 Integer validOverLapDeptId) {
 //
-//		log.info("----------참조: " + approvalMailRequest.getReference());
-//		log.info("----------부서: " + approvalMailRequest.getDept());
-
-//		기안자의 부서에서 상위 보직좌가 존재하는지 확인하는 로직
-//		if (bosses.size() == 0) {
-//			if (arrays.stream().noneMatch(id -> id.equals(validOverLapDeptId))) {
-//				arrays.add(validOverLapDeptId);
+//		List<EmployeeDao> bosses = mapper.findBossByDeptId(validOverLapDeptId);
+//
+////		log.info("----------InitService.checkApprovalCondition 시작 \n\n");
+////		log.info("----------최종 결재자: " + approvalMailRequest.getLastApprover());
+////
+////		log.info("----------참조: " + approvalMailRequest.getReference());
+////		log.info("----------부서: " + approvalMailRequest.getDept());
+//
+////		기안자의 부서에서 상위 보직좌가 존재하는지 확인하는 로직
+////		if (bosses.size() == 0) {
+////			if (arrays.stream().noneMatch(id -> id.equals(validOverLapDeptId))) {
+////				arrays.add(validOverLapDeptId);
+////			}
+////			log.info("----------------- boss 사이즈가 0입니다. 심각한 사항입니다.");
+////			log.info("----------------- 문서번호: " + approvalMailRequest.getDocNumber());
+////			log.info("----------------- 기안자 부서번호: " + validOverLapDeptId);
+////			log.info("----------------- 부서: " + approvalMailRequest.getDept());
+////			log.info("----------------- 기안자: " + approvalMailRequest.getDraftsman());
+////		}
+//
+//		// 중복된 보스 이름을 가진 객체 중 가장 최신의 RGT_DTTM 값을 가진 객체만을 유지
+//		Map<String, EmployeeDao> uniqueBosses = new HashMap<>();
+//		for (EmployeeDao boss : bosses) {
+//			EmployeeDao existingBoss = uniqueBosses.get(boss.getEmpName());
+//			if (existingBoss == null || boss.getRgtDttm().isAfter(existingBoss.getRgtDttm())) {
+//				uniqueBosses.put(boss.getEmpName(), boss);
 //			}
-//			log.info("----------------- boss 사이즈가 0입니다. 심각한 사항입니다.");
-//			log.info("----------------- 문서번호: " + approvalMailRequest.getDocNumber());
-//			log.info("----------------- 기안자 부서번호: " + validOverLapDeptId);
-//			log.info("----------------- 부서: " + approvalMailRequest.getDept());
-//			log.info("----------------- 기안자: " + approvalMailRequest.getDraftsman());
 //		}
-
-		// 중복된 보스 이름을 가진 객체 중 가장 최신의 RGT_DTTM 값을 가진 객체만을 유지
-		Map<String, EmployeeDao> uniqueBosses = new HashMap<>();
-		for (EmployeeDao boss : bosses) {
-			EmployeeDao existingBoss = uniqueBosses.get(boss.getEmpName());
-			if (existingBoss == null || boss.getRgtDttm().isAfter(existingBoss.getRgtDttm())) {
-				uniqueBosses.put(boss.getEmpName(), boss);
-			}
-		}
-
-		for (EmployeeDao boss : uniqueBosses.values()) {
-//			log.info("----------------- 최종 결재자 혹은 포함되는지 확인 중 -----------------");
-//			log.info("부서 대빵 보스의 아이디 boss.getDeptId() = " + boss.getDeptId());
-//			log.info("부서 대빵 보스의 이름 boss.getEmpName() = " + boss.getEmpName());
-//			log.info("부서 대빵 보스의 이메일 boss.getEmpEmail() = " + boss.getEmpEmail());
-//			log.info("부서 대빵 보스의 부서코드.getDeptId() = " + boss.getDeptId());
-
-			if (boss.getEmpName().equals(approvalMailDto.getLastApprover()) ||
-					approvalMailDto.getReference().contains(boss.getEmpName()) ||
-					approvalMailDto.getReference().contains(boss.getEmpEmail())) {
-//				log.info("----------------- 적격 조건 탐 InitService.checkApprovalCondition -----------------");
-//				log.info("----------------- 확인 끝 -----------------");
-				return "O";
-			}
-		}
-//		log.info("----------------- 부적격 -----------------");
-//		log.info("----------------- approvalMailRequest = " + approvalMailRequest.getDept());
-//		log.info("----------------- 확인 끝 -----------------");
-		return "X";
-
-		// 메일 테스트는 emp 없으니까 예외처리 부적격 적격에는 넣지 않고 y or a 일때
-		// 메일에는 있는데 emp에는 없는 애들은 따로 예외처리 적격 부적격 판단 로직 x
-		// A, T 등
-	}
+//
+//		for (EmployeeDao boss : uniqueBosses.values()) {
+////			log.info("----------------- 최종 결재자 혹은 포함되는지 확인 중 -----------------");
+////			log.info("부서 대빵 보스의 아이디 boss.getDeptId() = " + boss.getDeptId());
+////			log.info("부서 대빵 보스의 이름 boss.getEmpName() = " + boss.getEmpName());
+////			log.info("부서 대빵 보스의 이메일 boss.getEmpEmail() = " + boss.getEmpEmail());
+////			log.info("부서 대빵 보스의 부서코드.getDeptId() = " + boss.getDeptId());
+//
+//			if (boss.getEmpName().equals(approvalMailDto.getLastApprover()) ||
+//					approvalMailDto.getReference().contains(boss.getEmpName()) ||
+//					approvalMailDto.getReference().contains(boss.getEmpEmail())) {
+////				log.info("----------------- 적격 조건 탐 InitService.checkApprovalCondition -----------------");
+////				log.info("----------------- 확인 끝 -----------------");
+//				return "O";
+//			}
+//		}
+////		log.info("----------------- 부적격 -----------------");
+////		log.info("----------------- approvalMailRequest = " + approvalMailRequest.getDept());
+////		log.info("----------------- 확인 끝 -----------------");
+//		return "X";
+//
+//		// 메일 테스트는 emp 없으니까 예외처리 부적격 적격에는 넣지 않고 y or a 일때
+//		// 메일에는 있는데 emp에는 없는 애들은 따로 예외처리 적격 부적격 판단 로직 x
+//		// A, T 등
+//	}
 
 	// 보스가 없는 사람들만 추출 - 테스트 용
 	public List<Integer> getNoBossDepartments() {

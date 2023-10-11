@@ -93,30 +93,43 @@ public class GetExelService {
                     condition = "T";
                 }
 
+                // 결재를 받으려는 사람이 일반 사원일 경우
                 if (apprReferYn == "Y") {
                     // 팀장이 결재했는가?
                     boolean isApprovalTBoss = initService.approvalTBoss(lastApprover, empDeptId);
-                    boolean isReferenceSBoss = initService.referenceSBoss(lastApprover, empDeptId);
+                    if (isApprovalTBoss) {
+                        // 실장 혹은 본부장을 참조했는가?
+                        boolean referenceSBBoss =
+                                initService.matchSBBoss(referencer, sBossEmpName, bBossEmpName);
 
-                    if (isApprovalTBoss && isReferenceSBoss) {
-                        condition = "O";
+                        // 팀장이 결재 && (실장 or 본부장을 참조)한 경우
+                        if (referenceSBBoss) {
+                            condition = "O";
+                            break;
+                        }
                     }
 
-                    // todo 실장, 본부장 결재 검증 / 특수팀 결재 검증 후 참조
-
+                    // 실장 혹은 본부장이 결재했는가?
+                    boolean approvalSBBoss = initService.matchSBBoss(lastApprover, sBossEmpName, bBossEmpName);
+                    if (approvalSBBoss) {
+                        condition = "O";
+                        break;
+                    }
 
                 }
 
+                // 결재를 받으려는 사람이 팀장일 경우
                 if (apprReferYn == "T") {
 
                 }
 
+                // 결재를 받으려는 사람이 실장일 경우
                 if (apprReferYn == "S") {
 
                 } else {
 
                     // initService의 검사 로직탐
-                    condition = initService.checkApprovalCondition(approvalMailDto, empDeptId);
+//                    condition = initService.checkApprovalCondition(approvalMailDto, empDeptId);
 
                     // condition이 "X"일 경우, 부적격 리스트에 추가
                     if (condition == "X") {

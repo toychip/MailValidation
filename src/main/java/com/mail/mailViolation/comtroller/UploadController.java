@@ -35,7 +35,6 @@ public class UploadController {
 
 	private final GetExelService getExelService;
 	private final InsertService insertService;
-	private final InitService initService;
 
 	@GetMapping("/upload")	// 업로드 페이지 VIEW 렌더링
 	public String getMailForm(Model model, @ModelAttribute ArrayList<String> errors) {
@@ -160,7 +159,7 @@ public class UploadController {
 
 
 
-		List<MailResultDao> data = initService.getData(fromYear, fromMonth, toYear, toMonth);
+		List<MailResultDao> data = getExelService.getData(fromYear, fromMonth, toYear, toMonth);
 
 		redirectAttributes.addFlashAttribute("fromYear", fromYear);
 		redirectAttributes.addFlashAttribute("fromMonth", fromMonth);

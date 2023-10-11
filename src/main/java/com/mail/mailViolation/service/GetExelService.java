@@ -72,7 +72,7 @@ public class GetExelService {
                 EmployeeDao findEmp = initService.getEmp(approvalMailDto.getDraftsman());
                 Integer empDeptId = findEmp.getDeptId();
 
-                String condition;
+                String condition = "X";
                 String title = approvalMailDto.getTitle();
 
                 String apprReferYn = findEmp.getApprReferYn();
@@ -103,24 +103,23 @@ public class GetExelService {
                                 initService.matchSBBoss(referencer, sBossEmpName, bBossEmpName);
 
                         // 팀장이 결재 && (실장 or 본부장을 참조)한 경우
-                        if (referenceSBBoss) {
-                            condition = "O";
-                            break;
-                        }
+                        condition = checkCondition(referenceSBBoss);
+                        break;
                     }
 
                     // 실장 혹은 본부장이 결재했는가?
                     boolean approvalSBBoss = initService.matchSBBoss(lastApprover, sBossEmpName, bBossEmpName);
-                    if (approvalSBBoss) {
-                        condition = "O";
-                        break;
-                    }
+
+                    condition = checkCondition(approvalSBBoss);
+                    break;
 
                 }
 
                 // 결재를 받으려는 사람이 팀장일 경우
                 if (apprReferYn == "T") {
-
+                    boolean approvalSBBoss = initService.matchSBBoss(lastApprover, sBossEmpName, bBossEmpName);
+                    condition = checkCondition(approvalSBBoss);
+                    break;
                 }
 
                 // 결재를 받으려는 사람이 실장일 경우
@@ -194,5 +193,12 @@ public class GetExelService {
                 .conditionOList(conditionOList)
                 .build();
 	}
+
+    public String checkCondition(boolean trueOrFalse) {
+        if (trueOrFalse) {
+            return "O";
+        }
+        return "X";
+    }
 
 }

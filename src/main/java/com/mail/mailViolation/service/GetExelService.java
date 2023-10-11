@@ -1,27 +1,22 @@
 package com.mail.mailViolation.service;
 
+import com.mail.mailViolation.dto.dao.EmployeeDao;
+import com.mail.mailViolation.dto.dao.MailResultDao;
+import com.mail.mailViolation.dto.dto.ApprovalMailDto;
+import com.mail.mailViolation.dto.dto.ReturnDto;
+import com.mail.mailViolation.exception.ExelUploadException;
+import com.mail.mailViolation.mapper.MailMapper;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.ss.usermodel.*;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.mail.mailViolation.dto.dao.EmployeeDao;
-import com.mail.mailViolation.dto.dto.ApprovalMailDto;
-import com.mail.mailViolation.dto.dto.ReturnDto;
-import com.mail.mailViolation.exception.ExelUploadException;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
-import org.springframework.stereotype.Service;
-import org.springframework.validation.FieldError;
-import org.springframework.web.multipart.MultipartFile;
-
-import com.mail.mailViolation.dto.dao.MailResultDao;
 
 @Slf4j
 @Service
@@ -29,6 +24,19 @@ import com.mail.mailViolation.dto.dao.MailResultDao;
 public class GetExelService {
 
 	private final InitService initService;
+
+    private final CheckValidate checkValidate;
+
+    private final MailMapper mapper;
+
+    @Value("${management.support.team.tboss}")
+    private String managementTeamTBoss;
+
+    @Value("${management.support.team.sboss}")
+    private String managementTeamSBoss;
+
+    @Value("${it.innovation.team.tboss}")
+    private String itInnovationTeamTBoss;
 
     // 엑셀 파일 처리 메서드
 	public ReturnDto processExcelFile(MultipartFile file){
@@ -55,10 +63,10 @@ public class GetExelService {
             String year = strDate.substring(7, 11);
 
             // 엑셀 파일의 4번째 행부터 값 추출.
-//            for (int i = 3; i <= 100; i++) {
+//            for (int i = 3; i <= 300; i++) {
             for (int i = 3; i <= sheet.getLastRowNum(); i++) {
-//                log.info("\n\n");
-//            	log.info("------------------------------현재 i: " + i);
+                log.info("\n\n");
+            	log.info("------------------------------현재 i: " + i);
                 Row currentRow = sheet.getRow(i);
 
                 if (currentRow == null) {
@@ -69,66 +77,118 @@ public class GetExelService {
                 ApprovalMailDto approvalMailDto = initService.createMailDao(currentRow, year);
 
                 // DTO를 기반으로 직원 정보 가져옴
-                EmployeeDao validOverLap = initService.getEmp(approvalMailDto.getDraftsman());
-                Integer validOverLapDeptId = validOverLap.getDeptId();
-                String condition;
-                String title = approvalMailDto.getTitle();
+                EmployeeDao findEmp = checkValidate.getEmp(approvalMailDto.getDraftsman());
+                Integer empDeptId = findEmp.getDeptId();
+                log.info("-------------------- empDeptId = " + empDeptId);
 
-                // 결재 조건 확인
-                // 메일 테스트의 경우로, 부서가 그룹웨어관리가 포함될 경우
+                String condition = "X";
+                String title = approvalMailDto.getTitle();
+                log.info("--------------------  title = " + title);
+
+                // 기안자 등급
+                String apprReferYn = findEmp.getApprReferYn();
+                log.info("--------------------  등급 = " + apprReferYn);
+
+                // 결재자
+                String lastApprover = approvalMailDto.getLastApprover();
+                log.info("-------------------- 결재 = " + lastApprover);
+
+                // 참조
+                String referencer = approvalMailDto.getReference();
+                log.info("-------------------- 참조 = " + referencer);
+
+                // 실장
+                String sBossEmpName = checkValidate.findSBoss(empDeptId);
+                log.info("-------------------- 실장 이름 = " + sBossEmpName);
+
+                // 본부장
+                String bBossEmpName = checkValidate.findBBoss(empDeptId);
+                log.info("-------------------- 본부장 이름 = " + bBossEmpName);
+
                 if (approvalMailDto.getDept().contains("그룹웨어관리")) {
                     condition = "T";
-                } else {
-
-                    // initService의 검사 로직탐
-                    condition = initService.checkApprovalCondition(approvalMailDto, validOverLapDeptId);
-
-                    // condition이 "X"일 경우, 부적격 리스트에 추가
-                    if (condition == "X") {
-                        conditionXList.add(
-                                MailResultDao.builder()
-                                        .docNumber(approvalMailDto.getDocNumber())	// 문서 번호
-                                        .draftsman(approvalMailDto.getDraftsman())	// 기안자
-                                        .dept(approvalMailDto.getDept())	// 소속부서
-                                        .deptId(validOverLapDeptId)
-                                        .title(title)	// 제목
-                                        .approvalDate(approvalMailDto.getApprovalDate())	// 결재일
-                                        .mailTitle(approvalMailDto.getMailTitle())	// 메일 제목
-                                        .recipient(approvalMailDto.getRecipient())	// 받는 사람
-                                        .reference(approvalMailDto.getReference())	// 참조
-                                        .blockCause(approvalMailDto.getBlockCause())	// 차단사유
-                                        .lastApprover(approvalMailDto.getLastApprover())	// 최종 결재
-                                        .result(condition)		// 적격 여부 적격: O, 부적격: X, 테스트: T
-                                        .build()
-                        );
-
-//                        ReturnDto.ReturnDtoBuilder returnDtoBuilder = ReturnDto.builder()
-//                                .conditionXList(conditionXList);
-
-                    }
                 }
+
+                // 결재를 받으려는 사람이 일반 사원일 경우
+                if ("N".equals(apprReferYn)) {
+                    log.info("나는 일반 사원입니다 내 이름은 " + findEmp.getEmpName());
+                    condition = checkValidate.basicEmployee(lastApprover, empDeptId, referencer, sBossEmpName, bBossEmpName);
+                }
+
+                // 결재를 받으려는 사람이 팀장일 경우
+                if ("T".equals(apprReferYn)) {
+                    log.info("나는 팀장입니다 내 이름은 " + findEmp.getEmpName());
+                    boolean approvalSBBoss = checkValidate.matchSBBoss(lastApprover, sBossEmpName, bBossEmpName);
+                    condition = checkValidate.checkCondition(approvalSBBoss);
+                }
+
+                // 결재를 받으려는 사람이 실장일 경우
+                if ("S".equals(apprReferYn)) {
+                    // 본부장이 결재한 경우
+                    log.info("나는 실장입니다 내 이름은 " + findEmp.getEmpName());
+                    boolean isApprovalBBoss = checkValidate.matchBoss(lastApprover, bBossEmpName);
+                    condition = checkValidate.checkCondition(isApprovalBBoss);
+                }
+
+                // DB 관리자인 it 혁신실 팀장, 결재 관리하는 경영지원실 팀장 및 실장일 경우
+                boolean masterApproval = (lastApprover.equals(managementTeamTBoss))
+                        || (lastApprover.equals(managementTeamSBoss))
+                        || (lastApprover.equals(itInnovationTeamTBoss));
+
+                if (masterApproval) {
+                    boolean isReferenceSBBoss = checkValidate.matchSBBoss(referencer, sBossEmpName, bBossEmpName);
+                    condition = checkValidate.checkCondition(isReferenceSBBoss);
+                }
+
+                log.info("i = " + i);
+                log.info("apprReferYn = " + apprReferYn);
+                log.info("적격 여부 = " + condition);
+
+                // condition이 "X"일 경우, 부적격 리스트에 추가
+                if ("X".equals(condition)) {
+                    conditionXList.add(
+                            MailResultDao.builder()
+                                    .docNumber(approvalMailDto.getDocNumber())	// 문서 번호
+                                    .draftsman(approvalMailDto.getDraftsman())	// 기안자
+                                    .dept(approvalMailDto.getDept())	// 소속부서
+                                    .deptId(empDeptId)
+                                    .title(title)	// 제목
+                                    .approvalDate(approvalMailDto.getApprovalDate())	// 결재일
+                                    .mailTitle(approvalMailDto.getMailTitle())	// 메일 제목
+                                    .recipient(approvalMailDto.getRecipient())	// 받는 사람
+                                    .reference(approvalMailDto.getReference())	// 참조
+                                    .blockCause(approvalMailDto.getBlockCause())	// 차단사유
+                                    .lastApprover(approvalMailDto.getLastApprover())	// 최종 결재
+                                    .result(condition)		// 적격 여부 적격: O, 부적격: X, 테스트: T
+                                    .build()
+                    );
+                }
+
                 // condition이 "O" 또는 "T"일 경우, 적격 리스트에 추가
-                conditionOList.add(
-                        MailResultDao.builder()
-                        .docNumber(approvalMailDto.getDocNumber())	// 문서 번호
-                        .draftsman(approvalMailDto.getDraftsman())	// 기안자
-                        .dept(approvalMailDto.getDept())	// 소속부서
-                        .deptId(validOverLapDeptId)
-                        .title(title)	// 제목
-                        .approvalDate(approvalMailDto.getApprovalDate())	// 결재일
-                        .mailTitle(approvalMailDto.getMailTitle())	// 메일 제목
-                        .recipient(approvalMailDto.getRecipient())	// 받는 사람
-                        .reference(approvalMailDto.getReference())	// 참조
-                        .blockCause(approvalMailDto.getBlockCause())	// 차단사유
-                        .lastApprover(approvalMailDto.getLastApprover())	// 최종 결재
-                        .result(condition)		// 적격 여부 적격: O, 부적격: X, 테스트: T
-                        .build()
-                );
+                if ("O".equals(condition)) {
+                    conditionOList.add(
+                            MailResultDao.builder()
+                                    .docNumber(approvalMailDto.getDocNumber())	// 문서 번호
+                                    .draftsman(approvalMailDto.getDraftsman())	// 기안자
+                                    .dept(approvalMailDto.getDept())	// 소속부서
+                                    .deptId(empDeptId)
+                                    .title(title)	// 제목
+                                    .approvalDate(approvalMailDto.getApprovalDate())	// 결재일
+                                    .mailTitle(approvalMailDto.getMailTitle())	// 메일 제목
+                                    .recipient(approvalMailDto.getRecipient())	// 받는 사람
+                                    .reference(approvalMailDto.getReference())	// 참조
+                                    .blockCause(approvalMailDto.getBlockCause())	// 차단사유
+                                    .lastApprover(approvalMailDto.getLastApprover())	// 최종 결재
+                                    .result(condition)		// 적격 여부 적격: O, 부적격: X, 테스트: T
+                                    .build()
+                    );
+                }
             }
 
             workbook.close();
         } catch (Exception e) {
 
+            e.printStackTrace();
             throw new ExelUploadException();
         } finally {
             if (inputStream != null) {
@@ -136,6 +196,7 @@ public class GetExelService {
                     inputStream.close();     // 스트림 닫기
                 } catch (IOException e) {
                     throw new ExelUploadException();
+
                 }
             }
         }
@@ -146,5 +207,12 @@ public class GetExelService {
                 .conditionOList(conditionOList)
                 .build();
 	}
+
+    // 날짜 검색
+    public List<MailResultDao> getData(Integer fromYear, Integer fromMonth,
+                                       Integer toYear, Integer toMonth) {
+        List<MailResultDao> validEmail = mapper.searchDateConditionX(fromYear, fromMonth, toYear, toMonth);
+        return validEmail;
+    }
 
 }

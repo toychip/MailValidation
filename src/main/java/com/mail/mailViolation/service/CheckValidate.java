@@ -17,7 +17,7 @@ public class CheckValidate {
     public EmployeeDao getEmp(String name) {
 
         return mapper.findByNameAndUseYn(name)
-                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없음"));
+                .orElse(EmployeeDao.getDefault());
     }
 
     // 팀장이 결재 후 실장 혹은 본부장이을 참초 or 결재 했는가?
@@ -48,14 +48,17 @@ public class CheckValidate {
 
     // deptId로 팀장 이름 찾기
     public List<String> findTBoss(Integer deptId) {
-        return mapper.findTBoss(deptId)
-                .orElseThrow(() -> new RuntimeException("팀장을 찾을 수 없음"));
+        List<String> results = mapper.findTBoss(deptId);
+        if (results.isEmpty()) {
+            throw new RuntimeException("팀장을 찾을 수 없음");
+        }
+        return results;
     }
 
     // deptId로 실장 이름 찾기
     public String findSBoss(Integer deptId) {
         return mapper.findSBoss(deptId)
-                .orElseThrow(() -> new RuntimeException("실장을 찾을 수 없음"));
+                .orElse("");
     }
 
     // deptId로 본부장 이름 찾기
@@ -90,6 +93,7 @@ public class CheckValidate {
 
     // if true -> condition == O
     public String checkCondition(boolean trueOrFalse) {
+        System.out.println("trueOrFalse = " + trueOrFalse);
         if (trueOrFalse) {
             return "O";
         }

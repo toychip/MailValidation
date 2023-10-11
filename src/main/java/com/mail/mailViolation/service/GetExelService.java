@@ -63,8 +63,8 @@ public class GetExelService {
             String year = strDate.substring(7, 11);
 
             // 엑셀 파일의 4번째 행부터 값 추출.
-            for (int i = 3; i <= 100; i++) {
-//            for (int i = 3; i <= sheet.getLastRowNum(); i++) {
+//            for (int i = 3; i <= 300; i++) {
+            for (int i = 3; i <= sheet.getLastRowNum(); i++) {
                 log.info("\n\n");
             	log.info("------------------------------현재 i: " + i);
                 Row currentRow = sheet.getRow(i);
@@ -110,20 +110,20 @@ public class GetExelService {
                 }
 
                 // 결재를 받으려는 사람이 일반 사원일 경우
-                if (apprReferYn == "N") {
+                if ("N".equals(apprReferYn)) {
                     System.out.println("나는 일반 사원입니다 내 이름은 " + findEmp.getEmpName());
                     condition = checkValidate.basicEmployee(lastApprover, empDeptId, referencer, sBossEmpName, bBossEmpName);
                 }
 
                 // 결재를 받으려는 사람이 팀장일 경우
-                if (apprReferYn == "T") {
+                if ("T".equals(apprReferYn)) {
                     System.out.println("나는 팀장입니다 내 이름은 " + findEmp.getEmpName());
                     boolean approvalSBBoss = checkValidate.matchSBBoss(lastApprover, sBossEmpName, bBossEmpName);
                     condition = checkValidate.checkCondition(approvalSBBoss);
                 }
 
                 // 결재를 받으려는 사람이 실장일 경우
-                if (apprReferYn == "S") {
+                if ("S".equals(apprReferYn)) {
                     // 본부장이 결재한 경우
                     System.out.println("나는 실장입니다 내 이름은 " + findEmp.getEmpName());
                     boolean isApprovalBBoss = checkValidate.matchBoss(lastApprover, bBossEmpName);
@@ -140,8 +140,12 @@ public class GetExelService {
                     condition = checkValidate.checkCondition(isReferenceSBBoss);
                 }
 
+                System.out.println("i = " + i);
+                System.out.println("apprReferYn = " + apprReferYn);
+                System.out.println("적격 여부 = " + condition);
+
                 // condition이 "X"일 경우, 부적격 리스트에 추가
-                if (condition == "X") {
+                if ("X".equals(condition)) {
                     conditionXList.add(
                             MailResultDao.builder()
                                     .docNumber(approvalMailDto.getDocNumber())	// 문서 번호
@@ -161,7 +165,7 @@ public class GetExelService {
                 }
 
                 // condition이 "O" 또는 "T"일 경우, 적격 리스트에 추가
-                if (condition == "O") {
+                if ("O".equals(condition)) {
                     conditionOList.add(
                             MailResultDao.builder()
                                     .docNumber(approvalMailDto.getDocNumber())	// 문서 번호

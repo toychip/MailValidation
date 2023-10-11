@@ -22,7 +22,7 @@ public interface MailMapper {
 
     String findBBoss(@Param("deptId") Integer deptId);
 
-    Optional<List<String>> findTBoss(@Param("deptId") Integer deptId);
+    List<String> findTBoss(@Param("deptId") Integer deptId);
 
 
 

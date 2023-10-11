@@ -124,35 +124,30 @@ public class GetExelService {
 
                 // 결재를 받으려는 사람이 실장일 경우
                 if (apprReferYn == "S") {
+                    // 본부장이 결재한 경우
+                    boolean isApprovalBBoss = initService.matchBoss(lastApprover, bBossEmpName);
+                    condition = checkCondition(isApprovalBBoss);
+                    break;
+                }
 
-                } else {
-
-                    // initService의 검사 로직탐
-//                    condition = initService.checkApprovalCondition(approvalMailDto, empDeptId);
-
-                    // condition이 "X"일 경우, 부적격 리스트에 추가
-                    if (condition == "X") {
-                        conditionXList.add(
-                                MailResultDao.builder()
-                                        .docNumber(approvalMailDto.getDocNumber())	// 문서 번호
-                                        .draftsman(approvalMailDto.getDraftsman())	// 기안자
-                                        .dept(approvalMailDto.getDept())	// 소속부서
-                                        .deptId(empDeptId)
-                                        .title(title)	// 제목
-                                        .approvalDate(approvalMailDto.getApprovalDate())	// 결재일
-                                        .mailTitle(approvalMailDto.getMailTitle())	// 메일 제목
-                                        .recipient(approvalMailDto.getRecipient())	// 받는 사람
-                                        .reference(approvalMailDto.getReference())	// 참조
-                                        .blockCause(approvalMailDto.getBlockCause())	// 차단사유
-                                        .lastApprover(approvalMailDto.getLastApprover())	// 최종 결재
-                                        .result(condition)		// 적격 여부 적격: O, 부적격: X, 테스트: T
-                                        .build()
-                        );
-
-//                        ReturnDto.ReturnDtoBuilder returnDtoBuilder = ReturnDto.builder()
-//                                .conditionXList(conditionXList);
-
-                    }
+                // condition이 "X"일 경우, 부적격 리스트에 추가
+                if (condition == "X") {
+                    conditionXList.add(
+                            MailResultDao.builder()
+                                    .docNumber(approvalMailDto.getDocNumber())	// 문서 번호
+                                    .draftsman(approvalMailDto.getDraftsman())	// 기안자
+                                    .dept(approvalMailDto.getDept())	// 소속부서
+                                    .deptId(empDeptId)
+                                    .title(title)	// 제목
+                                    .approvalDate(approvalMailDto.getApprovalDate())	// 결재일
+                                    .mailTitle(approvalMailDto.getMailTitle())	// 메일 제목
+                                    .recipient(approvalMailDto.getRecipient())	// 받는 사람
+                                    .reference(approvalMailDto.getReference())	// 참조
+                                    .blockCause(approvalMailDto.getBlockCause())	// 차단사유
+                                    .lastApprover(approvalMailDto.getLastApprover())	// 최종 결재
+                                    .result(condition)		// 적격 여부 적격: O, 부적격: X, 테스트: T
+                                    .build()
+                    );
                 }
                 // condition이 "O" 또는 "T"일 경우, 적격 리스트에 추가
                 conditionOList.add(

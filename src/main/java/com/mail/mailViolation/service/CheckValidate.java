@@ -3,10 +3,12 @@ package com.mail.mailViolation.service;
 import com.mail.mailViolation.dto.dao.EmployeeDao;
 import com.mail.mailViolation.mapper.MailMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CheckValidate {
@@ -30,6 +32,9 @@ public class CheckValidate {
                                  Integer deptId) {
         // 팀장 이름 리스트
         List<String> tBossEmpNameList = findTBoss(deptId);
+        for (String s : tBossEmpNameList) {
+            log.info("-------------- 팀장 이름 = " + s);
+        }
 
         // 하나라도 존재하는가?
         return tBossEmpNameList.stream()
@@ -58,7 +63,7 @@ public class CheckValidate {
     // deptId로 실장 이름 찾기
     public String findSBoss(Integer deptId) {
         return mapper.findSBoss(deptId)
-                .orElse("");
+                .orElse("실장이 존재하지 않으니 IT혁신실이지?");
     }
 
     // deptId로 본부장 이름 찾기
@@ -93,7 +98,7 @@ public class CheckValidate {
 
     // if true -> condition == O
     public String checkCondition(boolean trueOrFalse) {
-        System.out.println("trueOrFalse = " + trueOrFalse);
+        log.info("trueOrFalse = " + trueOrFalse);
         if (trueOrFalse) {
             return "O";
         }

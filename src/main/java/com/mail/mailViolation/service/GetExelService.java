@@ -15,8 +15,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -46,6 +48,8 @@ public class GetExelService {
         List<MailResultDto> conditionXList = new ArrayList<>();
         List<MailResultDto> conditionOList = new ArrayList<>();
 
+        checkValidate.loadBossInfoToMemory();
+
 //		log.info("-------------------------엑셀 처리 전 로그");
 		try {
 
@@ -63,7 +67,7 @@ public class GetExelService {
             String year = strDate.substring(7, 11);
 
             // 엑셀 파일의 4번째 행부터 값 추출.
-//            for (int i = 3; i <= 300; i++) {
+//            for (int i = 3; i <= 200; i++) {
             for (int i = 3; i <= sheet.getLastRowNum(); i++) {
                 log.info("\n\n");
             	log.info("------------------------------현재 i: " + i);
@@ -78,7 +82,7 @@ public class GetExelService {
 
                 // DTO를 기반으로 직원 정보 가져옴
                 EmployeeDto findEmp = checkValidate.getEmp(approvalMailDto.getDraftsman());
-                Integer empDeptId = findEmp.getDeptId();
+                BigDecimal empDeptId = findEmp.getDeptId();
                 log.info("-------------------- empDeptId = " + empDeptId);
 
                 String condition = "X";

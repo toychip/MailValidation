@@ -11,6 +11,32 @@
           AND USE_YN = 'Y'
     </select>
 
+    <!-- 모든 팀장 조회 -->
+    <select id="findAllTBoss" resultType="map">
+        SELECT DEPT_ID, EMP_NAME FROM TB_AS_SCRT_EMP
+        WHERE USE_YN = 'Y'
+          AND APPR_REFER_YN = 'T'
+    </select>
+
+    <!-- 모든 실장 조회 -->
+    <select id="findAllSBoss" resultType="map">
+        SELECT DEPT_ID, EMP_NAME FROM TB_AS_SCRT_EMP
+        WHERE USE_YN = 'Y'
+          AND APPR_REFER_YN = 'S'
+    </select>
+
+    <!-- 모든 본부장 조회 -->
+    <select id="findAllBBoss" resultType="map">
+        SELECT D1.dept_id, E.emp_name
+        FROM tb_as_scrt_emp E
+                 JOIN tb_as_scrt_dept D ON E.dept_id = D.dept_id
+                 JOIN tb_as_scrt_dept D1 ON D.dept_code = D1.upper_dept
+        WHERE E.USE_YN = 'Y'
+          AND E.APPR_REFER_YN = 'B'
+    </select>
+
+
+
     <!--  실장 조회  -->
     <select id="findSBoss" resultType="string">
         SELECT EMP_NAME FROM TB_AS_SCRT_EMP

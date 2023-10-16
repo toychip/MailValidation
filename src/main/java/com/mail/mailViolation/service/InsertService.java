@@ -1,6 +1,6 @@
 package com.mail.mailViolation.service;
 
-import com.mail.mailViolation.dto.dao.MailResultDao;
+import com.mail.mailViolation.dto.MailResultDto;
 import com.mail.mailViolation.mapper.MailMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,15 +16,15 @@ public class InsertService {
 
     // 데이터 삽입
     @Transactional
-    public void insertData(List<MailResultDao> conditionOList,
-                           List<MailResultDao> conditionXList) {
+    public void insertData(List<MailResultDto> conditionOList,
+                           List<MailResultDto> conditionXList) {
 
-        for (MailResultDao mailResultDao : conditionOList) {
-            mapper.insertValidResult(mailResultDao);
+        for (MailResultDto mailResultDto : conditionOList) {
+            mapper.insertValidResult(mailResultDto);
         }
 
-        for (MailResultDao mailResultDao : conditionXList) {
-            mapper.insertValidResult(mailResultDao);
+        for (MailResultDto mailResultDto : conditionXList) {
+            mapper.insertValidResult(mailResultDto);
         }
     }
 }

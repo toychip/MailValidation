@@ -4,47 +4,39 @@
 <mapper namespace="com.mail.mailViolation.mapper.MailMapper">
 
     <!-- 기안자 이름으로 TB_AS_SCRT_EMP 테이블에서 직원 정보를 조회 -->
-    <select id="findByNameAndUseYn" resultType="com.mail.mailViolation.dto.dao.EmployeeDao">
+    <select id="findByNameAndUseYn" resultType="com.mail.mailViolation.dto.EmployeeDto">
         SELECT EMP_ID, EMP_NAME, DEPT_ID, EMP_EMAIL, USE_YN, RGT_DTTM, APPR_REFER_YN
         FROM TB_AS_SCRT_EMP
         WHERE EMP_NAME = #{name}
           AND USE_YN = 'Y'
     </select>
 
-    <!--  실장 조회  -->
-    <select id="findSBoss" resultType="string">
-        SELECT EMP_NAME FROM TB_AS_SCRT_EMP
-        WHERE DEPT_ID = #{deptId}
-          AND USE_YN = 'Y'
-          AND APPR_REFER_YN = 'S'
-    </select>
-
-    <!-- 팀장 리스트 조회 -->
-    <select id="findTBoss" resultType="string">
-        SELECT EMP_NAME FROM TB_AS_SCRT_EMP
-        WHERE DEPT_ID = #{deptId}
-          AND USE_YN = 'Y'
+    <!-- 모든 팀장 조회 -->
+    <select id="findAllTBoss" resultType="map">
+        SELECT DEPT_ID, EMP_NAME FROM TB_AS_SCRT_EMP
+        WHERE USE_YN = 'Y'
           AND APPR_REFER_YN = 'T'
     </select>
 
-    <!-- 본부장의 이름을 찾는 쿼리 -->
-    <select id="findBBoss" resultType="string">
-        SELECT E.emp_name
+    <!-- 모든 실장 조회 -->
+    <select id="findAllSBoss" resultType="map">
+        SELECT DEPT_ID, EMP_NAME FROM TB_AS_SCRT_EMP
+        WHERE USE_YN = 'Y'
+          AND APPR_REFER_YN = 'S'
+    </select>
+
+    <!-- 모든 본부장 조회 -->
+    <select id="findAllBBoss" resultType="map">
+        SELECT D1.dept_id, E.emp_name
         FROM tb_as_scrt_emp E
                  JOIN tb_as_scrt_dept D ON E.dept_id = D.dept_id
-        WHERE D.dept_code IN (
-            SELECT D1.upper_dept
-            FROM tb_as_scrt_dept D1
-            WHERE D1.dept_id = #{deptId}
-        )
-          AND E.USE_YN = 'Y'
+                 JOIN tb_as_scrt_dept D1 ON D.dept_code = D1.upper_dept
+        WHERE E.USE_YN = 'Y'
           AND E.APPR_REFER_YN = 'B'
     </select>
 
-
-
     <!-- TEST_EMAIL_VALID 테이블에 메일 결과를 삽입 또는 업데이트 -->
-    <insert id="insertValidResult" parameterType="com.mail.mailViolation.dto.dao.MailResultDao">
+    <insert id="insertValidResult" parameterType="com.mail.mailViolation.dto.MailResultDto">
         MERGE INTO TEST_EMAIL_VALID T
             USING (SELECT #{docNumber} AS temp FROM dual) S
             ON (T.DOC_NUMBER = S.temp)
@@ -74,7 +66,7 @@
     </insert>
 
     <!-- 메일 결과 매핑 설정 -->
-    <resultMap id="mailResultMap" type="com.mail.mailViolation.dto.dao.MailResultDao">
+    <resultMap id="mailResultMap" type="com.mail.mailViolation.dto.MailResultDto">
         <result property="docNumber" column="DOC_NUMBER"/>
         <result property="draftsman" column="DRAFTSMAN"/>
         <result property="dept" column="DEPT"/>
@@ -89,13 +81,44 @@
         <result property="result" column="RESULT"/>
     </resultMap>
 
-    <!-- TEST_EMAIL_VALID 테이블에서 모든 메일 결과를 조회 -->
+    <!-- TEST_EMAIL_VALID 테이블에서 날짜에 맞게 조회 -->
     <select id="searchDateConditionX" resultMap="mailResultMap">
         SELECT *
         FROM TEST_EMAIL_VALID
         WHERE APPROVAL_DATE BETWEEN TO_DATE(#{fromYear} || LPAD(#{fromMonth}, 2, '0') || '01', 'YYYYMMDD')
                   AND LAST_DAY(TO_DATE(#{toYear} || LPAD(#{toMonth}, 2, '0') || '01', 'YYYYMMDD'))
                   AND RESULT = 'X'
+    </select>
+
+    <!-- 예전에 사용한 쿼리들 -->
+    <!--  실장 조회  -->
+    <select id="findSBoss" resultType="string">
+        SELECT EMP_NAME FROM TB_AS_SCRT_EMP
+        WHERE DEPT_ID = #{deptId}
+          AND USE_YN = 'Y'
+          AND APPR_REFER_YN = 'S'
+    </select>
+
+    <!-- 팀장 리스트 조회 -->
+    <select id="findTBoss" resultType="string">
+        SELECT EMP_NAME FROM TB_AS_SCRT_EMP
+        WHERE DEPT_ID = #{deptId}
+          AND USE_YN = 'Y'
+          AND APPR_REFER_YN = 'T'
+    </select>
+
+    <!-- 본부장의 이름을 찾는 쿼리 -->
+    <select id="findBBoss" resultType="string">
+        SELECT E.emp_name
+        FROM tb_as_scrt_emp E
+                 JOIN tb_as_scrt_dept D ON E.dept_id = D.dept_id
+        WHERE D.dept_code IN (
+            SELECT D1.upper_dept
+            FROM tb_as_scrt_dept D1
+            WHERE D1.dept_id = #{deptId}
+        )
+          AND E.USE_YN = 'Y'
+          AND E.APPR_REFER_YN = 'B'
     </select>
 
 </mapper>

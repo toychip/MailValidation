@@ -1,7 +1,8 @@
-package com.mail.mailViolation.dto.dao;
+package com.mail.mailViolation.dto;
 
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 
@@ -10,20 +11,20 @@ import java.time.LocalDate;
 @AllArgsConstructor
 
 // 보직좌를 확인하기 위해 DB에서 데이터를 꺼내오는 과정에서 필요한 객체
-public class EmployeeDao {
+public class EmployeeDto {
     private Integer empId;
     private String empName;
-    private Integer deptId;
+    private BigDecimal deptId;
     private String empEmail;
     private String useYN;
     private LocalDate rgtDttm;
     private String apprReferYn;
 
-    public static EmployeeDao getDefault() {
-        return EmployeeDao.builder()
+    public static EmployeeDto getDefault() {
+        return EmployeeDto.builder()
                 .empId(-1)
                 .empName("-1")
-                .deptId(-1)
+                .deptId(null)
                 .empEmail("-1")
                 .useYN("-1")
                 .rgtDttm(LocalDate.now())

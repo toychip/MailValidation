@@ -1,13 +1,11 @@
 package com.mail.mailViolation.comtroller;
 
 import java.time.LocalDate;
-import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.mail.mailViolation.dto.dto.ReturnDto;
-import com.mail.mailViolation.service.InitService;
+import com.mail.mailViolation.dto.ReturnDto;
 import com.mail.mailViolation.service.InsertService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -18,15 +16,14 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.mail.mailViolation.dto.dto.FileUploadDto;
-import com.mail.mailViolation.dto.dao.MailResultDao;
+import com.mail.mailViolation.dto.FileUploadDto;
+import com.mail.mailViolation.dto.MailResultDto;
 import com.mail.mailViolation.service.GetExelService;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 @Slf4j
 @Controller
@@ -74,14 +71,11 @@ public class UploadController {
 			// 검증 로직
 
 			// 적격 리스트, 부적격 리스트 분리
-			List<MailResultDao> conditionOList = returnDto.getConditionOList();
-			List<MailResultDao> conditionXList = returnDto.getConditionXList();
+			List<MailResultDto> conditionOList = returnDto.getConditionOList();
+			List<MailResultDto> conditionXList = returnDto.getConditionXList();
 
 			// 데이터 삽입
 			insertService.insertData(conditionOList, conditionXList);
-
-			// 검사 진행시 부적격 리스트 조회
-			log.info("---------------------" + conditionXList.size());
 
 			redirectAttributes.addFlashAttribute("conditionXList", conditionXList);
 			log.info("안전하게 저장 성공");
@@ -96,30 +90,6 @@ public class UploadController {
 
 			return "uploadForm";
 		}
-
-//		적격 리스트 출력
-//		for (MailResultDao mailResultDao : conditionOList) {
-//			log.info("\n\n");
-//			log.info("---------- conditionOList 문서 번호: " + mailResultDao.getDocNumber());
-//			log.info("---------- conditionOList 메일 기안자: " + mailResultDao.getDraftsman());
-//			log.info("---------- conditionOList 기안자 부서: " + mailResultDao.getDept());
-//			log.info("---------- conditionOList 기안자 부서 코드: " + mailResultDao.getDeptId());
-//			log.info("---------- conditionOList 적격 여부: " + mailResultDao.getResult());
-//			log.info("---------- conditionOList 최종 결재자: " + mailResultDao.getLastApprover());
-//			log.info("---------- conditionOList 결재일: " + mailResultDao.getApprovalDate());
-//		}
-
-//		부적격 리스트 출력
-//		for (MailResultDao mailResultDao : conditionXList) {
-//			log.info("\n\n");
-//			log.info("---------- conditionXList 문서 번호: " + mailResultDao.getDocNumber());
-//			log.info("---------- conditionXList 메일 기안자: " + mailResultDao.getDraftsman());
-//			log.info("---------- conditionXList 기안자 부서: " + mailResultDao.getDept());
-//			log.info("---------- conditionXList 기안자 부서 코드: " + mailResultDao.getDeptId());
-//			log.info("---------- conditionXList 적격 여부: " + mailResultDao.getResult());
-//			log.info("---------- conditionXList 최종 결재자: " + mailResultDao.getLastApprover());
-//			log.info("---------- conditionXList 결재일: " + mailResultDao.getApprovalDate());
-//		}
 	}
 
 //	DB연결 및 조회 테스트
@@ -157,9 +127,7 @@ public class UploadController {
 		log.info("toYear = " + toYear);
 		log.info("toMonth = " + toMonth);
 
-
-
-		List<MailResultDao> data = getExelService.getData(fromYear, fromMonth, toYear, toMonth);
+		List<MailResultDto> data = getExelService.getData(fromYear, fromMonth, toYear, toMonth);
 
 		redirectAttributes.addFlashAttribute("fromYear", fromYear);
 		redirectAttributes.addFlashAttribute("fromMonth", fromMonth);

@@ -8,22 +8,8 @@
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         /* ... (CSS는 그대로 사용 가능하므로 생략) ... */
-        .limit-text {
-            max-width: 400px;  /* 최대 너비 설정 */
-            overflow: hidden;  /* 넘치는 부분은 숨김 */
-            text-overflow: ellipsis;  /* 넘치는 텍스트를 "..."로 표시 */
-            white-space: nowrap;  /* 텍스트를 한 줄로 표시 */
-        }
-
-        .limit-title {
-            max-width: 300px;  /* 최대 너비 설정 */
-            overflow: hidden;  /* 넘치는 부분은 숨김 */
-            text-overflow: ellipsis;  /* 넘치는 텍스트를 "..."로 표시 */
-            white-space: nowrap;  /* 텍스트를 한 줄로 표시 */
-        }
-
-        .limit-reason {
-            max-width: 300px;  /* 최대 너비 설정 */
+        .limit-reference {
+            max-width: 200px;  /* 최대 너비 설정 */
             overflow: hidden;  /* 넘치는 부분은 숨김 */
             text-overflow: ellipsis;  /* 넘치는 텍스트를 "..."로 표시 */
             white-space: nowrap;  /* 텍스트를 한 줄로 표시 */
@@ -87,7 +73,7 @@
         <tr>
             <th>🔢 순서</th>
             <th>📑 문서 번호</th>
-            <th>👤 기안</th>
+            <th>👤 기안자</th>
             <th>🏢 부서</th>
             <th>📄 문서 제목</th>
             <th>📅 결재일</th>
@@ -157,9 +143,32 @@
         });
     });
 
+    function formatDate(dateString) {
+        console.log("Input dateString: ", dateString);  // 이 부분 추가
+        const date = new Date(dateString);
+        const year = date.getFullYear();
+        const month = date.getMonth() + 1; // 월은 0부터 시작하므로 +1을 해줍니다.
+        const day = date.getDate();
+        const hour = date.getHours();
+        const minute = date.getMinutes();
+
+        let temp =  year+"년 "+ month + "월 " + day + "일 " + hour + "시 " + minute + "분";
+        return temp;
+    }
+
+
+
     $(document).ready(function() {
         // 서버에서 전달받은 JSON 문자열을 JavaScript 객체로 변환
         <%--var conditionXList = JSON.parse('<c:out value="${conditionXList}" />');--%>
+
+        // 날짜를 오름차순으로 정렬
+        jsonTemp.sort(function(a, b) {
+            const dateA = new Date(a.approvalDate);
+            const dateB = new Date(b.approvalDate);
+            return dateA - dateB;
+        });
+
 
         // 동적으로 테이블 로우 생성
         var tbodyHtml = "";
@@ -169,9 +178,12 @@
             tbodyHtml += "<td>" + item.docNumber + "</td>";
             tbodyHtml += "<td>" + item.draftsman + "</td>";
             tbodyHtml += "<td>" + item.dept + "</td>";
-            tbodyHtml += "<td>" + item.title + "</td>";
-            tbodyHtml += "<td>" + item.approvalDate + "</td>";
-            tbodyHtml += "<td>" + (item.reference || 'N/A') + "</td>";
+            tbodyHtml += "<td class='limit-reference'>" + (item.title || '' ) + "</td>";
+
+            const formattedDate = formatDate(item.approvalDate);
+            tbodyHtml += "<td>" + formattedDate + "</td>";
+
+            tbodyHtml += "<td class='limit-reference'>" + (item.reference || '') + "</td>";
             tbodyHtml += "<td>" + item.blockCause + "</td>";
             tbodyHtml += "<td>" + item.lastApprover + "</td>";
             tbodyHtml += "<td>" + item.result + "</td>";

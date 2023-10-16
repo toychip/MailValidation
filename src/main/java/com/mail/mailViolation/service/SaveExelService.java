@@ -11,12 +11,22 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
 public class SaveExelService {
 
     public void exportToExcel(HttpServletResponse response, List<MailResultDto> conditionXList) throws IOException {
+
+        Collections.sort(conditionXList, new Comparator<MailResultDto>() {
+            @Override
+            public int compare(MailResultDto m1, MailResultDto m2) {
+                return m1.getApprovalDate().compareTo(m2.getApprovalDate());
+            }
+        });
+
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("Mail Results");
         Row headerRow = sheet.createRow(0);
@@ -33,7 +43,7 @@ public class SaveExelService {
         headerRow.createCell(8).setCellValue("최종 결재자");
         headerRow.createCell(9).setCellValue("적격 여부");
 
-        // Fill data rows
+        // rows
         for (int i = 0; i < conditionXList.size(); i++) {
             MailResultDto data = conditionXList.get(i);
             Row row = sheet.createRow(i + 1);
@@ -50,13 +60,13 @@ public class SaveExelService {
             row.createCell(9).setCellValue(data.getResult());
         }
 
-        // Set the response properties
+        // 응답 properties 설정
         String headerKey = "Content-Disposition";
         String headerValue = "attachment; filename=mail_results.xlsx";
         response.setHeader(headerKey, headerValue);
         response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
 
-        // Write the workbook to the ServletOutputStream
+        // workbook 쓰고 닫기
         ServletOutputStream outputStream = response.getOutputStream();
         workbook.write(outputStream);
         workbook.close();

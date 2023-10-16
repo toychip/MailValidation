@@ -1,11 +1,8 @@
 package com.mail.mailViolation.service;
 
 import java.time.LocalDateTime;
-import java.util.*;
 
-import com.mail.mailViolation.dto.dao.MailResultDao;
-import com.mail.mailViolation.dto.dto.ApprovalMailDto;
-import com.mail.mailViolation.dto.dao.EmployeeDao;
+import com.mail.mailViolation.dto.ApprovalMailDto;
 import com.mail.mailViolation.mapper.MailMapper;
 import lombok.RequiredArgsConstructor;
 import org.apache.poi.ss.usermodel.Row;

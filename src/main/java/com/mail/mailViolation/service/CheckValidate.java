@@ -1,9 +1,10 @@
 package com.mail.mailViolation.service;
 
-import com.mail.mailViolation.dto.dao.EmployeeDao;
+import com.mail.mailViolation.dto.EmployeeDto;
 import com.mail.mailViolation.mapper.MailMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,10 +17,11 @@ public class CheckValidate {
     private final MailMapper mapper;
 
     // Y, N 등 여러개의 리스트 반환시 가장 최신 것으로 반환하는 메서드
-    public EmployeeDao getEmp(String name) {
+    @Cacheable(value = "employees", key = "#name")
+    public EmployeeDto getEmp(String name) {
 
         return mapper.findByNameAndUseYn(name)
-                .orElse(EmployeeDao.getDefault());
+                .orElse(EmployeeDto.getDefault());
     }
 
     // 팀장이 결재 후 실장 혹은 본부장이을 참초 or 결재 했는가?
@@ -52,7 +54,9 @@ public class CheckValidate {
     }
 
     // deptId로 팀장 이름 찾기
+    @Cacheable(value = "TLeaders", key = "#deptId")
     public List<String> findTBoss(Integer deptId) {
+        System.out.println("CheckValidate.findTBoss");
         List<String> results = mapper.findTBoss(deptId);
         if (results.isEmpty()) {
             throw new RuntimeException("팀장을 찾을 수 없음");
@@ -61,12 +65,14 @@ public class CheckValidate {
     }
 
     // deptId로 실장 이름 찾기
+    @Cacheable(value = "SLeader", key = "#deptId")
     public String findSBoss(Integer deptId) {
         return mapper.findSBoss(deptId)
                 .orElse("실장이 존재하지 않으니 IT혁신실이지?");
     }
 
     // deptId로 본부장 이름 찾기
+    @Cacheable(value = "BLeader", key = "#deptId")
     public String findBBoss(Integer deptId){
         return mapper.findBBoss(deptId);
     }
@@ -87,11 +93,14 @@ public class CheckValidate {
             if (condition.equals("O")) {
                 return condition;
             }
+
+
         }
 
         // 실장 혹은 본부장이 결재했는가?
         boolean approvalSBBoss = matchSBBoss(lastApprover, sBossEmpName, bBossEmpName);
         condition = checkCondition(approvalSBBoss);
+
 
         return condition;
     }

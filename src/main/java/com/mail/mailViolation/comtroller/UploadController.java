@@ -1,13 +1,11 @@
 package com.mail.mailViolation.comtroller;
 
 import java.time.LocalDate;
-import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.mail.mailViolation.dto.dto.ReturnDto;
-import com.mail.mailViolation.service.InitService;
+import com.mail.mailViolation.dto.ReturnDto;
 import com.mail.mailViolation.service.InsertService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -18,15 +16,14 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.mail.mailViolation.dto.dto.FileUploadDto;
-import com.mail.mailViolation.dto.dao.MailResultDao;
+import com.mail.mailViolation.dto.FileUploadDto;
+import com.mail.mailViolation.dto.MailResultDto;
 import com.mail.mailViolation.service.GetExelService;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 @Slf4j
 @Controller
@@ -74,8 +71,8 @@ public class UploadController {
 			// 검증 로직
 
 			// 적격 리스트, 부적격 리스트 분리
-			List<MailResultDao> conditionOList = returnDto.getConditionOList();
-			List<MailResultDao> conditionXList = returnDto.getConditionXList();
+			List<MailResultDto> conditionOList = returnDto.getConditionOList();
+			List<MailResultDto> conditionXList = returnDto.getConditionXList();
 
 			// 데이터 삽입
 			insertService.insertData(conditionOList, conditionXList);
@@ -159,7 +156,7 @@ public class UploadController {
 
 
 
-		List<MailResultDao> data = getExelService.getData(fromYear, fromMonth, toYear, toMonth);
+		List<MailResultDto> data = getExelService.getData(fromYear, fromMonth, toYear, toMonth);
 
 		redirectAttributes.addFlashAttribute("fromYear", fromYear);
 		redirectAttributes.addFlashAttribute("fromMonth", fromMonth);

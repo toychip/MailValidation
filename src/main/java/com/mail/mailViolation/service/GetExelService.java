@@ -1,9 +1,9 @@
 package com.mail.mailViolation.service;
 
-import com.mail.mailViolation.dto.dao.EmployeeDao;
-import com.mail.mailViolation.dto.dao.MailResultDao;
-import com.mail.mailViolation.dto.dto.ApprovalMailDto;
-import com.mail.mailViolation.dto.dto.ReturnDto;
+import com.mail.mailViolation.dto.EmployeeDto;
+import com.mail.mailViolation.dto.MailResultDto;
+import com.mail.mailViolation.dto.ApprovalMailDto;
+import com.mail.mailViolation.dto.ReturnDto;
 import com.mail.mailViolation.exception.ExelUploadException;
 import com.mail.mailViolation.mapper.MailMapper;
 import lombok.RequiredArgsConstructor;
@@ -43,8 +43,8 @@ public class GetExelService {
 
 
         InputStream inputStream = null;
-        List<MailResultDao> conditionXList = new ArrayList<>();
-        List<MailResultDao> conditionOList = new ArrayList<>();
+        List<MailResultDto> conditionXList = new ArrayList<>();
+        List<MailResultDto> conditionOList = new ArrayList<>();
 
 //		log.info("-------------------------엑셀 처리 전 로그");
 		try {
@@ -77,7 +77,7 @@ public class GetExelService {
                 ApprovalMailDto approvalMailDto = initService.createMailDao(currentRow, year);
 
                 // DTO를 기반으로 직원 정보 가져옴
-                EmployeeDao findEmp = checkValidate.getEmp(approvalMailDto.getDraftsman());
+                EmployeeDto findEmp = checkValidate.getEmp(approvalMailDto.getDraftsman());
                 Integer empDeptId = findEmp.getDeptId();
                 log.info("-------------------- empDeptId = " + empDeptId);
 
@@ -147,7 +147,7 @@ public class GetExelService {
                 // condition이 "X"일 경우, 부적격 리스트에 추가
                 if ("X".equals(condition)) {
                     conditionXList.add(
-                            MailResultDao.builder()
+                            MailResultDto.builder()
                                     .docNumber(approvalMailDto.getDocNumber())	// 문서 번호
                                     .draftsman(approvalMailDto.getDraftsman())	// 기안자
                                     .dept(approvalMailDto.getDept())	// 소속부서
@@ -167,7 +167,7 @@ public class GetExelService {
                 // condition이 "O" 또는 "T"일 경우, 적격 리스트에 추가
                 if ("O".equals(condition)) {
                     conditionOList.add(
-                            MailResultDao.builder()
+                            MailResultDto.builder()
                                     .docNumber(approvalMailDto.getDocNumber())	// 문서 번호
                                     .draftsman(approvalMailDto.getDraftsman())	// 기안자
                                     .dept(approvalMailDto.getDept())	// 소속부서
@@ -209,9 +209,9 @@ public class GetExelService {
 	}
 
     // 날짜 검색
-    public List<MailResultDao> getData(Integer fromYear, Integer fromMonth,
+    public List<MailResultDto> getData(Integer fromYear, Integer fromMonth,
                                        Integer toYear, Integer toMonth) {
-        List<MailResultDao> validEmail = mapper.searchDateConditionX(fromYear, fromMonth, toYear, toMonth);
+        List<MailResultDto> validEmail = mapper.searchDateConditionX(fromYear, fromMonth, toYear, toMonth);
         return validEmail;
     }
 

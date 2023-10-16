@@ -4,7 +4,7 @@
 <mapper namespace="com.mail.mailViolation.mapper.MailMapper">
 
     <!-- 기안자 이름으로 TB_AS_SCRT_EMP 테이블에서 직원 정보를 조회 -->
-    <select id="findByNameAndUseYn" resultType="com.mail.mailViolation.dto.dao.EmployeeDao">
+    <select id="findByNameAndUseYn" resultType="com.mail.mailViolation.dto.EmployeeDto">
         SELECT EMP_ID, EMP_NAME, DEPT_ID, EMP_EMAIL, USE_YN, RGT_DTTM, APPR_REFER_YN
         FROM TB_AS_SCRT_EMP
         WHERE EMP_NAME = #{name}
@@ -44,7 +44,7 @@
 
 
     <!-- TEST_EMAIL_VALID 테이블에 메일 결과를 삽입 또는 업데이트 -->
-    <insert id="insertValidResult" parameterType="com.mail.mailViolation.dto.dao.MailResultDao">
+    <insert id="insertValidResult" parameterType="com.mail.mailViolation.dto.MailResultDto">
         MERGE INTO TEST_EMAIL_VALID T
             USING (SELECT #{docNumber} AS temp FROM dual) S
             ON (T.DOC_NUMBER = S.temp)
@@ -74,7 +74,7 @@
     </insert>
 
     <!-- 메일 결과 매핑 설정 -->
-    <resultMap id="mailResultMap" type="com.mail.mailViolation.dto.dao.MailResultDao">
+    <resultMap id="mailResultMap" type="com.mail.mailViolation.dto.MailResultDto">
         <result property="docNumber" column="DOC_NUMBER"/>
         <result property="draftsman" column="DRAFTSMAN"/>
         <result property="dept" column="DEPT"/>

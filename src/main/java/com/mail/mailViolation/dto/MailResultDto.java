@@ -1,4 +1,4 @@
-package com.mail.mailViolation.dto.dao;
+package com.mail.mailViolation.dto;
 
 import lombok.*;
 
@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @Builder
 
 // DB 저장 객체
-public class MailResultDao {
+public class MailResultDto {
 	private String docNumber;	// 문서 번호
 	private String draftsman;	// 기안자
 	private String dept;		// 소속부서

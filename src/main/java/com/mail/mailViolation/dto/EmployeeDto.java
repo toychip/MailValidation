@@ -1,4 +1,4 @@
-package com.mail.mailViolation.dto.dao;
+package com.mail.mailViolation.dto;
 
 import lombok.*;
 
@@ -10,7 +10,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 
 // 보직좌를 확인하기 위해 DB에서 데이터를 꺼내오는 과정에서 필요한 객체
-public class EmployeeDao {
+public class EmployeeDto {
     private Integer empId;
     private String empName;
     private Integer deptId;
@@ -19,8 +19,8 @@ public class EmployeeDao {
     private LocalDate rgtDttm;
     private String apprReferYn;
 
-    public static EmployeeDao getDefault() {
-        return EmployeeDao.builder()
+    public static EmployeeDto getDefault() {
+        return EmployeeDto.builder()
                 .empId(-1)
                 .empName("-1")
                 .deptId(-1)

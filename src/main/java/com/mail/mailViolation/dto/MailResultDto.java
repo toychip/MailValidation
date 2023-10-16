@@ -2,6 +2,7 @@ package com.mail.mailViolation.dto;
 
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Getter
@@ -14,7 +15,7 @@ public class MailResultDto {
 	private String docNumber;	// 문서 번호
 	private String draftsman;	// 기안자
 	private String dept;		// 소속부서
-	private Integer deptId;
+	private BigDecimal deptId;
 	private String title;		// 제목
 	private LocalDateTime approvalDate;	// 결재일
 	private String mailTitle;	// 메일 제목

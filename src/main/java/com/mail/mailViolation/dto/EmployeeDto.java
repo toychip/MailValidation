@@ -2,6 +2,7 @@ package com.mail.mailViolation.dto;
 
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 
@@ -13,7 +14,7 @@ import java.time.LocalDate;
 public class EmployeeDto {
     private Integer empId;
     private String empName;
-    private Integer deptId;
+    private BigDecimal deptId;
     private String empEmail;
     private String useYN;
     private LocalDate rgtDttm;
@@ -23,7 +24,7 @@ public class EmployeeDto {
         return EmployeeDto.builder()
                 .empId(-1)
                 .empName("-1")
-                .deptId(-1)
+                .deptId(null)
                 .empEmail("-1")
                 .useYN("-1")
                 .rgtDttm(LocalDate.now())

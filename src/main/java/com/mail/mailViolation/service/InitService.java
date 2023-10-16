@@ -16,8 +16,6 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class InitService {
 
-	private final MailMapper mapper;
-
 	public ApprovalMailDto createMailDao(Row row, String strYear) {
 
 		String strDocNumber = row.getCell(1).toString();

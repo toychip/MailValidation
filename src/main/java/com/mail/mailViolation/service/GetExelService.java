@@ -1,8 +1,8 @@
 package com.mail.mailViolation.service;
 
+import com.mail.mailViolation.dto.ApprovalMailDto;
 import com.mail.mailViolation.dto.EmployeeDto;
 import com.mail.mailViolation.dto.MailResultDto;
-import com.mail.mailViolation.dto.ApprovalMailDto;
 import com.mail.mailViolation.dto.ReturnDto;
 import com.mail.mailViolation.exception.ExelUploadException;
 import com.mail.mailViolation.mapper.MailMapper;
@@ -18,7 +18,6 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @Service
@@ -69,8 +68,8 @@ public class GetExelService {
             // 엑셀 파일의 4번째 행부터 값 추출.
 //            for (int i = 3; i <= 200; i++) {
             for (int i = 3; i <= sheet.getLastRowNum(); i++) {
-                log.info("\n\n");
-            	log.info("------------------------------현재 i: " + i);
+//                log.info("\n\n");
+//            	log.info("------------------------------현재 i: " + i);
                 Row currentRow = sheet.getRow(i);
 
                 if (currentRow == null) {
@@ -83,31 +82,31 @@ public class GetExelService {
                 // DTO를 기반으로 직원 정보 가져옴
                 EmployeeDto findEmp = checkValidate.getEmp(approvalMailDto.getDraftsman());
                 BigDecimal empDeptId = findEmp.getDeptId();
-                log.info("-------------------- empDeptId = " + empDeptId);
+//                log.info("-------------------- empDeptId = " + empDeptId);
 
                 String condition = "X";
                 String title = approvalMailDto.getTitle();
-                log.info("--------------------  title = " + title);
+//                log.info("-------------------- title = " + title);
 
                 // 기안자 등급
                 String apprReferYn = findEmp.getApprReferYn();
-                log.info("--------------------  등급 = " + apprReferYn);
+//                log.info("-------------------- 등급 = " + apprReferYn);
 
                 // 결재자
                 String lastApprover = approvalMailDto.getLastApprover();
-                log.info("-------------------- 결재 = " + lastApprover);
+//                log.info("-------------------- 결재 = " + lastApprover);
 
                 // 참조
                 String referencer = approvalMailDto.getReference();
-                log.info("-------------------- 참조 = " + referencer);
+//                log.info("-------------------- 참조 = " + referencer);
 
                 // 실장
                 String sBossEmpName = checkValidate.findSBoss(empDeptId);
-                log.info("-------------------- 실장 이름 = " + sBossEmpName);
+//                log.info("-------------------- 실장 이름 = " + sBossEmpName);
 
                 // 본부장
                 String bBossEmpName = checkValidate.findBBoss(empDeptId);
-                log.info("-------------------- 본부장 이름 = " + bBossEmpName);
+//                log.info("-------------------- 본부장 이름 = " + bBossEmpName);
 
                 if (approvalMailDto.getDept().contains("그룹웨어관리")) {
                     condition = "T";
@@ -115,13 +114,13 @@ public class GetExelService {
 
                 // 결재를 받으려는 사람이 일반 사원일 경우
                 if ("N".equals(apprReferYn)) {
-                    log.info("나는 일반 사원입니다 내 이름은 " + findEmp.getEmpName());
+//                    log.info("나는 일반 사원입니다 내 이름은 " + findEmp.getEmpName());
                     condition = checkValidate.basicEmployee(lastApprover, empDeptId, referencer, sBossEmpName, bBossEmpName);
                 }
 
                 // 결재를 받으려는 사람이 팀장일 경우
                 if ("T".equals(apprReferYn)) {
-                    log.info("나는 팀장입니다 내 이름은 " + findEmp.getEmpName());
+//                    log.info("나는 팀장입니다 내 이름은 " + findEmp.getEmpName());
                     boolean approvalSBBoss = checkValidate.matchSBBoss(lastApprover, sBossEmpName, bBossEmpName);
                     condition = checkValidate.checkCondition(approvalSBBoss);
                 }
@@ -129,7 +128,7 @@ public class GetExelService {
                 // 결재를 받으려는 사람이 실장일 경우
                 if ("S".equals(apprReferYn)) {
                     // 본부장이 결재한 경우
-                    log.info("나는 실장입니다 내 이름은 " + findEmp.getEmpName());
+//                    log.info("나는 실장입니다 내 이름은 " + findEmp.getEmpName());
                     boolean isApprovalBBoss = checkValidate.matchBoss(lastApprover, bBossEmpName);
                     condition = checkValidate.checkCondition(isApprovalBBoss);
                 }
@@ -139,14 +138,11 @@ public class GetExelService {
                         || (lastApprover.equals(managementTeamSBoss))
                         || (lastApprover.equals(itInnovationTeamTBoss));
 
-                if (masterApproval) {
+                // 부적격 상태이고, 최종 DB 관리자 및 경영지원실 팀장 or 실장일경우
+                if ((!condition.equals("O")) && masterApproval) {
                     boolean isReferenceSBBoss = checkValidate.matchSBBoss(referencer, sBossEmpName, bBossEmpName);
                     condition = checkValidate.checkCondition(isReferenceSBBoss);
                 }
-
-                log.info("i = " + i);
-                log.info("apprReferYn = " + apprReferYn);
-                log.info("적격 여부 = " + condition);
 
                 // condition이 "X"일 경우, 부적격 리스트에 추가
                 if ("X".equals(condition)) {
@@ -215,8 +211,7 @@ public class GetExelService {
     // 날짜 검색
     public List<MailResultDto> getData(Integer fromYear, Integer fromMonth,
                                        Integer toYear, Integer toMonth) {
-        List<MailResultDto> validEmail = mapper.searchDateConditionX(fromYear, fromMonth, toYear, toMonth);
-        return validEmail;
+        return mapper.searchDateConditionX(fromYear, fromMonth, toYear, toMonth);
     }
 
 }

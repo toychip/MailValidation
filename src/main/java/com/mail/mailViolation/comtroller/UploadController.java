@@ -77,9 +77,6 @@ public class UploadController {
 			// 데이터 삽입
 			insertService.insertData(conditionOList, conditionXList);
 
-			// 검사 진행시 부적격 리스트 조회
-			log.info("---------------------" + conditionXList.size());
-
 			redirectAttributes.addFlashAttribute("conditionXList", conditionXList);
 			log.info("안전하게 저장 성공");
 			return "redirect:/validResult";
@@ -93,30 +90,6 @@ public class UploadController {
 
 			return "uploadForm";
 		}
-
-//		적격 리스트 출력
-//		for (MailResultDao mailResultDao : conditionOList) {
-//			log.info("\n\n");
-//			log.info("---------- conditionOList 문서 번호: " + mailResultDao.getDocNumber());
-//			log.info("---------- conditionOList 메일 기안자: " + mailResultDao.getDraftsman());
-//			log.info("---------- conditionOList 기안자 부서: " + mailResultDao.getDept());
-//			log.info("---------- conditionOList 기안자 부서 코드: " + mailResultDao.getDeptId());
-//			log.info("---------- conditionOList 적격 여부: " + mailResultDao.getResult());
-//			log.info("---------- conditionOList 최종 결재자: " + mailResultDao.getLastApprover());
-//			log.info("---------- conditionOList 결재일: " + mailResultDao.getApprovalDate());
-//		}
-
-//		부적격 리스트 출력
-//		for (MailResultDao mailResultDao : conditionXList) {
-//			log.info("\n\n");
-//			log.info("---------- conditionXList 문서 번호: " + mailResultDao.getDocNumber());
-//			log.info("---------- conditionXList 메일 기안자: " + mailResultDao.getDraftsman());
-//			log.info("---------- conditionXList 기안자 부서: " + mailResultDao.getDept());
-//			log.info("---------- conditionXList 기안자 부서 코드: " + mailResultDao.getDeptId());
-//			log.info("---------- conditionXList 적격 여부: " + mailResultDao.getResult());
-//			log.info("---------- conditionXList 최종 결재자: " + mailResultDao.getLastApprover());
-//			log.info("---------- conditionXList 결재일: " + mailResultDao.getApprovalDate());
-//		}
 	}
 
 //	DB연결 및 조회 테스트
@@ -153,8 +126,6 @@ public class UploadController {
 		log.info("fromMonth = " + fromMonth);
 		log.info("toYear = " + toYear);
 		log.info("toMonth = " + toMonth);
-
-
 
 		List<MailResultDto> data = getExelService.getData(fromYear, fromMonth, toYear, toMonth);
 

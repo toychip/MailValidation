@@ -86,7 +86,7 @@ public class CheckValidate {
     public boolean matchBoss(String exelEmpName,
                              String realEmpName) {
 
-        if (exelEmpName.equals(realEmpName)) {
+        if (exelEmpName.contains(realEmpName)) {
             return true;
         }
         return false;

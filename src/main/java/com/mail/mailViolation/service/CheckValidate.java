@@ -1,5 +1,6 @@
 package com.mail.mailViolation.service;
 
+import com.mail.mailViolation.dto.BossInfo;
 import com.mail.mailViolation.dto.EmployeeDto;
 import com.mail.mailViolation.exception.NotFoundTBossException;
 import com.mail.mailViolation.mapper.MailMapper;
@@ -23,20 +24,18 @@ public class CheckValidate {
 
     // 멤버 변수 선언
     private final ConcurrentHashMap<BigDecimal, List<String>> tBossMap = new ConcurrentHashMap<>();
-    private final ConcurrentHashMap<BigDecimal, String> sBossMap = new ConcurrentHashMap<>();
-    private final ConcurrentHashMap<BigDecimal, String> bBossMap = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<BigDecimal, BossInfo> sBossMap = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<BigDecimal, BossInfo> bBossMap = new ConcurrentHashMap<>();
 
     public void loadBossInfoToMemory() {
         List<Map<String, Object>> allTBoss = mapper.findAllTBoss();
-        List<Map<String, Object>> allSBoss = mapper.findAllSBoss();
-        List<Map<String, Object>> allBBoss = mapper.findAllBBoss();
+        List<BossInfo> allSBoss = mapper.findAllSBoss();
+        List<BossInfo> allBBoss = mapper.findAllBBoss();
 
+        // 팀장 정보 로딩
         for (Map<String, Object> map : allTBoss) {
             BigDecimal deptId = (BigDecimal) map.get("DEPT_ID");
             String empName = (String) map.get("EMP_NAME");
-
-//            log.info("----- loadBossInfoToMemory. deptId = " + deptId);
-//            log.info("deptId.getClass() = " + deptId.getClass());
 
             if (!tBossMap.containsKey(deptId)) {
                 tBossMap.put(deptId, new ArrayList<>());
@@ -44,16 +43,14 @@ public class CheckValidate {
             tBossMap.get(deptId).add(empName);
         }
 
-        for (Map<String, Object> map : allSBoss) {
-            sBossMap.put((BigDecimal) map.get("DEPT_ID"), (String) map.get("EMP_NAME"));
+        // 실장 정보 로딩
+        for (BossInfo bossInfo : allSBoss) {
+            sBossMap.put(bossInfo.getDeptId(), bossInfo);
         }
 
-        for (Map<String, Object> map : allBBoss) {
-            BigDecimal deptId = (BigDecimal) map.get("DEPT_ID");
-            String empName = (String) map.get("EMP_NAME");
-
-            // 상위 부서의 본부장을 저장
-            bBossMap.put(deptId, empName);
+        // 본부장 정보 로딩
+        for (BossInfo bossInfo : allBBoss) {
+            bBossMap.put(bossInfo.getDeptId(), bossInfo);
         }
     }
 
@@ -101,21 +98,28 @@ public class CheckValidate {
         return tBossList;
     }
 
-    public String findSBoss(BigDecimal deptId) {
+    public BossInfo findSBoss(BigDecimal deptId) {
+
         if (deptId == null) {
-            return "DeptId가 null입니다";
+            deptId = new BigDecimal(-1);
         }
-        return sBossMap.getOrDefault(deptId, "실장이 존재하지 않으니 IT혁신실이지?");
+        BossInfo sBossInfo = sBossMap.get(deptId);
+
+        if (sBossInfo == null) {
+            return BossInfo.defaultValue();
+        }
+        return sBossInfo;
     }
 
-    public String findBBoss(BigDecimal deptId) {
-//        log.info("findBBoss.deptId = " + deptId);
+    public BossInfo findBBoss(BigDecimal deptId) {
         if (deptId == null) {
-            return "DeptId가 null입니다";
+            deptId = new BigDecimal(-1);
         }
-        
-        
-        return bBossMap.getOrDefault(deptId, "본부장이 존재하지 않음");
+        BossInfo bBossInfo = bBossMap.get(deptId);
+        if (bBossInfo == null) {
+            return BossInfo.defaultValue();
+        }
+        return bBossInfo;
     }
 
     // 팀장, 실장, 본부장이 아닌 '일반 사원'일 경우

@@ -1,9 +1,6 @@
 package com.mail.mailViolation.service;
 
-import com.mail.mailViolation.dto.ApprovalMailDto;
-import com.mail.mailViolation.dto.EmployeeDto;
-import com.mail.mailViolation.dto.MailResultDto;
-import com.mail.mailViolation.dto.ReturnDto;
+import com.mail.mailViolation.dto.*;
 import com.mail.mailViolation.exception.ExelUploadException;
 import com.mail.mailViolation.mapper.MailMapper;
 import lombok.RequiredArgsConstructor;
@@ -101,11 +98,15 @@ public class GetExelService {
 //                log.info("-------------------- 참조 = " + referencer);
 
                 // 실장
-                String sBossEmpName = checkValidate.findSBoss(empDeptId);
+                BossInfo sBoss = checkValidate.findSBoss(empDeptId);
+                String sBossEmpName = sBoss.getName();
+                String sBossEmail = sBoss.getEmail();
 //                log.info("-------------------- 실장 이름 = " + sBossEmpName);
 
                 // 본부장
-                String bBossEmpName = checkValidate.findBBoss(empDeptId);
+                BossInfo bBoss = checkValidate.findBBoss(empDeptId);
+                String bBossEmpName = bBoss.getName();
+                String bBossEmail = bBoss.getEmail();
 //                log.info("-------------------- 본부장 이름 = " + bBossEmpName);
 
                 if (approvalMailDto.getDept().contains("그룹웨어관리")) {

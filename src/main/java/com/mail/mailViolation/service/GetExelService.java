@@ -116,22 +116,40 @@ public class GetExelService {
                 // 결재를 받으려는 사람이 일반 사원일 경우
                 if ("N".equals(apprReferYn)) {
 //                    log.info("나는 일반 사원입니다 내 이름은 " + findEmp.getEmpName());
-                    condition = checkValidate.basicEmployee(lastApprover, empDeptId, referencer, sBossEmpName, bBossEmpName);
+
+                    // 팀장이 결재했는가?
+                    boolean isTBossApprover = checkValidate.approvalTBoss(empDeptId, lastApprover);
+
+                    // 실장 혹은 본부장을 참조하였는가?
+                    condition = checkValidate.basicEmployee(
+                            isTBossApprover, lastApprover, referencer,
+                            sBossEmpName, sBossEmail,
+                            bBossEmpName, bBossEmail);
                 }
 
                 // 결재를 받으려는 사람이 팀장일 경우
                 if ("T".equals(apprReferYn)) {
 //                    log.info("나는 팀장입니다 내 이름은 " + findEmp.getEmpName());
-                    boolean approvalSBBoss = checkValidate.matchSBBoss(lastApprover, sBossEmpName, bBossEmpName);
-                    condition = checkValidate.checkCondition(approvalSBBoss);
+
+                    // 실장 결재
+                    boolean isSBossApprover = checkValidate.isSBossApprover(lastApprover, sBossEmpName);
+                    // 본부장 결재
+                    boolean isBBossApprover = checkValidate.isBBossApprover(lastApprover, bBossEmpName);
+
+                    // 실장 혹은 본부장에게 결재를 받았는가?
+                    boolean currentState = isSBossApprover || isBBossApprover;
+
+                    condition = checkValidate.checkCondition(currentState);
                 }
 
                 // 결재를 받으려는 사람이 실장일 경우
                 if ("S".equals(apprReferYn)) {
                     // 본부장이 결재한 경우
 //                    log.info("나는 실장입니다 내 이름은 " + findEmp.getEmpName());
-                    boolean isApprovalBBoss = checkValidate.matchBoss(lastApprover, bBossEmpName);
-                    condition = checkValidate.checkCondition(isApprovalBBoss);
+
+                    boolean isBBossApprover = checkValidate.isBBossApprover(lastApprover, bBossEmpName);
+
+                    condition = checkValidate.checkCondition(isBBossApprover);
                 }
 
                 // DB 관리자인 it 혁신실 팀장, 결재 관리하는 경영지원실 팀장 및 실장일 경우
@@ -139,10 +157,25 @@ public class GetExelService {
                         || (lastApprover.equals(managementTeamSBoss))
                         || (lastApprover.equals(itInnovationTeamTBoss));
 
-                // 부적격 상태이고, 최종 DB 관리자 및 경영지원실 팀장 or 실장일경우
-                if ((!condition.equals("O")) && masterApproval) {
-                    boolean isReferenceSBBoss = checkValidate.matchSBBoss(referencer, sBossEmpName, bBossEmpName);
-                    condition = checkValidate.checkCondition(isReferenceSBBoss);
+                // 일반사원이고, 부적격 상태이고, (최종 DB 관리자 및 경영지원실 팀장 or 실장이 결재한 경우
+                if (condition.equals("X") && masterApproval && !apprReferYn.equals("S") ) {
+
+                    // 본인 부서의 실장 혹은 본부장을 참조했는가?
+                    boolean isSBossReferer = checkValidate.isSBossReferer(referencer, sBossEmpName, sBossEmail);
+                    boolean isBBossReferer = checkValidate.isBBossReferer(referencer, bBossEmpName, bBossEmail);
+
+                    boolean isSBReferer = isSBossReferer || isBBossReferer;
+
+                    condition = checkValidate.checkCondition(isSBReferer);
+                }
+
+                // 실장이고, 부적격 상태이고, (최종 DB 관리자 및 경영지원실 팀장 or 실장이 결재한 경우
+                if (condition.equals("X") && masterApproval && apprReferYn.equals("S") ) {
+
+                    // 본인 부서의 본부장을 참조했는가?
+                    boolean isBBossReferer = checkValidate.isBBossReferer(referencer, bBossEmpName, bBossEmail);
+
+                    condition = checkValidate.checkCondition(isBBossReferer);
                 }
 
                 // condition이 "X"일 경우, 부적격 리스트에 추가

@@ -183,7 +183,7 @@
             const formattedDate = formatDate(item.approvalDate);
             tbodyHtml += "<td>" + formattedDate + "</td>";
 
-            tbodyHtml += "<td class='limit-reference'>" + (item.reference || '') + "</td>";
+            tbodyHtml += "<td>" + (item.reference || '') + "</td>";
             tbodyHtml += "<td>" + item.blockCause + "</td>";
             tbodyHtml += "<td>" + item.lastApprover + "</td>";
             tbodyHtml += "<td>" + item.result + "</td>";

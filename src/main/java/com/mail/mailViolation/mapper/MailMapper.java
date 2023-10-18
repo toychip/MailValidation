@@ -1,5 +1,6 @@
 package com.mail.mailViolation.mapper;
 
+import com.mail.mailViolation.dto.BossInfo;
 import com.mail.mailViolation.dto.EmployeeDto;
 import com.mail.mailViolation.dto.MailResultDto;
 import org.apache.ibatis.annotations.Mapper;
@@ -22,7 +23,7 @@ public interface MailMapper {
     List<MailResultDto> searchDateConditionX(Integer fromYear, Integer fromMonth,
                                              Integer toYear, Integer toMonth);
     List<Map<String, Object>> findAllTBoss();
-    List<Map<String, Object>> findAllSBoss();
-    List<Map<String, Object>> findAllBBoss();
+    List<BossInfo> findAllSBoss();
+    List<BossInfo> findAllBBoss();
 
 }

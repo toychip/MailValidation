@@ -60,22 +60,6 @@ public class CheckValidate {
                 .orElse(EmployeeDto.getDefault());
     }
 
-
-    // 팀장이 결재 했는가?
-    public boolean approvalTBoss(String lastApprover,
-                                 BigDecimal deptId) {
-        // 팀장 이름 리스트
-        List<String> tBossEmpNameList = findTBoss(deptId);
-        for (String s : tBossEmpNameList) {
-//            log.info("-------------- 팀장 이름 = " + s);
-        }
-
-        // 하나라도 존재하는가?
-        return tBossEmpNameList.stream()
-                .anyMatch(empName -> empName.equals(lastApprover));
-    }
-
-
     public List<String> findTBoss(BigDecimal deptId) {
 //        log.info("deptId = " + deptId);
         List<String> tBossList = tBossMap.getOrDefault(deptId, new ArrayList<>());
@@ -109,74 +93,88 @@ public class CheckValidate {
         return bBossInfo;
     }
 
-    // 팀장, 실장, 본부장이 아닌 '일반 사원'일 경우
-    public String basicEmployee(String lastApprover, BigDecimal empDeptId, String referencer,
-                                String sBossEmpName, String bBossEmpName) {
+    // 팀장이 결재 했는가?
+    public boolean approvalTBoss(BigDecimal deptId, String lastApprover) {
+        // 팀장 이름 리스트
+        List<String> tBossEmpNameList = findTBoss(deptId);
+        for (String s : tBossEmpNameList) {
+//            log.info("-------------- 팀장 이름 = " + s);
+        }
+
+        // 하나라도 존재하는가?
+        return tBossEmpNameList.stream()
+                .anyMatch(empName -> empName.equals(lastApprover));
+    }
+
+    // 실장, 본부장이 아닌 '일반 사원'일 경우
+    public String basicEmployee(Boolean isTBossApprover, String lastApprover, String referenceString,
+                                String sBossName, String sBossEmail,
+                                String bBossName, String bBossEmail) {
         String condition;
 
         // 팀장이 결재했는가?
-        boolean isApprovalTBoss = approvalTBoss(lastApprover, empDeptId);
-        if (isApprovalTBoss) {
+        if (isTBossApprover) {
             // 실장 혹은 본부장을 참조했는가?
-            boolean referenceSBBoss = matchSBBoss(referencer, sBossEmpName, bBossEmpName);
+            boolean isSBossReferer = isSBossReferer(referenceString, sBossName, sBossEmail);
+            boolean isBBossReferer = isBBossReferer(referenceString, bBossName, bBossEmail);
+            boolean SBReference = isSBossReferer || isBBossReferer;
 
             // 팀장이 결재 && (실장 or 본부장을 참조)한 경우
-            condition = checkCondition(referenceSBBoss);
+            condition = checkCondition(SBReference);
+
             if (condition.equals("O")) {
                 return condition;
             }
+
         }
+
         // 이곳에 왔다면 팀장이 결재하지 않았거나, 팀장이 결재했는데 참조를 올바르게 하지 않은 상태
 
         // 실장 혹은 본부장이 결재했는가?
-        boolean approvalSBBoss = matchSBBoss(lastApprover, sBossEmpName, bBossEmpName);
-        condition = checkCondition(approvalSBBoss);
+        boolean isSBossApprover = isSBossApprover(lastApprover, sBossName);
+        boolean isBBossApprover = isBBossApprover(lastApprover, bBossName);
+
+        boolean SBApprover = isSBossApprover || isBBossApprover;
+        condition = checkCondition(SBApprover);
 
         return condition;
     }
 
     // 실장이 결재했는가?
-    public boolean isSBossApprover(BigDecimal deptId, String name) {
-        BossInfo sBoss = sBossMap.get(deptId);
-        if (sBoss != null && sBoss.getName().equals(name)) {
+    public boolean isSBossApprover(String lastApprover, String sBossName) {
+
+        if (lastApprover != null && lastApprover.equals(sBossName)) {
             return true;
         }
         return false;
     }
 
     // 실장을 참조했는가?
-    public boolean isSBossReferer(BigDecimal deptId, String refererString) {
-        BossInfo sBoss = sBossMap.get(deptId);
-        if (sBoss == null) {
+    public boolean isSBossReferer(String refererString, String sBossName, String sBossMail) {
+        if (refererString == null) {
             return false;
         }
-        String sBossName = sBoss.getName();
-        String sBossEmail = sBoss.getEmail();
 
         // 참조 문자열에서 실장의 이름 또는 이메일이 포함되어 있는지 확인
-        if (refererString.contains(sBossName) || refererString.contains(sBossEmail)) {
+        if (refererString.contains(sBossName) || refererString.contains(sBossMail)) {
             return true;
         }
         return false;
     }
 
     // 본부장이 결재했는가?
-    public boolean isBBossApprover(BigDecimal deptId, String name) {
-        BossInfo bBoss = bBossMap.get(deptId);
-        if (bBoss != null && bBoss.getName().equals(name)) {
+    public boolean isBBossApprover(String lastApprover, String bBossName) {
+        if (lastApprover != null && lastApprover.equals(bBossName)) {
             return true;
         }
         return false;
     }
 
     // 본부장을 참조했는가?
-    public boolean isBBossReferer(BigDecimal deptId, String refererString) {
-        BossInfo bBoss = bBossMap.get(deptId);
-        if (bBoss == null) {
+    public boolean isBBossReferer(String refererString, String bBossName, String bBossEmail) {
+        if (refererString == null) {
             return false;
         }
-        String bBossName = bBoss.getName();
-        String bBossEmail = bBoss.getEmail();
 
         // 참조 문자열에서 본부장의 이름 또는 이메일이 포함되어 있는지 확인
         if (refererString.contains(bBossName) || refererString.contains(bBossEmail)) {

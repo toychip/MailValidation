@@ -6,7 +6,6 @@ import com.mail.mailViolation.exception.NotFoundTBossException;
 import com.mail.mailViolation.mapper.MailMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -54,16 +53,13 @@ public class CheckValidate {
         }
     }
 
+    // 사원 정보 로딩
     public EmployeeDto getEmp(String name) {
 
         return mapper.findByNameAndUseYn(name)
                 .orElse(EmployeeDto.getDefault());
     }
 
-    // 팀장이 결재 후 실장 혹은 본부장이을 참초 or 결재 했는가?
-    public boolean matchSBBoss(String exelEmpName, String sBossEmpName, String bBossEmpName) {
-        return matchBoss(exelEmpName, sBossEmpName) || matchBoss(exelEmpName, bBossEmpName);
-    }
 
     // 팀장이 결재 했는가?
     public boolean approvalTBoss(String lastApprover,
@@ -79,15 +75,6 @@ public class CheckValidate {
                 .anyMatch(empName -> empName.equals(lastApprover));
     }
 
-    // 실장, 본부장 - 결재 혹은 참조로 match 확인
-    public boolean matchBoss(String exelEmpName,
-                             String realEmpName) {
-
-        if (exelEmpName.contains(realEmpName)) {
-            return true;
-        }
-        return false;
-    }
 
     public List<String> findTBoss(BigDecimal deptId) {
 //        log.info("deptId = " + deptId);
@@ -146,6 +133,56 @@ public class CheckValidate {
         condition = checkCondition(approvalSBBoss);
 
         return condition;
+    }
+
+    // 실장이 결재했는가?
+    public boolean isSBossApprover(BigDecimal deptId, String name) {
+        BossInfo sBoss = sBossMap.get(deptId);
+        if (sBoss != null && sBoss.getName().equals(name)) {
+            return true;
+        }
+        return false;
+    }
+
+    // 실장을 참조했는가?
+    public boolean isSBossReferer(BigDecimal deptId, String refererString) {
+        BossInfo sBoss = sBossMap.get(deptId);
+        if (sBoss == null) {
+            return false;
+        }
+        String sBossName = sBoss.getName();
+        String sBossEmail = sBoss.getEmail();
+
+        // 참조 문자열에서 실장의 이름 또는 이메일이 포함되어 있는지 확인
+        if (refererString.contains(sBossName) || refererString.contains(sBossEmail)) {
+            return true;
+        }
+        return false;
+    }
+
+    // 본부장이 결재했는가?
+    public boolean isBBossApprover(BigDecimal deptId, String name) {
+        BossInfo bBoss = bBossMap.get(deptId);
+        if (bBoss != null && bBoss.getName().equals(name)) {
+            return true;
+        }
+        return false;
+    }
+
+    // 본부장을 참조했는가?
+    public boolean isBBossReferer(BigDecimal deptId, String refererString) {
+        BossInfo bBoss = bBossMap.get(deptId);
+        if (bBoss == null) {
+            return false;
+        }
+        String bBossName = bBoss.getName();
+        String bBossEmail = bBoss.getEmail();
+
+        // 참조 문자열에서 본부장의 이름 또는 이메일이 포함되어 있는지 확인
+        if (refererString.contains(bBossName) || refererString.contains(bBossEmail)) {
+            return true;
+        }
+        return false;
     }
 
     // if true -> condition == O

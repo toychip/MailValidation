@@ -2,7 +2,6 @@ package com.mail.mailViolation.service;
 
 import com.mail.mailViolation.dto.BossInfo;
 import com.mail.mailViolation.dto.EmployeeDto;
-import com.mail.mailViolation.exception.NotFoundTBossException;
 import com.mail.mailViolation.mapper.MailMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -61,10 +60,12 @@ public class CheckValidate {
     }
 
     public List<String> findTBoss(BigDecimal deptId) {
+        List<String> newList = new ArrayList<>();
 //        log.info("deptId = " + deptId);
         List<String> tBossList = tBossMap.getOrDefault(deptId, new ArrayList<>());
         if (tBossList.isEmpty()) {
-            throw new NotFoundTBossException("팀장을 찾을 수 없음");
+            return newList;
+//            throw new NotFoundTBossException("팀장을 찾을 수 없음");
         }
         return tBossList;
     }

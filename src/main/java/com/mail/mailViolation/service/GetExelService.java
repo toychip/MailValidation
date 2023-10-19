@@ -176,6 +176,13 @@ public class GetExelService {
                     boolean isBBossReferer = checkValidate.isBBossReferer(referencer, bBossEmpName, bBossEmail);
 
                     condition = checkValidate.checkCondition(isBBossReferer);
+
+                    System.out.println("GetExelService.processExcelFile");
+                    // DT 실은 본부가 없음
+                    if(findEmp.getEmpName().equals("유성훈")) {
+                        log.info("findemp.getempName() = " + findEmp.getEmpName());
+                        condition = "O";
+                    }
                 }
 
                 // condition이 "X"일 경우, 부적격 리스트에 추가

@@ -1,6 +1,5 @@
 package nice.mailViolation.service;
 
-import com.mail.mailViolation.dto.*;
 import nice.mailViolation.dto.*;
 import nice.mailViolation.exception.ExelUploadException;
 import nice.mailViolation.mapper.MailMapper;
@@ -82,6 +81,11 @@ public class GetExelService {
                 BigDecimal empDeptId = findEmp.getDeptId();
 //                log.info("-------------------- empDeptId = " + empDeptId);
 
+                // 부적격 사유
+                ReasonIneligibility reasonIneligibility;
+
+                ReferNTypeReturnDto referNTypeReturnDto;
+
                 String condition = "X";
                 String title = approvalMailDto.getTitle();
 //                log.info("-------------------- title = " + title);
@@ -121,11 +125,13 @@ public class GetExelService {
                     // 팀장이 결재했는가?
                     boolean isTBossApprover = checkValidate.approvalTBoss(empDeptId, lastApprover);
 
-                    // 실장 혹은 본부장을 참조하였는가?
-                    condition = checkValidate.basicEmployee(
+
+                    // 일반사원일 때의 부적격 검증
+                    referNTypeReturnDto = checkValidate.basicEmployee(
                             isTBossApprover, lastApprover, referencer,
                             sBossEmpName, sBossEmail,
                             bBossEmpName, bBossEmail);
+
                 }
 
                 // 결재를 받으려는 사람이 팀장일 경우

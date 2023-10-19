@@ -2,6 +2,8 @@ package nice.mailViolation.service;
 
 import nice.mailViolation.dto.BossInfo;
 import nice.mailViolation.dto.EmployeeDto;
+import nice.mailViolation.dto.ReasonIneligibility;
+import nice.mailViolation.dto.ReferNTypeReturnDto;
 import nice.mailViolation.mapper.MailMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -108,10 +110,11 @@ public class CheckValidate {
     }
 
     // 실장, 본부장이 아닌 '일반 사원'일 경우
-    public String basicEmployee(Boolean isTBossApprover, String lastApprover, String referenceString,
-                                String sBossName, String sBossEmail,
-                                String bBossName, String bBossEmail) {
+    public ReferNTypeReturnDto basicEmployee(Boolean isTBossApprover, String lastApprover, String referenceString,
+                                             String sBossName, String sBossEmail,
+                                             String bBossName, String bBossEmail) {
         String condition;
+        ReasonIneligibility reasonIneligibility = ReasonIneligibility.I;    // 초기화
 
         // 팀장이 결재했는가?
         if (isTBossApprover) {
@@ -124,7 +127,11 @@ public class CheckValidate {
             condition = checkCondition(SBReference);
 
             if (condition.equals("O")) {
-                return condition;
+                reasonIneligibility = ReasonIneligibility.A;
+                return ReferNTypeReturnDto.builder()
+                        .condition(condition)   // Contiion == O
+                        .reasonIneligibility(reasonIneligibility) // reasonIneligibility.A 적격
+                        .build();
             }
 
         }
@@ -138,7 +145,21 @@ public class CheckValidate {
         boolean SBApprover = isSBossApprover || isBBossApprover;
         condition = checkCondition(SBApprover);
 
-        return condition;
+        // 팀장이 결재하였지만 부적격이므로 보직좌(실장 혹은 본부장)를 참조하지 않음
+        if ((isTBossApprover == true) && (condition.equals("X"))) {
+            reasonIneligibility = ReasonIneligibility.C;
+        }
+
+        // 팀장과 실장, 본부장 중 아무에게도 결제를 받지 않음
+        if ((isTBossApprover == false) && (condition.equals("X"))) {
+            reasonIneligibility = ReasonIneligibility.C;
+        }
+
+        return ReferNTypeReturnDto.builder()
+                .condition(condition)   // Contiion == O
+                .reasonIneligibility(reasonIneligibility) // reasonIneligibility.A 적격
+                .build();
+
     }
 
     // 실장이 결재했는가?

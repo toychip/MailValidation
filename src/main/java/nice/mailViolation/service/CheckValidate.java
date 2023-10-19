@@ -127,10 +127,9 @@ public class CheckValidate {
             condition = checkCondition(SBReference);
 
             if (condition.equals("O")) {
-                reasonIneligibility = ReasonIneligibility.A;
                 return ConditionAndReasonIneligibility.builder()
                         .condition(condition)   // Contiion == O
-                        .reasonIneligibility(reasonIneligibility) // reasonIneligibility.A 적격
+                        .reasonIneligibility(ReasonIneligibility.A) // reasonIneligibility.A 적격
                         .build();
             }
 

@@ -13,7 +13,7 @@ public enum ReasonIneligibility {
     I, // 실장 이고, 경영지원실 팀장, 실장, DB관리자 중 한 명에게 결재를 받았지만, 본부장을 참조하지 않음.
     J,
 
-    T // temp
+    T // 퇴사나 휴직
 
 
 }

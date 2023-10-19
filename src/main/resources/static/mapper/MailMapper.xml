@@ -54,7 +54,7 @@
                     T.REFERENCE = #{reference},
                     T.BLOCK_CAUSE = #{blockCause},
                     T.LAST_APPROVER = #{lastApprover},
-                    T.RESULT = #{result}
+                    T.RESULT = #{result},
                     T.REASON_INELIGIBILITY = #{reasonIneligibility}
             WHEN NOT MATCHED THEN
                 INSERT (

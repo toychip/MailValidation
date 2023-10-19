@@ -154,7 +154,6 @@ public class GetExelService {
                     // 팀장이고, 실장 혹은 본부장 중 아무에게도 결재를 받지 않음
                     if (condition.equals("X")) {
                         reasonIneligibility = ReasonIneligibility.E;
-
                     }
 
                 }
@@ -168,13 +167,9 @@ public class GetExelService {
 
                     condition = checkValidate.checkCondition(isBBossApprover);
 
+//                    실장이고, 본부장에게 결재를 받지 않음
                     if (condition.equals("X")) {
                         reasonIneligibility = ReasonIneligibility.F;
-
-                        conditionAndReasonIneligibility = ConditionAndReasonIneligibility.builder()
-                                .condition(condition)
-                                .reasonIneligibility(reasonIneligibility)
-                                .build();
                     }
                 }
 
@@ -183,7 +178,7 @@ public class GetExelService {
                         || (lastApprover.equals(managementTeamSBoss))
                         || (lastApprover.equals(itInnovationTeamTBoss));
 
-                // 일반사원이고, 부적격 상태이고, (최종 DB 관리자 및 경영지원실 팀장 or 실장이 결재한 경우
+                // 일반사원 or 팀장이고, 부적격 상태이고, (최종 DB 관리자 및 경영지원실 팀장 or 실장이 결재한 경우
                 if (condition.equals("X") && masterApproval && !apprReferYn.equals("S") ) {
 
                     // 본인 부서의 실장 혹은 본부장을 참조했는가?
@@ -193,6 +188,16 @@ public class GetExelService {
                     boolean isSBReferer = isSBossReferer || isBBossReferer;
 
                     condition = checkValidate.checkCondition(isSBReferer);
+
+                    // 일반 사원이고, 경영지원실 팀장, 실장, DB관리자 중 한 명에게 결재를 받았지만, 본인 부서의 보직좌를 참조하지 않음.
+                    if (apprReferYn.equals("N") && condition.equals("X")) {
+                        reasonIneligibility = ReasonIneligibility.G;
+                    }
+
+                    // 팀장 이고, 경영지원실 팀장, 실장, DB관리자 중 한 명에게 결재를 받았지만, 본인 부서의 보직좌를 참조하지 않음.
+                    if (apprReferYn.equals("T") && condition.equals("X")) {
+                        reasonIneligibility = ReasonIneligibility.H;
+                    }
                 }
 
                 // 실장이고, 부적격 상태이고, (최종 DB 관리자 및 경영지원실 팀장 or 실장이 결재한 경우
@@ -208,6 +213,7 @@ public class GetExelService {
                     if(findEmp.getEmpName().equals("유성훈")) {
                         log.info("findemp.getempName() = " + findEmp.getEmpName());
                         condition = "O";
+                        reasonIneligibility = ReasonIneligibility.A;
                     }
                 }
 

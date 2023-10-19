@@ -19,24 +19,28 @@ public class InsertService {
     public void insertData(List<MailResultDto> conditionOList,
                            List<MailResultDto> conditionXList,
                            List<MailResultDto> conditionTList) {
-        if (conditionOList != null && !conditionOList.isEmpty()){
+
+        if (isExists(conditionOList)) {
             for (MailResultDto mailResultDto : conditionOList) {
                 mapper.insertValidResult(mailResultDto);
             }
         }
 
-
-        if (conditionXList != null && !conditionXList.isEmpty()){
+        if (isExists(conditionXList)) {
             for (MailResultDto mailResultDto : conditionXList) {
                 mapper.insertValidResult(mailResultDto);
             }
         }
 
-        if (conditionTList != null && !conditionTList.isEmpty()){
+        if (isExists(conditionTList)) {
             for (MailResultDto mailResultDto : conditionTList) {
                 mapper.insertValidResult(mailResultDto);
             }
         }
+    }
+
+    private static boolean isExists(List<MailResultDto> conditionList) {
+        return conditionList != null && !conditionList.isEmpty();
     }
 }
 

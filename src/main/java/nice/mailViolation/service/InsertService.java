@@ -17,13 +17,18 @@ public class InsertService {
     // 데이터 삽입
     @Transactional
     public void insertData(List<MailResultDto> conditionOList,
-                           List<MailResultDto> conditionXList) {
+                           List<MailResultDto> conditionXList,
+                           List<MailResultDto> conditionTList) {
 
         for (MailResultDto mailResultDto : conditionOList) {
             mapper.insertValidResult(mailResultDto);
         }
 
         for (MailResultDto mailResultDto : conditionXList) {
+            mapper.insertValidResult(mailResultDto);
+        }
+
+        for (MailResultDto mailResultDto : conditionTList) {
             mapper.insertValidResult(mailResultDto);
         }
     }

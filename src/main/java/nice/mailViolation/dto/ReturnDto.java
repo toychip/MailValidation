@@ -15,4 +15,5 @@ public class ReturnDto {
 
     private List<MailResultDto> conditionXList;
     private List<MailResultDto> conditionOList;
+    private List<MailResultDto> conditionTList;
 }

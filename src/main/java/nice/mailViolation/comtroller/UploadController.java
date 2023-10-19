@@ -72,9 +72,11 @@ public class UploadController {
 			// 적격 리스트, 부적격 리스트 분리
 			List<MailResultDto> conditionOList = returnDto.getConditionOList();
 			List<MailResultDto> conditionXList = returnDto.getConditionXList();
+			List<MailResultDto> conditionTList = returnDto.getConditionTList();
+
 
 			// 데이터 삽입
-			insertService.insertData(conditionOList, conditionXList);
+			insertService.insertData(conditionOList, conditionXList, conditionTList);
 
 			redirectAttributes.addFlashAttribute("conditionXList", conditionXList);
 			log.info("안전하게 저장 성공");

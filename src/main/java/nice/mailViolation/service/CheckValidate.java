@@ -156,7 +156,7 @@ public class CheckValidate {
 
         return ConditionAndReasonIneligibility.builder()
                 .condition(condition)   // Contiion == O
-                .reasonIneligibility(reasonIneligibility) // reasonIneligibility.A 적격
+                .reasonIneligibility(reasonIneligibility)
                 .build();
 
     }

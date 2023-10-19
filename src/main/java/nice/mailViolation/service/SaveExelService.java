@@ -1,6 +1,7 @@
 package nice.mailViolation.service;
 
 import nice.mailViolation.dto.MailResultDto;
+import nice.mailViolation.dto.ReasonIneligibility;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -42,6 +43,7 @@ public class SaveExelService {
         headerRow.createCell(7).setCellValue("차단 사유");
         headerRow.createCell(8).setCellValue("최종 결재자");
         headerRow.createCell(9).setCellValue("적격 여부");
+        headerRow.createCell(10).setCellValue("부적격 사유");
 
         // rows
         for (int i = 0; i < conditionXList.size(); i++) {
@@ -58,6 +60,7 @@ public class SaveExelService {
             row.createCell(7).setCellValue(data.getBlockCause());
             row.createCell(8).setCellValue(data.getLastApprover());
             row.createCell(9).setCellValue(data.getResult());
+            row.createCell(10).setCellValue(getReasonInKorean(data.getReasonIneligibility()));
         }
 
         // 응답 properties 설정
@@ -72,4 +75,43 @@ public class SaveExelService {
         workbook.close();
         outputStream.close();
     }
+
+    public String getReasonInKorean(ReasonIneligibility reason) {
+        if (reason == ReasonIneligibility.A) {
+            return "적격";
+        }
+        if (reason == ReasonIneligibility.B) {
+            return "그룹웨어관리 테스트용";
+        }
+        if (reason == ReasonIneligibility.C) {
+            return "일반 사원이고, 팀장한테 결재받았지만 보직좌(실장 or 본부장)에게 결재를 받지 않음";
+        }
+        if (reason == ReasonIneligibility.D) {
+            return "일반 사원이고, 팀장, 실장, 본부장 중 아무에게도 결재를 받지 않음";
+        }
+        if (reason == ReasonIneligibility.E) {
+            return "팀장이고, 실장 or 본부장 중 아무에게도 결재를 받지 않음";
+        }
+        if (reason == ReasonIneligibility.F) {
+            return "실장이고, 본부장에게 결재를 받지 않음";
+        }
+        if (reason == ReasonIneligibility.G) {
+            return "일반 사원이고, 경영지원실 팀장, 실장, DB관리자 중 한 명에게 결재를 받았지만, 본인 부서의 보직좌를 참조하지 않음";
+        }
+        if (reason == ReasonIneligibility.H) {
+            return "팀장 이고, 경영지원실 팀장, 실장, DB관리자 중 한 명에게 결재를 받았지만, 본인 부서의 보직좌를 참조하지 않음";
+        }
+        if (reason == ReasonIneligibility.I) {
+            return "실장 이고, 경영지원실 팀장, 실장, DB관리자 중 한 명에게 결재를 받았지만, 본부장을 참조하지 않음";
+        }
+        if (reason == ReasonIneligibility.J) {
+            return "여유 공백";
+        }
+        if (reason == ReasonIneligibility.T) {
+            return "퇴사나 휴직";
+        }
+
+        return "";  // "알 수 없음" 상태는 오지 않는다고 하셨으므로 빈 문자열을 반환합니다.
+    }
+
 }

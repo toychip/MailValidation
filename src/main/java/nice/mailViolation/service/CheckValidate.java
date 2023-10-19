@@ -114,7 +114,7 @@ public class CheckValidate {
                                                          String sBossName, String sBossEmail,
                                                          String bBossName, String bBossEmail) {
         String condition;
-        ReasonIneligibility reasonIneligibility = ReasonIneligibility.I;    // 초기화
+        ReasonIneligibility reasonIneligibility = ReasonIneligibility.T;    // temp init
 
         // 팀장이 결재했는가?
         if (isTBossApprover) {

@@ -43,6 +43,7 @@ public class GetExelService {
         InputStream inputStream = null;
         List<MailResultDto> conditionXList = new ArrayList<>();
         List<MailResultDto> conditionOList = new ArrayList<>();
+        List<MailResultDto> conditionTList = new ArrayList<>();
 
         checkValidate.loadBossInfoToMemory();
 
@@ -82,7 +83,7 @@ public class GetExelService {
 //                log.info("-------------------- empDeptId = " + empDeptId);
 
                 // 부적격 사유
-                ReasonIneligibility reasonIneligibility;
+                ReasonIneligibility reasonIneligibility = ReasonIneligibility.T;
 
                 ConditionAndReasonIneligibility conditionAndReasonIneligibility;
 
@@ -208,7 +209,10 @@ public class GetExelService {
 
                     condition = checkValidate.checkCondition(isBBossReferer);
 
-                    System.out.println("GetExelService.processExcelFile");
+                    if (condition.equals("X")) {
+                        reasonIneligibility = ReasonIneligibility.I;
+                    }
+
                     // DT 실은 본부가 없음
                     if(findEmp.getEmpName().equals("유성훈")) {
                         log.info("findemp.getempName() = " + findEmp.getEmpName());
@@ -233,6 +237,7 @@ public class GetExelService {
                                     .blockCause(approvalMailDto.getBlockCause())	// 차단사유
                                     .lastApprover(approvalMailDto.getLastApprover())	// 최종 결재
                                     .result(condition)		// 적격 여부 적격: O, 부적격: X, 테스트: T
+                                    .reasonIneligibility(reasonIneligibility)
                                     .build()
                     );
                 }
@@ -253,6 +258,27 @@ public class GetExelService {
                                     .blockCause(approvalMailDto.getBlockCause())	// 차단사유
                                     .lastApprover(approvalMailDto.getLastApprover())	// 최종 결재
                                     .result(condition)		// 적격 여부 적격: O, 부적격: X, 테스트: T
+                                    .reasonIneligibility(reasonIneligibility)
+                                    .build()
+                    );
+                }
+
+                if ("T".equals(condition)) {
+                    conditionTList.add(
+                            MailResultDto.builder()
+                                    .docNumber(approvalMailDto.getDocNumber())	// 문서 번호
+                                    .draftsman(approvalMailDto.getDraftsman())	// 기안자
+                                    .dept(approvalMailDto.getDept())	// 소속부서
+                                    .deptId(empDeptId)
+                                    .title(title)	// 제목
+                                    .approvalDate(approvalMailDto.getApprovalDate())	// 결재일
+                                    .mailTitle(approvalMailDto.getMailTitle())	// 메일 제목
+                                    .recipient(approvalMailDto.getRecipient())	// 받는 사람
+                                    .reference(approvalMailDto.getReference())	// 참조
+                                    .blockCause(approvalMailDto.getBlockCause())	// 차단사유
+                                    .lastApprover(approvalMailDto.getLastApprover())	// 최종 결재
+                                    .result(condition)		// 적격 여부 적격: O, 부적격: X, 테스트: T
+                                    .reasonIneligibility(reasonIneligibility)
                                     .build()
                     );
                 }
@@ -277,7 +303,8 @@ public class GetExelService {
         // 최종 결과 반환
 		return ReturnDto.builder()
                 .conditionXList(conditionXList.isEmpty() ? null:conditionXList)
-                .conditionOList(conditionOList)
+                .conditionOList(conditionTList.isEmpty() ? null:conditionOList)
+                .conditionTList(conditionTList.isEmpty() ? null:conditionTList)
                 .build();
 	}
 

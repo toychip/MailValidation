@@ -55,15 +55,16 @@
                     T.BLOCK_CAUSE = #{blockCause},
                     T.LAST_APPROVER = #{lastApprover},
                     T.RESULT = #{result}
+                    T.REASON_INELIGIBILITY = #{reasonIneligibility}
             WHEN NOT MATCHED THEN
                 INSERT (
                         NO, DOC_NUMBER, DRAFTSMAN, DEPT, DEPT_ID, TITLE, APPROVAL_DATE,
-                        MAIL_TITLE, RECIPIENT, REFERENCE, BLOCK_CAUSE, LAST_APPROVER, RESULT
+                        MAIL_TITLE, RECIPIENT, REFERENCE, BLOCK_CAUSE, LAST_APPROVER, RESULT, REASON_INELIGIBILITY
                     )
                     VALUES (
                                TEST_EMAIL_VALID_seq.NEXTVAL, #{docNumber}, #{draftsman}, #{dept}, #{deptId}, #{title},
                                #{approvalDate, jdbcType=TIMESTAMP}, #{mailTitle}, #{recipient}, #{reference},
-                               #{blockCause}, #{lastApprover}, #{result}
+                               #{blockCause}, #{lastApprover}, #{result}, #{reasonIneligibility}
                            )
     </insert>
 
@@ -81,6 +82,7 @@
         <result property="blockCause" column="BLOCK_CAUSE"/>
         <result property="lastApprover" column="LAST_APPROVER"/>
         <result property="result" column="RESULT"/>
+        <result property="reasonIneligibility" column="REASON_INELIGIBILITY"/>
     </resultMap>
 
     <!-- TEST_EMAIL_VALID 테이블에서 날짜에 맞게 조회 -->

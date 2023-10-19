@@ -258,7 +258,7 @@ public class GetExelService {
                                     .blockCause(approvalMailDto.getBlockCause())	// 차단사유
                                     .lastApprover(approvalMailDto.getLastApprover())	// 최종 결재
                                     .result(condition)		// 적격 여부 적격: O, 부적격: X, 테스트: T
-                                    .reasonIneligibility(reasonIneligibility)
+                                    .reasonIneligibility(ReasonIneligibility.A)
                                     .build()
                     );
                 }
@@ -278,7 +278,7 @@ public class GetExelService {
                                     .blockCause(approvalMailDto.getBlockCause())	// 차단사유
                                     .lastApprover(approvalMailDto.getLastApprover())	// 최종 결재
                                     .result(condition)		// 적격 여부 적격: O, 부적격: X, 테스트: T
-                                    .reasonIneligibility(reasonIneligibility)
+                                    .reasonIneligibility(ReasonIneligibility.B)
                                     .build()
                     );
                 }
@@ -303,7 +303,7 @@ public class GetExelService {
         // 최종 결과 반환
 		return ReturnDto.builder()
                 .conditionXList(conditionXList.isEmpty() ? null:conditionXList)
-                .conditionOList(conditionTList.isEmpty() ? null:conditionOList)
+                .conditionOList(conditionOList.isEmpty() ? null:conditionOList)
                 .conditionTList(conditionTList.isEmpty() ? null:conditionTList)
                 .build();
 	}

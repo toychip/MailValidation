@@ -132,6 +132,9 @@ public class GetExelService {
                             sBossEmpName, sBossEmail,
                             bBossEmpName, bBossEmail);
 
+                    condition = conditionAndReasonIneligibility.getCondition();
+                    reasonIneligibility = conditionAndReasonIneligibility.getReasonIneligibility();
+
                 }
 
                 // 결재를 받으려는 사람이 팀장일 경우
@@ -148,13 +151,10 @@ public class GetExelService {
 
                     condition = checkValidate.checkCondition(currentState);
 
+                    // 팀장이고, 실장 혹은 본부장 중 아무에게도 결재를 받지 않음
                     if (condition.equals("X")) {
                         reasonIneligibility = ReasonIneligibility.E;
 
-                        conditionAndReasonIneligibility = ConditionAndReasonIneligibility.builder()
-                                .condition(condition)
-                                .reasonIneligibility(reasonIneligibility)
-                                .build();
                     }
 
                 }
@@ -167,6 +167,15 @@ public class GetExelService {
                     boolean isBBossApprover = checkValidate.isBBossApprover(lastApprover, bBossEmpName);
 
                     condition = checkValidate.checkCondition(isBBossApprover);
+
+                    if (condition.equals("X")) {
+                        reasonIneligibility = ReasonIneligibility.F;
+
+                        conditionAndReasonIneligibility = ConditionAndReasonIneligibility.builder()
+                                .condition(condition)
+                                .reasonIneligibility(reasonIneligibility)
+                                .build();
+                    }
                 }
 
                 // DB 관리자인 it 혁신실 팀장, 결재 관리하는 경영지원실 팀장 및 실장일 경우

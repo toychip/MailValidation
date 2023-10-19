@@ -81,6 +81,7 @@
             <th>🚫 차단 사유</th>
             <th>👑 최종 결재자</th>
             <th>✔️ 적격 여부</th>
+            <th>🚫 부적격사유</th>
         </tr>
         </thead>
         <tbody id="dynamicTbody">
@@ -110,6 +111,24 @@
         }
         return newObj;
     }
+
+    function getReasonInKorean(reason) {
+        switch (reason) {
+            // case 'A': return '적격';
+            // case 'B': return '그룹웨어관리 테스트용';
+            case 'C': return '일반 사원이고, 팀장한테 결재받았지만 보직좌(실장 혹은 본부장)에게 결재를 받지 않음';
+            case 'D': return '일반 사원이고, 팀장 실장 본부장 중 아무에게도 결재를 받지 않음';
+            case 'E': return '팀장이고, 실장 혹은 본부장 중 아무에게도 결재를 받지 않음';
+            case 'F': return '실장이고, 본부장에게 결재를 받지 않음';
+            case 'G': return '일반 사원이고, 경영지원실 팀장, 실장, DB관리자 중 한 명에게 결재를 받았지만, 본인 부서의 보직좌를 참조하지 않음';
+            case 'H': return '팀장 이고, 경영지원실 팀장, 실장, DB관리자 중 한 명에게 결재를 받았지만, 본인 부서의 보직좌를 참조하지 않음';
+            case 'I': return '실장 이고, 경영지원실 팀장, 실장, DB관리자 중 한 명에게 결재를 받았지만, 본부장을 참조하지 않음';
+            // case 'J': return '여유 공백';
+            case 'T': return '현재 퇴사나 휴직으로 검증 불가';
+            default: return '알 수 없음';
+        }
+    }
+
 
     // 이 부분은 변경할 필요가 없습니다.
     var jsonTemp = ${conditionXList};
@@ -187,6 +206,7 @@
             tbodyHtml += "<td>" + item.blockCause + "</td>";
             tbodyHtml += "<td>" + item.lastApprover + "</td>";
             tbodyHtml += "<td>" + item.result + "</td>";
+            tbodyHtml += "<td>" + getReasonInKorean(item.reasonIneligibility) + "</td>";
             tbodyHtml += "</tr>";
         });
 

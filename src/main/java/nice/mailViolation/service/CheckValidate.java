@@ -1,8 +1,8 @@
-package com.mail.mailViolation.service;
+package nice.mailViolation.service;
 
-import com.mail.mailViolation.dto.BossInfo;
-import com.mail.mailViolation.dto.EmployeeDto;
-import com.mail.mailViolation.mapper.MailMapper;
+import nice.mailViolation.dto.BossInfo;
+import nice.mailViolation.dto.EmployeeDto;
+import nice.mailViolation.mapper.MailMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

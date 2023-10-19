@@ -1,7 +1,7 @@
-package com.mail.mailViolation.service;
+package nice.mailViolation.service;
 
-import com.mail.mailViolation.dto.MailResultDto;
-import com.mail.mailViolation.mapper.MailMapper;
+import nice.mailViolation.dto.MailResultDto;
+import nice.mailViolation.mapper.MailMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

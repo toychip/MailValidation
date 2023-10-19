@@ -1,13 +1,16 @@
-package com.mail.mailViolation.comtroller;
+package nice.mailViolation.comtroller;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.mail.mailViolation.dto.ReturnDto;
-import com.mail.mailViolation.service.InsertService;
+import nice.mailViolation.dto.ReturnDto;
+import nice.mailViolation.service.InsertService;
 import lombok.extern.slf4j.Slf4j;
+import nice.mailViolation.dto.FileUploadDto;
+import nice.mailViolation.dto.MailResultDto;
+import nice.mailViolation.service.GetExelService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -15,10 +18,6 @@ import org.springframework.validation.ObjectError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import com.mail.mailViolation.dto.FileUploadDto;
-import com.mail.mailViolation.dto.MailResultDto;
-import com.mail.mailViolation.service.GetExelService;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -43,7 +42,7 @@ public class UploadController {
 
 	@PostMapping("/upload")
 	public String handleFileUpload(@Validated FileUploadDto form, BindingResult bindingResult,
-								   RedirectAttributes redirectAttributes, Model model) {
+                                   RedirectAttributes redirectAttributes, Model model) {
 		log.info("------------------------- 업로드 중");
 
 		// 파일 유효성 검사 및 처리 로직

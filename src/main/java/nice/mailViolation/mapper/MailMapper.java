@@ -1,8 +1,8 @@
-package com.mail.mailViolation.mapper;
+package nice.mailViolation.mapper;
 
-import com.mail.mailViolation.dto.BossInfo;
-import com.mail.mailViolation.dto.EmployeeDto;
-import com.mail.mailViolation.dto.MailResultDto;
+import nice.mailViolation.dto.BossInfo;
+import nice.mailViolation.dto.EmployeeDto;
+import nice.mailViolation.dto.MailResultDto;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

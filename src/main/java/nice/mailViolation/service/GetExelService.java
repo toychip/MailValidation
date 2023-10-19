@@ -1,8 +1,9 @@
-package com.mail.mailViolation.service;
+package nice.mailViolation.service;
 
 import com.mail.mailViolation.dto.*;
-import com.mail.mailViolation.exception.ExelUploadException;
-import com.mail.mailViolation.mapper.MailMapper;
+import nice.mailViolation.dto.*;
+import nice.mailViolation.exception.ExelUploadException;
+import nice.mailViolation.mapper.MailMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;

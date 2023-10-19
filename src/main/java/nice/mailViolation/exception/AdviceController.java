@@ -1,8 +1,8 @@
-package com.mail.mailViolation.exception;
+package nice.mailViolation.exception;
 
-import com.mail.mailViolation.comtroller.UploadController;
-import com.mail.mailViolation.comtroller.ValidResultController;
-import com.mail.mailViolation.service.CheckValidate;
+import nice.mailViolation.comtroller.UploadController;
+import nice.mailViolation.comtroller.ValidResultController;
+import nice.mailViolation.service.CheckValidate;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.ui.Model;

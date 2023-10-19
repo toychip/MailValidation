@@ -1,4 +1,4 @@
-package com.mail.mailViolation.dto;
+package nice.mailViolation.dto;
 
 import java.time.LocalDateTime;
 

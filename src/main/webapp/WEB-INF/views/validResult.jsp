@@ -75,6 +75,7 @@
             <th>📑 문서 번호</th>
             <th>👤 기안자</th>
             <th>🏢 부서</th>
+            <th>📄 제목</th>
             <th>📄 문서 제목</th>
             <th>📅 결재일</th>
             <th>👁️ 참조</th>
@@ -198,6 +199,7 @@
             tbodyHtml += "<td>" + item.draftsman + "</td>";
             tbodyHtml += "<td>" + item.dept + "</td>";
             tbodyHtml += "<td class='limit-reference'>" + (item.title || '' ) + "</td>";
+            tbodyHtml += "<td>" + item.mailTitle + "</td>";
 
             const formattedDate = formatDate(item.approvalDate);
             tbodyHtml += "<td>" + formattedDate + "</td>";

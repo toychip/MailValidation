@@ -3,7 +3,7 @@ package nice.mailViolation.service;
 import nice.mailViolation.dto.BossInfo;
 import nice.mailViolation.dto.EmployeeDto;
 import nice.mailViolation.dto.ReasonIneligibility;
-import nice.mailViolation.dto.ReferNTypeReturnDto;
+import nice.mailViolation.dto.ConditionAndReasonIneligibility;
 import nice.mailViolation.mapper.MailMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -110,9 +110,9 @@ public class CheckValidate {
     }
 
     // 실장, 본부장이 아닌 '일반 사원'일 경우
-    public ReferNTypeReturnDto basicEmployee(Boolean isTBossApprover, String lastApprover, String referenceString,
-                                             String sBossName, String sBossEmail,
-                                             String bBossName, String bBossEmail) {
+    public ConditionAndReasonIneligibility basicEmployee(Boolean isTBossApprover, String lastApprover, String referenceString,
+                                                         String sBossName, String sBossEmail,
+                                                         String bBossName, String bBossEmail) {
         String condition;
         ReasonIneligibility reasonIneligibility = ReasonIneligibility.I;    // 초기화
 
@@ -128,7 +128,7 @@ public class CheckValidate {
 
             if (condition.equals("O")) {
                 reasonIneligibility = ReasonIneligibility.A;
-                return ReferNTypeReturnDto.builder()
+                return ConditionAndReasonIneligibility.builder()
                         .condition(condition)   // Contiion == O
                         .reasonIneligibility(reasonIneligibility) // reasonIneligibility.A 적격
                         .build();
@@ -152,10 +152,10 @@ public class CheckValidate {
 
         // 팀장과 실장, 본부장 중 아무에게도 결제를 받지 않음
         if ((isTBossApprover == false) && (condition.equals("X"))) {
-            reasonIneligibility = ReasonIneligibility.C;
+            reasonIneligibility = ReasonIneligibility.D;
         }
 
-        return ReferNTypeReturnDto.builder()
+        return ConditionAndReasonIneligibility.builder()
                 .condition(condition)   // Contiion == O
                 .reasonIneligibility(reasonIneligibility) // reasonIneligibility.A 적격
                 .build();

@@ -84,7 +84,7 @@ public class GetExelService {
                 // 부적격 사유
                 ReasonIneligibility reasonIneligibility;
 
-                ReferNTypeReturnDto referNTypeReturnDto;
+                ConditionAndReasonIneligibility conditionAndReasonIneligibility;
 
                 String condition = "X";
                 String title = approvalMailDto.getTitle();
@@ -127,7 +127,7 @@ public class GetExelService {
 
 
                     // 일반사원일 때의 부적격 검증
-                    referNTypeReturnDto = checkValidate.basicEmployee(
+                    conditionAndReasonIneligibility = checkValidate.basicEmployee(
                             isTBossApprover, lastApprover, referencer,
                             sBossEmpName, sBossEmail,
                             bBossEmpName, bBossEmail);
@@ -147,6 +147,16 @@ public class GetExelService {
                     boolean currentState = isSBossApprover || isBBossApprover;
 
                     condition = checkValidate.checkCondition(currentState);
+
+                    if (condition.equals("X")) {
+                        reasonIneligibility = ReasonIneligibility.E;
+
+                        conditionAndReasonIneligibility = ConditionAndReasonIneligibility.builder()
+                                .condition(condition)
+                                .reasonIneligibility(reasonIneligibility)
+                                .build();
+                    }
+
                 }
 
                 // 결재를 받으려는 사람이 실장일 경우

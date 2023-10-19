@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @Builder
-public class ReferNTypeReturnDto {
+public class ConditionAndReasonIneligibility {
 
     private String condition;
 

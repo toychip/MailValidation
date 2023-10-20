@@ -1,4 +1,4 @@
-package com.mail.mailViolation.dto;
+package nice.mailViolation.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,4 +15,5 @@ public class ReturnDto {
 
     private List<MailResultDto> conditionXList;
     private List<MailResultDto> conditionOList;
+    private List<MailResultDto> conditionTList;
 }

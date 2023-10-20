@@ -1,8 +1,8 @@
-package com.mail.mailViolation.service;
+package nice.mailViolation.service;
 
-import com.mail.mailViolation.dto.*;
-import com.mail.mailViolation.exception.ExelUploadException;
-import com.mail.mailViolation.mapper.MailMapper;
+import nice.mailViolation.dto.*;
+import nice.mailViolation.exception.ExelUploadException;
+import nice.mailViolation.mapper.MailMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
@@ -43,6 +43,7 @@ public class GetExelService {
         InputStream inputStream = null;
         List<MailResultDto> conditionXList = new ArrayList<>();
         List<MailResultDto> conditionOList = new ArrayList<>();
+        List<MailResultDto> conditionTList = new ArrayList<>();
 
         checkValidate.loadBossInfoToMemory();
 
@@ -80,6 +81,11 @@ public class GetExelService {
                 EmployeeDto findEmp = checkValidate.getEmp(approvalMailDto.getDraftsman());
                 BigDecimal empDeptId = findEmp.getDeptId();
 //                log.info("-------------------- empDeptId = " + empDeptId);
+
+                // 부적격 사유
+                ReasonIneligibility reasonIneligibility = ReasonIneligibility.T;
+
+                ConditionAndReasonIneligibility conditionAndReasonIneligibility;
 
                 String condition = "X";
                 String title = approvalMailDto.getTitle();
@@ -120,11 +126,16 @@ public class GetExelService {
                     // 팀장이 결재했는가?
                     boolean isTBossApprover = checkValidate.approvalTBoss(empDeptId, lastApprover);
 
-                    // 실장 혹은 본부장을 참조하였는가?
-                    condition = checkValidate.basicEmployee(
+
+                    // 일반사원일 때의 부적격 검증
+                    conditionAndReasonIneligibility = checkValidate.basicEmployee(
                             isTBossApprover, lastApprover, referencer,
                             sBossEmpName, sBossEmail,
                             bBossEmpName, bBossEmail);
+
+                    condition = conditionAndReasonIneligibility.getCondition();
+                    reasonIneligibility = conditionAndReasonIneligibility.getReasonIneligibility();
+
                 }
 
                 // 결재를 받으려는 사람이 팀장일 경우
@@ -140,6 +151,12 @@ public class GetExelService {
                     boolean currentState = isSBossApprover || isBBossApprover;
 
                     condition = checkValidate.checkCondition(currentState);
+
+                    // 팀장이고, 실장 혹은 본부장 중 아무에게도 결재를 받지 않음
+                    if (condition.equals("X")) {
+                        reasonIneligibility = ReasonIneligibility.E;
+                    }
+
                 }
 
                 // 결재를 받으려는 사람이 실장일 경우
@@ -150,6 +167,11 @@ public class GetExelService {
                     boolean isBBossApprover = checkValidate.isBBossApprover(lastApprover, bBossEmpName);
 
                     condition = checkValidate.checkCondition(isBBossApprover);
+
+//                    실장이고, 본부장에게 결재를 받지 않음
+                    if (condition.equals("X")) {
+                        reasonIneligibility = ReasonIneligibility.F;
+                    }
                 }
 
                 // DB 관리자인 it 혁신실 팀장, 결재 관리하는 경영지원실 팀장 및 실장일 경우
@@ -157,7 +179,7 @@ public class GetExelService {
                         || (lastApprover.equals(managementTeamSBoss))
                         || (lastApprover.equals(itInnovationTeamTBoss));
 
-                // 일반사원이고, 부적격 상태이고, (최종 DB 관리자 및 경영지원실 팀장 or 실장이 결재한 경우
+                // 일반사원 or 팀장이고, 부적격 상태이고, (최종 DB 관리자 및 경영지원실 팀장 or 실장이 결재한 경우
                 if (condition.equals("X") && masterApproval && !apprReferYn.equals("S") ) {
 
                     // 본인 부서의 실장 혹은 본부장을 참조했는가?
@@ -167,6 +189,16 @@ public class GetExelService {
                     boolean isSBReferer = isSBossReferer || isBBossReferer;
 
                     condition = checkValidate.checkCondition(isSBReferer);
+
+                    // 일반 사원이고, 경영지원실 팀장, 실장, DB관리자 중 한 명에게 결재를 받았지만, 본인 부서의 보직좌를 참조하지 않음.
+                    if (apprReferYn.equals("N") && condition.equals("X")) {
+                        reasonIneligibility = ReasonIneligibility.G;
+                    }
+
+                    // 팀장 이고, 경영지원실 팀장, 실장, DB관리자 중 한 명에게 결재를 받았지만, 본인 부서의 보직좌를 참조하지 않음.
+                    if (apprReferYn.equals("T") && condition.equals("X")) {
+                        reasonIneligibility = ReasonIneligibility.H;
+                    }
                 }
 
                 // 실장이고, 부적격 상태이고, (최종 DB 관리자 및 경영지원실 팀장 or 실장이 결재한 경우
@@ -176,6 +208,17 @@ public class GetExelService {
                     boolean isBBossReferer = checkValidate.isBBossReferer(referencer, bBossEmpName, bBossEmail);
 
                     condition = checkValidate.checkCondition(isBBossReferer);
+
+                    if (condition.equals("X")) {
+                        reasonIneligibility = ReasonIneligibility.I;
+                    }
+
+                    // DT 실은 본부가 없음
+                    if(findEmp.getEmpName().equals("유성훈")) {
+                        log.info("findemp.getempName() = " + findEmp.getEmpName());
+                        condition = "O";
+                        reasonIneligibility = ReasonIneligibility.A;
+                    }
                 }
 
                 // condition이 "X"일 경우, 부적격 리스트에 추가
@@ -194,6 +237,7 @@ public class GetExelService {
                                     .blockCause(approvalMailDto.getBlockCause())	// 차단사유
                                     .lastApprover(approvalMailDto.getLastApprover())	// 최종 결재
                                     .result(condition)		// 적격 여부 적격: O, 부적격: X, 테스트: T
+                                    .reasonIneligibility(reasonIneligibility)
                                     .build()
                     );
                 }
@@ -214,6 +258,27 @@ public class GetExelService {
                                     .blockCause(approvalMailDto.getBlockCause())	// 차단사유
                                     .lastApprover(approvalMailDto.getLastApprover())	// 최종 결재
                                     .result(condition)		// 적격 여부 적격: O, 부적격: X, 테스트: T
+                                    .reasonIneligibility(ReasonIneligibility.A)
+                                    .build()
+                    );
+                }
+
+                if ("T".equals(condition)) {
+                    conditionTList.add(
+                            MailResultDto.builder()
+                                    .docNumber(approvalMailDto.getDocNumber())	// 문서 번호
+                                    .draftsman(approvalMailDto.getDraftsman())	// 기안자
+                                    .dept(approvalMailDto.getDept())	// 소속부서
+                                    .deptId(empDeptId)
+                                    .title(title)	// 제목
+                                    .approvalDate(approvalMailDto.getApprovalDate())	// 결재일
+                                    .mailTitle(approvalMailDto.getMailTitle())	// 메일 제목
+                                    .recipient(approvalMailDto.getRecipient())	// 받는 사람
+                                    .reference(approvalMailDto.getReference())	// 참조
+                                    .blockCause(approvalMailDto.getBlockCause())	// 차단사유
+                                    .lastApprover(approvalMailDto.getLastApprover())	// 최종 결재
+                                    .result(condition)		// 적격 여부 적격: O, 부적격: X, 테스트: T
+                                    .reasonIneligibility(ReasonIneligibility.B)
                                     .build()
                     );
                 }
@@ -238,7 +303,8 @@ public class GetExelService {
         // 최종 결과 반환
 		return ReturnDto.builder()
                 .conditionXList(conditionXList.isEmpty() ? null:conditionXList)
-                .conditionOList(conditionOList)
+                .conditionOList(conditionOList.isEmpty() ? null:conditionOList)
+                .conditionTList(conditionTList.isEmpty() ? null:conditionTList)
                 .build();
 	}
 

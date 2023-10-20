@@ -1,9 +1,9 @@
-package com.mail.mailViolation.comtroller;
+package nice.mailViolation.comtroller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mail.mailViolation.dto.MailResultDto;
-import com.mail.mailViolation.service.SaveExelService;
+import nice.mailViolation.dto.MailResultDto;
+import nice.mailViolation.service.SaveExelService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;

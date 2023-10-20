@@ -1,9 +1,8 @@
-package com.mail.mailViolation.service;
+package nice.mailViolation.service;
 
 import java.time.LocalDateTime;
 
-import com.mail.mailViolation.dto.ApprovalMailDto;
-import com.mail.mailViolation.mapper.MailMapper;
+import nice.mailViolation.dto.ApprovalMailDto;
 import lombok.RequiredArgsConstructor;
 import org.apache.poi.ss.usermodel.Row;
 import org.springframework.stereotype.Service;

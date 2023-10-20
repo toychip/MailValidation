@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.mail.mailViolation.mapper.MailMapper">
+<mapper namespace="nice.mailViolation.mapper.MailMapper">
 
     <!-- 기안자 이름으로 TB_AS_SCRT_EMP 테이블에서 직원 정보를 조회 -->
-    <select id="findByNameAndUseYn" resultType="com.mail.mailViolation.dto.EmployeeDto">
+    <select id="findByNameAndUseYn" resultType="nice.mailViolation.dto.EmployeeDto">
         SELECT EMP_ID, EMP_NAME, DEPT_ID, EMP_EMAIL, USE_YN, RGT_DTTM, APPR_REFER_YN
         FROM TB_AS_SCRT_EMP
         WHERE EMP_NAME = #{name}
@@ -19,14 +19,14 @@
     </select>
 
     <!-- 모든 실장 조회 -->
-    <select id="findAllSBoss" resultType="com.mail.mailViolation.dto.BossInfo">
+    <select id="findAllSBoss" resultType="nice.mailViolation.dto.BossInfo">
         SELECT DEPT_ID as deptId, EMP_NAME as name, EMP_EMAIL as email FROM TB_AS_SCRT_EMP
         WHERE USE_YN = 'Y'
           AND APPR_REFER_YN = 'S'
     </select>
 
     <!-- 모든 본부장 조회 -->
-    <select id="findAllBBoss" resultType="com.mail.mailViolation.dto.BossInfo">
+    <select id="findAllBBoss" resultType="nice.mailViolation.dto.BossInfo">
         SELECT D1.dept_id as deptId, E.emp_name as name, E.emp_email as email
         FROM tb_as_scrt_emp E
                  JOIN tb_as_scrt_dept D ON E.dept_id = D.dept_id
@@ -38,7 +38,7 @@
 
 
     <!-- TEST_EMAIL_VALID 테이블에 메일 결과를 삽입 또는 업데이트 -->
-    <insert id="insertValidResult" parameterType="com.mail.mailViolation.dto.MailResultDto">
+    <insert id="insertValidResult" parameterType="nice.mailViolation.dto.MailResultDto">
         MERGE INTO TEST_EMAIL_VALID T
             USING (SELECT #{docNumber} AS temp FROM dual) S
             ON (T.DOC_NUMBER = S.temp)
@@ -54,21 +54,22 @@
                     T.REFERENCE = #{reference},
                     T.BLOCK_CAUSE = #{blockCause},
                     T.LAST_APPROVER = #{lastApprover},
-                    T.RESULT = #{result}
+                    T.RESULT = #{result},
+                    T.REASON_INELIGIBILITY = #{reasonIneligibility}
             WHEN NOT MATCHED THEN
                 INSERT (
                         NO, DOC_NUMBER, DRAFTSMAN, DEPT, DEPT_ID, TITLE, APPROVAL_DATE,
-                        MAIL_TITLE, RECIPIENT, REFERENCE, BLOCK_CAUSE, LAST_APPROVER, RESULT
+                        MAIL_TITLE, RECIPIENT, REFERENCE, BLOCK_CAUSE, LAST_APPROVER, RESULT, REASON_INELIGIBILITY
                     )
                     VALUES (
                                TEST_EMAIL_VALID_seq.NEXTVAL, #{docNumber}, #{draftsman}, #{dept}, #{deptId}, #{title},
                                #{approvalDate, jdbcType=TIMESTAMP}, #{mailTitle}, #{recipient}, #{reference},
-                               #{blockCause}, #{lastApprover}, #{result}
+                               #{blockCause}, #{lastApprover}, #{result}, #{reasonIneligibility}
                            )
     </insert>
 
     <!-- 메일 결과 매핑 설정 -->
-    <resultMap id="mailResultMap" type="com.mail.mailViolation.dto.MailResultDto">
+    <resultMap id="mailResultMap" type="nice.mailViolation.dto.MailResultDto">
         <result property="docNumber" column="DOC_NUMBER"/>
         <result property="draftsman" column="DRAFTSMAN"/>
         <result property="dept" column="DEPT"/>
@@ -81,6 +82,7 @@
         <result property="blockCause" column="BLOCK_CAUSE"/>
         <result property="lastApprover" column="LAST_APPROVER"/>
         <result property="result" column="RESULT"/>
+        <result property="reasonIneligibility" column="REASON_INELIGIBILITY"/>
     </resultMap>
 
     <!-- TEST_EMAIL_VALID 테이블에서 날짜에 맞게 조회 -->

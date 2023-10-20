@@ -1,4 +1,4 @@
-package com.mail.mailViolation.dto;
+package nice.mailViolation.dto;
 
 import lombok.*;
 
@@ -24,7 +24,7 @@ public class EmployeeDto {
         return EmployeeDto.builder()
                 .empId(-1)
                 .empName("-1")
-                .deptId(null)
+                .deptId(new BigDecimal("-1"))
                 .empEmail("-1")
                 .useYN("-1")
                 .rgtDttm(LocalDate.now())

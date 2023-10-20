@@ -1,9 +1,10 @@
-package com.mail.mailViolation.service;
+package nice.mailViolation.service;
 
-import com.mail.mailViolation.dto.BossInfo;
-import com.mail.mailViolation.dto.EmployeeDto;
-import com.mail.mailViolation.exception.NotFoundTBossException;
-import com.mail.mailViolation.mapper.MailMapper;
+import nice.mailViolation.dto.BossInfo;
+import nice.mailViolation.dto.EmployeeDto;
+import nice.mailViolation.dto.ReasonIneligibility;
+import nice.mailViolation.dto.ConditionAndReasonIneligibility;
+import nice.mailViolation.mapper.MailMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -61,10 +62,12 @@ public class CheckValidate {
     }
 
     public List<String> findTBoss(BigDecimal deptId) {
+        List<String> newList = new ArrayList<>();
 //        log.info("deptId = " + deptId);
         List<String> tBossList = tBossMap.getOrDefault(deptId, new ArrayList<>());
         if (tBossList.isEmpty()) {
-            throw new NotFoundTBossException("팀장을 찾을 수 없음");
+            return newList;
+//            throw new NotFoundTBossException("팀장을 찾을 수 없음");
         }
         return tBossList;
     }
@@ -107,10 +110,11 @@ public class CheckValidate {
     }
 
     // 실장, 본부장이 아닌 '일반 사원'일 경우
-    public String basicEmployee(Boolean isTBossApprover, String lastApprover, String referenceString,
-                                String sBossName, String sBossEmail,
-                                String bBossName, String bBossEmail) {
+    public ConditionAndReasonIneligibility basicEmployee(Boolean isTBossApprover, String lastApprover, String referenceString,
+                                                         String sBossName, String sBossEmail,
+                                                         String bBossName, String bBossEmail) {
         String condition;
+        ReasonIneligibility reasonIneligibility = ReasonIneligibility.T;    // temp init
 
         // 팀장이 결재했는가?
         if (isTBossApprover) {
@@ -123,7 +127,10 @@ public class CheckValidate {
             condition = checkCondition(SBReference);
 
             if (condition.equals("O")) {
-                return condition;
+                return ConditionAndReasonIneligibility.builder()
+                        .condition(condition)   // Contiion == O
+                        .reasonIneligibility(ReasonIneligibility.A) // reasonIneligibility.A 적격
+                        .build();
             }
 
         }
@@ -137,7 +144,21 @@ public class CheckValidate {
         boolean SBApprover = isSBossApprover || isBBossApprover;
         condition = checkCondition(SBApprover);
 
-        return condition;
+        // 팀장이 결재하였지만 부적격이므로 보직좌(실장 혹은 본부장)를 참조하지 않음
+        if ((isTBossApprover == true) && (condition.equals("X"))) {
+            reasonIneligibility = ReasonIneligibility.C;
+        }
+
+        // 팀장과 실장, 본부장 중 아무에게도 결제를 받지 않음
+        if ((isTBossApprover == false) && (condition.equals("X"))) {
+            reasonIneligibility = ReasonIneligibility.D;
+        }
+
+        return ConditionAndReasonIneligibility.builder()
+                .condition(condition)   // Contiion == O
+                .reasonIneligibility(reasonIneligibility)
+                .build();
+
     }
 
     // 실장이 결재했는가?

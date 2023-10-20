@@ -75,12 +75,14 @@
             <th>📑 문서 번호</th>
             <th>👤 기안자</th>
             <th>🏢 부서</th>
+            <th>📄 제목</th>
             <th>📄 문서 제목</th>
             <th>📅 결재일</th>
             <th>👁️ 참조</th>
             <th>🚫 차단 사유</th>
             <th>👑 최종 결재자</th>
             <th>✔️ 적격 여부</th>
+            <th>🚫 부적격사유</th>
         </tr>
         </thead>
         <tbody id="dynamicTbody">
@@ -110,6 +112,24 @@
         }
         return newObj;
     }
+
+    function getReasonInKorean(reason) {
+        switch (reason) {
+            // case 'A': return '적격';
+            // case 'B': return '그룹웨어관리 테스트용';
+            case 'C': return '기안자: 일반사원 <br> 결재: 팀장 <br> 참조: 보직좌 참조 X';
+            case 'D': return '기안자: 일반사원 <br> 결재: 팀장, 실장, 본부장 중 아무도 안받음';
+            case 'E': return '기안자: 팀장 <br> 결재: 실장, 본부장 중 아무도 안받음';
+            case 'F': return '기안자: 실장 <br> 결재: 본부장이 안했음';
+            case 'G': return '기안자: 일반 사원 <br> 결재: 경영지원실 팀장, 실장, DB관리자 중 한 명에게 받음 <br> 참조: 본인 부서의 보직좌(실장 or 본부장) 참조안함';
+            case 'H': return '기안자: 팀장 <br> 결재: 경영지원실 팀장, 실장, DB관리자 중 한 명에게 받음 <br> 참조: 본인 부서의 보직좌(실장 or 본부장) 참조안함';
+            case 'I': return '기안자: 실장 <br> 결재: 경영지원실 팀장, 실장, DB관리자 중 한 명에게 받음 <br> 참조: 본부장을 참조 안함';
+            // case 'J': return '여유 공백';
+            case 'T': return '현재 퇴사 or 휴직으로 검증 불가';
+            default: return '알 수 없음';
+        }
+    }
+
 
     // 이 부분은 변경할 필요가 없습니다.
     var jsonTemp = ${conditionXList};
@@ -179,6 +199,7 @@
             tbodyHtml += "<td>" + item.draftsman + "</td>";
             tbodyHtml += "<td>" + item.dept + "</td>";
             tbodyHtml += "<td class='limit-reference'>" + (item.title || '' ) + "</td>";
+            tbodyHtml += "<td>" + item.mailTitle + "</td>";
 
             const formattedDate = formatDate(item.approvalDate);
             tbodyHtml += "<td>" + formattedDate + "</td>";
@@ -187,6 +208,7 @@
             tbodyHtml += "<td>" + item.blockCause + "</td>";
             tbodyHtml += "<td>" + item.lastApprover + "</td>";
             tbodyHtml += "<td>" + item.result + "</td>";
+            tbodyHtml += "<td>" + getReasonInKorean(item.reasonIneligibility) + "</td>";
             tbodyHtml += "</tr>";
         });
 

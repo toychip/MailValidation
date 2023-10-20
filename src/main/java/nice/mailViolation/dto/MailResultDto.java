@@ -1,4 +1,4 @@
-package com.mail.mailViolation.dto;
+package nice.mailViolation.dto;
 
 import lombok.*;
 
@@ -24,4 +24,6 @@ public class MailResultDto {
 	private String blockCause;	// 차단사유
 	private String lastApprover;	// 최종 결재
 	private String result; 		// 적격 여부 일단 1 or 0 으로 설정. 추후 보안사항 위반일 경우 위반의 해당하는 값 1, 2, 3, .. 기입
+	private ReasonIneligibility reasonIneligibility ; // 부적격 사유 A, B, C, D, E, F, G .. 등
+
 }

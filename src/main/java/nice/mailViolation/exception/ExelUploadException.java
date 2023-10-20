@@ -1,4 +1,4 @@
-package com.mail.mailViolation.exception;
+package nice.mailViolation.exception;
 
 public class ExelUploadException extends RuntimeException{
 

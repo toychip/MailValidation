@@ -90,8 +90,8 @@
         SELECT *
         FROM TEST_EMAIL_VALID
         WHERE APPROVAL_DATE BETWEEN TO_DATE(#{fromYear} || LPAD(#{fromMonth}, 2, '0') || '01', 'YYYYMMDD')
-                  AND LAST_DAY(TO_DATE(#{toYear} || LPAD(#{toMonth}, 2, '0') || '01', 'YYYYMMDD'))
-                  AND RESULT = 'X'
+            AND LAST_DAY(TO_DATE(#{toYear} || LPAD(#{toMonth}, 2, '0') || '01', 'YYYYMMDD'))
+          AND RESULT = 'X'
     </select>
 
     <!-- 예전에 사용한 쿼리들 -->

@@ -128,7 +128,6 @@ public class GetExelService {
                     // 팀장이 결재했는가?
                     boolean isTBossApprover = checkValidate.approvalTBoss(empDeptId, lastApprover);
 
-
                     // 일반사원일 때의 부적격 검증
                     conditionAndReasonIneligibility = checkValidate.basicEmployee(
                             isTBossApprover, lastApprover, recipient, referencer,
@@ -181,6 +180,7 @@ public class GetExelService {
                         reasonIneligibility = ReasonIneligibility.F;
                     }
 
+                    // 본부장이 수신처인가?
                     boolean isBBosRecipient = checkValidate.isBBosRecipient(recipient, bBossEmpName, bBossEmail);
                     if (isBBosRecipient) {
                         condition = "O";
@@ -212,6 +212,13 @@ public class GetExelService {
                     if (apprReferYn.equals("T") && condition.equals("X")) {
                         reasonIneligibility = ReasonIneligibility.H;
                     }
+
+                    // 실장 혹은 본부장이 수신처인가?
+                    boolean isSBBossRecipient = checkValidate.isSBBossRecipient(recipient, sBossEmpName, sBossEmail, bBossEmpName, bBossEmail);
+                    if (isSBBossRecipient) {
+                        condition = "O";
+                    }
+
                 }
 
                 // 실장이고, 부적격 상태이고, (최종 DB 관리자 및 경영지원실 팀장 or 실장이 결재한 경우
@@ -231,6 +238,12 @@ public class GetExelService {
                         log.info("findemp.getempName() = " + findEmp.getEmpName());
                         condition = "O";
                         reasonIneligibility = ReasonIneligibility.A;
+                    }
+
+                    // 본부장이 수신처인가?
+                    boolean isBBosRecipient = checkValidate.isBBosRecipient(recipient, bBossEmpName, bBossEmail);
+                    if (isBBosRecipient) {
+                        condition = "O";
                     }
                 }
 

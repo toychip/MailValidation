@@ -40,11 +40,12 @@ public class SaveExelService {
         headerRow.createCell(4).setCellValue("제목");
         headerRow.createCell(5).setCellValue("문서 제목");
         headerRow.createCell(6).setCellValue("결재일");
-        headerRow.createCell(7).setCellValue("참조");
-        headerRow.createCell(8).setCellValue("차단 사유");
-        headerRow.createCell(9).setCellValue("최종 결재자");
-        headerRow.createCell(10).setCellValue("적격 여부");
-        headerRow.createCell(11).setCellValue("부적격 사유");
+        headerRow.createCell(7).setCellValue("수신처");
+        headerRow.createCell(8).setCellValue("참조");
+        headerRow.createCell(9).setCellValue("차단 사유");
+        headerRow.createCell(10).setCellValue("최종 결재자");
+        headerRow.createCell(11).setCellValue("적격 여부");
+        headerRow.createCell(12).setCellValue("부적격 사유");
 
         // rows
         for (int i = 0; i < conditionXList.size(); i++) {
@@ -58,11 +59,12 @@ public class SaveExelService {
             row.createCell(4).setCellValue(data.getTitle());
             row.createCell(5).setCellValue(data.getMailTitle());
             row.createCell(6).setCellValue(data.getApprovalDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-            row.createCell(7).setCellValue(data.getReference());
-            row.createCell(8).setCellValue(data.getBlockCause());
-            row.createCell(9).setCellValue(data.getLastApprover());
-            row.createCell(10).setCellValue(data.getResult());
-            row.createCell(11).setCellValue(getReasonInKorean(data.getReasonIneligibility()));
+            row.createCell(7).setCellValue(data.getRecipient());
+            row.createCell(8).setCellValue(data.getReference());
+            row.createCell(9).setCellValue(data.getBlockCause());
+            row.createCell(10).setCellValue(data.getLastApprover());
+            row.createCell(11).setCellValue(data.getResult());
+            row.createCell(12).setCellValue(getReasonInKorean(data.getReasonIneligibility()));
         }
 
         // 응답 properties 설정

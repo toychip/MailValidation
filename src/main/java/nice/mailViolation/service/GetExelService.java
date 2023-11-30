@@ -27,14 +27,14 @@ public class GetExelService {
 
     private final MailMapper mapper;
 
-    @Value("${management.support.team.tboss}")
-    private String managementTeamTBoss;
+    //    @Value("${management.support.team.tboss}")
+    private final String managementTeamTBoss = "천희준";
 
-    @Value("${management.support.team.sboss}")
-    private String managementTeamSBoss;
+    //    @Value("${management.support.team.sboss}")
+    private final String managementTeamSBoss = "정재훈";
 
-    @Value("${it.innovation.team.tboss}")
-    private String itInnovationTeamTBoss;
+    //    @Value("${it.innovation.team.tboss}")
+    private final String itInnovationTeamTBoss = "송대호";
 
     // 엑셀 파일 처리 메서드
 	public ReturnDto processExcelFile(MultipartFile file){
@@ -103,6 +103,8 @@ public class GetExelService {
                 String referencer = approvalMailDto.getReference();
 //                log.info("-------------------- 참조 = " + referencer);
 
+                String recipient = approvalMailDto.getRecipient();
+
                 // 실장
                 BossInfo sBoss = checkValidate.findSBoss(empDeptId);
                 String sBossEmpName = sBoss.getName();
@@ -126,10 +128,9 @@ public class GetExelService {
                     // 팀장이 결재했는가?
                     boolean isTBossApprover = checkValidate.approvalTBoss(empDeptId, lastApprover);
 
-
                     // 일반사원일 때의 부적격 검증
                     conditionAndReasonIneligibility = checkValidate.basicEmployee(
-                            isTBossApprover, lastApprover, referencer,
+                            isTBossApprover, lastApprover, recipient, referencer,
                             sBossEmpName, sBossEmail,
                             bBossEmpName, bBossEmail);
 
@@ -152,6 +153,12 @@ public class GetExelService {
 
                     condition = checkValidate.checkCondition(currentState);
 
+                    // 실장 혹은 본부장이 수신처인가?
+                    boolean isSBBossRecipient = checkValidate.isSBBossRecipient(recipient, sBossEmpName, sBossEmail, bBossEmpName, bBossEmail);
+                    if (isSBBossRecipient) {
+                        condition = "O";
+                    }
+
                     // 팀장이고, 실장 혹은 본부장 중 아무에게도 결재를 받지 않음
                     if (condition.equals("X")) {
                         reasonIneligibility = ReasonIneligibility.E;
@@ -171,6 +178,12 @@ public class GetExelService {
 //                    실장이고, 본부장에게 결재를 받지 않음
                     if (condition.equals("X")) {
                         reasonIneligibility = ReasonIneligibility.F;
+                    }
+
+                    // 본부장이 수신처인가?
+                    boolean isBBosRecipient = checkValidate.isBBosRecipient(recipient, bBossEmpName, bBossEmail);
+                    if (isBBosRecipient) {
+                        condition = "O";
                     }
                 }
 
@@ -199,6 +212,13 @@ public class GetExelService {
                     if (apprReferYn.equals("T") && condition.equals("X")) {
                         reasonIneligibility = ReasonIneligibility.H;
                     }
+
+                    // 실장 혹은 본부장이 수신처인가?
+                    boolean isSBBossRecipient = checkValidate.isSBBossRecipient(recipient, sBossEmpName, sBossEmail, bBossEmpName, bBossEmail);
+                    if (isSBBossRecipient) {
+                        condition = "O";
+                    }
+
                 }
 
                 // 실장이고, 부적격 상태이고, (최종 DB 관리자 및 경영지원실 팀장 or 실장이 결재한 경우
@@ -218,6 +238,12 @@ public class GetExelService {
                         log.info("findemp.getempName() = " + findEmp.getEmpName());
                         condition = "O";
                         reasonIneligibility = ReasonIneligibility.A;
+                    }
+
+                    // 본부장이 수신처인가?
+                    boolean isBBosRecipient = checkValidate.isBBosRecipient(recipient, bBossEmpName, bBossEmail);
+                    if (isBBosRecipient) {
+                        condition = "O";
                     }
                 }
 

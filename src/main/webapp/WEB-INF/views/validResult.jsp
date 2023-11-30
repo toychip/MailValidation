@@ -5,90 +5,165 @@
 <html>
 <head>
     <title>Valid Result 🌟</title>
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/default.css" />
     <style>
-        /* ... (CSS는 그대로 사용 가능하므로 생략) ... */
-        .limit-reference {
-            max-width: 200px;  /* 최대 너비 설정 */
-            overflow: hidden;  /* 넘치는 부분은 숨김 */
-            text-overflow: ellipsis;  /* 넘치는 텍스트를 "..."로 표시 */
-            white-space: nowrap;  /* 텍스트를 한 줄로 표시 */
+        /* 날짜 검색 부분의 크기를 더 크게 설정 */
+        #searchInfo h3, #excelDownloadForm button, .container-fluid h1 {
+            font-size: 1.5em;
         }
 
-        body {
-            background: linear-gradient(90deg, rgba(255, 0, 150, 1) 0%, rgba(0, 204, 255, 1) 100%);
+        .table td {
+            /* white-space: nowrap; 기존 설정 제거 */
+            /* overflow: hidden; 기존 설정 제거 */
+            /* text-overflow: ellipsis; 기존 설정 제거 */
+            position: relative; /* 툴팁의 위치 기준 설정 */
         }
 
-        h1, h3 {
-            color: white;
-            text-shadow: 2px 2px 4px #000000;
+        /* 툴팁 스타일 */
+        .tooltip {
+            display: none;
+            position: absolute;
+            z-index: 1000;
+            background-color: #f5f5f5;
+            border: 1px solid #ccc;
+            padding: 5px;
+            max-width: 200px;
+            word-wrap: break-word;
+            left: 100%;
+            white-space: normal;
         }
 
-        .btn-primary {
-            background: linear-gradient(45deg, #ff0066, #ffcc00);
-            border: none;
-            box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.2);
+        /* 마우스 오버시 툴팁 표시 */
+        .table td:hover .tooltip {
+            display: block;
         }
 
-        .table {
-            background-color: white;
-            border-radius: 15px;
-            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
+        .table th:nth-child(8), .table td:nth-child(8) {
+            font-size: 0.8em;
+            max-width: 600px; /* 참조 열의 최대 너비 설정 */
+            /* white-space: nowrap; 이미 적용됨 */
         }
 
-        th {
-            background: linear-gradient(45deg, #00ffaa, #ff00cc);
-            color: white;
+        .table th:nth-child(5), .table td:nth-child(5) {
+            font-size: 0.8em;
+            max-width: 400px; /* 참조 열의 최대 너비 설정 */
+            /* white-space: nowrap; 이미 적용됨 */
         }
 
-        td {
-            color: #333;
+        .table th:nth-child(6), .table td:nth-child(6) {
+            font-size: 0.8em;
+            max-width: 400px; /* 참조 열의 최대 너비 설정 */
+            /* white-space: nowrap; 이미 적용됨 */
         }
 
-        tr:nth-child(even) {
-            background-color: #f2f2f2;
+        .table th:nth-child(3), .table td:nth-child(3) {
+            font-size: 1.1em;
+            min-width: 80px; /* 참조 열의 최대 너비 설정 */
+            /* white-space: nowrap; 이미 적용됨 */
+        }
+        .table th:nth-child(7), .table td:nth-child(7) {
+            font-size: 1.0em;
+            min-width: 150px; /* 참조 열의 최대 너비 설정 */
+            /* white-space: nowrap; 이미 적용됨 */
         }
 
-        tr:hover {
-            background-color: #ddd;
+        .table th:nth-child(10), .table td:nth-child(10) {
+            font-size: 1.1em;
+            min-width: 80px; /* 참조 열의 최대 너비 설정 */
+            /* white-space: nowrap; 이미 적용됨 */
         }
+
+        .table th:nth-child(11), .table td:nth-child(11) {
+            font-size: 1.1em;
+            min-width: 80px; /* 참조 열의 최대 너비 설정 */
+            /* white-space: nowrap; 이미 적용됨 */
+        }
+        /* 홀수 및 짝수 행 배경색 설정 */
+        .table tr:nth-child(odd) {
+            background-color: #ffffff;
+        }
+        .table tr:nth-child(even) {
+            background-color: #f5f5f5;
+        }
+
+        /* 테이블 헤더 스타일 */
+        .table thead th {
+            background-color: #5b5b5b;
+        }
+        /* 예시 코드에서 가져온 스타일 */
+
+
+        .title-block.sub-title-block {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .sub-button {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+        }
+
+        .tab-ul {
+            border: 1px solid;
+            width: 120px;
+            height: 35px;
+            float: left;
+            background-color: #f5f7fa;
+        }
+
+        .tab-button {
+            width: 100px;
+            height: 32px;
+            background-color: #f5f7fa;
+        }
+
     </style>
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
 <div id="searchInfo" class="text-center mb-4">
     <c:if test="${not empty fromYear and not empty fromMonth and not empty toYear and not empty toMonth}">
-        <h3>${fromYear}년 ${fromMonth}월부터 ${toYear}년 ${toMonth}월까지의 검색 결과</h3>
+        <h3>${fromYear}년 ${fromMonth}월 ~ ${toYear}년 ${toMonth}월 검색 결과</h3>
     </c:if>
 </div>
+<br>
+<br>
 <div class="container-fluid mt-5">
     <form id="excelDownloadForm" action="/downloadExcel" method="post" target="_blank">
         <!-- Hidden field to store the JSON string -->
         <input type="hidden" id="hiddenField" name="conditionXListJson">
-        <button type="submit" class="btn btn-primary">📥 엑셀 다운로드 📥</button>
+        <button type="submit" class="btn btn-primary">엑셀 다운로드 📥</button>
     </form>
-    <h1 class="text-center">✨✨ 검증 결과 ✨✨</h1>
-    <table class="table table-responsive">
-        <thead>
-        <tr>
-            <th>🔢 순서</th>
-            <th>📑 문서 번호</th>
-            <th>👤 기안자</th>
-            <th>🏢 부서</th>
-            <th>📄 제목</th>
-            <th>📄 문서 제목</th>
-            <th>📅 결재일</th>
-            <th>👁️ 참조</th>
-            <th>🚫 차단 사유</th>
-            <th>👑 최종 결재자</th>
-            <th>✔️ 적격 여부</th>
-            <th>🚫 부적격사유</th>
-        </tr>
-        </thead>
-        <tbody id="dynamicTbody">
-        <!-- 동적으로 생성될 테이블 로우 -->
-        </tbody>
-    </table>
+    <br>
+    <ul class="table-block">
+        <li class="table__head">
+            <table class="table table-responsive" >
+                <thead>
+                <tr>
+                    <th scope="col">NO</th>
+                    <th scope="col">문서 번호</th>
+                    <th scope="col">기안자</th>
+                    <th scope="col">부서</th>
+                    <th scope="col">품의 문서 제목</th>
+                    <th scope="col">메일 제목</th>
+                    <th scope="col">결재일</th>
+                    <th scope="col">수신처</th>
+                    <th scope="col">👁참조</th>
+                    <th scope="col">차단 사유</th>
+                    <th scope="col">최종 결재자</th>
+                    <th scope="col">적격 여부</th>
+                    <th scope="col">부적격사유</th>
+                </tr>
+                </thead>
+                <tbody id="dynamicTbody">
+                <!-- 동적으로 생성될 테이블 로우 -->
+                </tbody>
+            </table>
+        </li>
+    </ul>
 </div>
 <!-- 검색 결과 날짜 정보를 표시하는 섹션 -->
 
@@ -117,12 +192,12 @@
         switch (reason) {
             // case 'A': return '적격';
             // case 'B': return '그룹웨어관리 테스트용';
-            case 'C': return '기안자: 일반사원 <br> 결재: 팀장 <br> 참조: 보직좌 참조 X';
+            case 'C': return '기안자: 일반사원 <br> 결재: 팀장 <br> 참조: 보직자 참조 X';
             case 'D': return '기안자: 일반사원 <br> 결재: 팀장, 실장, 본부장 중 아무도 안받음';
             case 'E': return '기안자: 팀장 <br> 결재: 실장, 본부장 중 아무도 안받음';
             case 'F': return '기안자: 실장 <br> 결재: 본부장이 안했음';
-            case 'G': return '기안자: 일반 사원 <br> 결재: 경영지원실 팀장, 실장, DB관리자 중 한 명에게 받음 <br> 참조: 본인 부서의 보직좌(실장 or 본부장) 참조안함';
-            case 'H': return '기안자: 팀장 <br> 결재: 경영지원실 팀장, 실장, DB관리자 중 한 명에게 받음 <br> 참조: 본인 부서의 보직좌(실장 or 본부장) 참조안함';
+            case 'G': return '기안자: 일반 사원 <br> 결재: 경영지원실 팀장, 실장, DB관리자 중 한 명에게 받음 <br> 참조: 본인 부서의 보직자(실장 or 본부장) 참조안함';
+            case 'H': return '기안자: 팀장 <br> 결재: 경영지원실 팀장, 실장, DB관리자 중 한 명에게 받음 <br> 참조: 본인 부서의 보직자(실장 or 본부장) 참조안함';
             case 'I': return '기안자: 실장 <br> 결재: 경영지원실 팀장, 실장, DB관리자 중 한 명에게 받음 <br> 참조: 본부장을 참조 안함';
             // case 'J': return '여유 공백';
             case 'T': return '현재 퇴사 or 휴직으로 검증 불가';
@@ -198,12 +273,13 @@
             tbodyHtml += "<td>" + item.docNumber + "</td>";
             tbodyHtml += "<td>" + item.draftsman + "</td>";
             tbodyHtml += "<td>" + item.dept + "</td>";
-            tbodyHtml += "<td class='limit-reference'>" + (item.title || '' ) + "</td>";
+            tbodyHtml += "<td>" + (item.title || '' ) + "</td>";
             tbodyHtml += "<td>" + item.mailTitle + "</td>";
 
             const formattedDate = formatDate(item.approvalDate);
             tbodyHtml += "<td>" + formattedDate + "</td>";
 
+            tbodyHtml += "<td>" + (item.recipient || '') + "</td>";
             tbodyHtml += "<td>" + (item.reference || '') + "</td>";
             tbodyHtml += "<td>" + item.blockCause + "</td>";
             tbodyHtml += "<td>" + item.lastApprover + "</td>";

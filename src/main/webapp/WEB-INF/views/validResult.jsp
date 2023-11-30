@@ -150,6 +150,7 @@
                     <th scope="col">품의 문서 제목</th>
                     <th scope="col">메일 제목</th>
                     <th scope="col">결재일</th>
+                    <th scope="col">수신처</th>
                     <th scope="col">👁참조</th>
                     <th scope="col">차단 사유</th>
                     <th scope="col">최종 결재자</th>
@@ -278,6 +279,7 @@
             const formattedDate = formatDate(item.approvalDate);
             tbodyHtml += "<td>" + formattedDate + "</td>";
 
+            tbodyHtml += "<td>" + (item.recipient || '') + "</td>";
             tbodyHtml += "<td>" + (item.reference || '') + "</td>";
             tbodyHtml += "<td>" + item.blockCause + "</td>";
             tbodyHtml += "<td>" + item.lastApprover + "</td>";

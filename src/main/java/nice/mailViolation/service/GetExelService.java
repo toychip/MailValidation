@@ -27,14 +27,14 @@ public class GetExelService {
 
     private final MailMapper mapper;
 
-    @Value("${management.support.team.tboss}")
-    private String managementTeamTBoss;
+    //    @Value("${management.support.team.tboss}")
+    private final String managementTeamTBoss = "천희준";
 
-    @Value("${management.support.team.sboss}")
-    private String managementTeamSBoss;
+    //    @Value("${management.support.team.sboss}")
+    private final String managementTeamSBoss = "정재훈";
 
-    @Value("${it.innovation.team.tboss}")
-    private String itInnovationTeamTBoss;
+    //    @Value("${it.innovation.team.tboss}")
+    private final String itInnovationTeamTBoss = "송대호";
 
     // 엑셀 파일 처리 메서드
 	public ReturnDto processExcelFile(MultipartFile file){
@@ -103,6 +103,8 @@ public class GetExelService {
                 String referencer = approvalMailDto.getReference();
 //                log.info("-------------------- 참조 = " + referencer);
 
+                String recipient = approvalMailDto.getRecipient();
+
                 // 실장
                 BossInfo sBoss = checkValidate.findSBoss(empDeptId);
                 String sBossEmpName = sBoss.getName();
@@ -129,7 +131,7 @@ public class GetExelService {
 
                     // 일반사원일 때의 부적격 검증
                     conditionAndReasonIneligibility = checkValidate.basicEmployee(
-                            isTBossApprover, lastApprover, referencer,
+                            isTBossApprover, lastApprover, recipient, referencer,
                             sBossEmpName, sBossEmail,
                             bBossEmpName, bBossEmail);
 

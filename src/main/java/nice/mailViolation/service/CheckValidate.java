@@ -27,6 +27,12 @@ public class CheckValidate {
     private final ConcurrentHashMap<BigDecimal, BossInfo> sBossMap = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<BigDecimal, BossInfo> bBossMap = new ConcurrentHashMap<>();
 
+    // 적격 Condition setting
+    private final ConditionAndReasonIneligibility whenConditionO = ConditionAndReasonIneligibility.builder()
+            .condition("O")   // Contiion == O
+            .reasonIneligibility(ReasonIneligibility.A) // reasonIneligibility.A 적격
+            .build();
+
     public void loadBossInfoToMemory() {
         List<Map<String, Object>> allTBoss = mapper.findAllTBoss();
         List<BossInfo> allSBoss = mapper.findAllSBoss();
@@ -67,7 +73,6 @@ public class CheckValidate {
         List<String> tBossList = tBossMap.getOrDefault(deptId, new ArrayList<>());
         if (tBossList.isEmpty()) {
             return newList;
-//            throw new NotFoundTBossException("팀장을 찾을 수 없음");
         }
         return tBossList;
     }
@@ -110,13 +115,17 @@ public class CheckValidate {
     }
 
     // 실장, 본부장이 아닌 '일반 사원'일 경우
-    public ConditionAndReasonIneligibility basicEmployee(Boolean isTBossApprover, String lastApprover, String referenceString,
+    public ConditionAndReasonIneligibility basicEmployee(Boolean isTBossApprover, String lastApprover,
+                                                         String recipientString, String referenceString,
                                                          String sBossName, String sBossEmail,
                                                          String bBossName, String bBossEmail) {
         String condition;
         ReasonIneligibility reasonIneligibility = ReasonIneligibility.T;    // temp init
 
+
+
         // 팀장이 결재했는가?
+
         if (isTBossApprover) {
             // 실장 혹은 본부장을 참조했는가?
             boolean isSBossReferer = isSBossReferer(referenceString, sBossName, sBossEmail);
@@ -127,10 +136,7 @@ public class CheckValidate {
             condition = checkCondition(SBReference);
 
             if (condition.equals("O")) {
-                return ConditionAndReasonIneligibility.builder()
-                        .condition(condition)   // Contiion == O
-                        .reasonIneligibility(ReasonIneligibility.A) // reasonIneligibility.A 적격
-                        .build();
+                return whenConditionO;
             }
 
         }
@@ -154,8 +160,20 @@ public class CheckValidate {
             reasonIneligibility = ReasonIneligibility.D;
         }
 
+        // 실장 혹은 본부장이 수신처인가?
+        boolean isSBosRecipient = isSBosRecipient(recipientString, sBossName, sBossEmail);
+        boolean isBBosRecipient = isBBosRecipient(recipientString, bBossName, bBossEmail);
+
+        boolean SBRecipient = isSBosRecipient || isBBosRecipient;
+        condition = checkCondition(SBRecipient);
+
+
+        if (condition.equals("O")) {
+            return whenConditionO;
+        }
+
         return ConditionAndReasonIneligibility.builder()
-                .condition(condition)   // Contiion == O
+                .condition(condition)
                 .reasonIneligibility(reasonIneligibility)
                 .build();
 
@@ -183,6 +201,20 @@ public class CheckValidate {
         return false;
     }
 
+    // 실장을 수신처로 했는가??
+    public boolean isSBosRecipient(String recipientString, String sBossName, String sBossMail) {
+        if (recipientString == null) {
+            return false;
+        }
+
+        // 참조 문자열에서 실장의 이름 또는 이메일이 포함되어 있는지 확인
+        if (recipientString.contains(sBossName) || recipientString.contains(sBossMail)) {
+            return true;
+        }
+        return false;
+    }
+
+
     // 본부장이 결재했는가?
     public boolean isBBossApprover(String lastApprover, String bBossName) {
         if (lastApprover != null && lastApprover.equals(bBossName)) {
@@ -203,6 +235,21 @@ public class CheckValidate {
         }
         return false;
     }
+
+    // 본부장을 수신처로 했는가?
+    public boolean isBBosRecipient(String recipientString, String bBossName, String bBossEmail) {
+        if (recipientString == null) {
+            return false;
+        }
+
+        // 참조 문자열에서 본부장의 이름 또는 이메일이 포함되어 있는지 확인
+        if (recipientString.contains(bBossName) || recipientString.contains(bBossEmail)) {
+            return true;
+        }
+        return false;
+    }
+    
+    
 
     // if true -> condition == O
     public String checkCondition(boolean trueOrFalse) {

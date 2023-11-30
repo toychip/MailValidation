@@ -180,6 +180,11 @@ public class GetExelService {
                     if (condition.equals("X")) {
                         reasonIneligibility = ReasonIneligibility.F;
                     }
+
+                    boolean isBBosRecipient = checkValidate.isBBosRecipient(recipient, bBossEmpName, bBossEmail);
+                    if (isBBosRecipient) {
+                        condition = "O";
+                    }
                 }
 
                 // DB 관리자인 it 혁신실 팀장, 결재 관리하는 경영지원실 팀장 및 실장일 경우

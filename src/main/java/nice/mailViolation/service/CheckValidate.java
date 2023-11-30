@@ -161,12 +161,11 @@ public class CheckValidate {
         }
 
         // 실장 혹은 본부장이 수신처인가?
-        boolean isSBosRecipient = isSBosRecipient(recipientString, sBossName, sBossEmail);
-        boolean isBBosRecipient = isBBosRecipient(recipientString, bBossName, bBossEmail);
+        boolean isSBBossRecipient = isSBBossRecipient(recipientString, sBossName, sBossEmail, bBossName, bBossEmail);
 
-        boolean SBRecipient = isSBosRecipient || isBBosRecipient;
-        condition = checkCondition(SBRecipient);
-
+        if (isSBBossRecipient) {
+            condition = "O";
+        }
 
         if (condition.equals("O")) {
             return whenConditionO;
@@ -177,6 +176,15 @@ public class CheckValidate {
                 .reasonIneligibility(reasonIneligibility)
                 .build();
 
+    }
+
+    // 실장 혹은 본부장이 수신처인가?
+    public boolean isSBBossRecipient(String recipientString, String sBossName, String sBossEmail, String bBossName, String bBossEmail) {
+        boolean isSBosRecipient = isSBosRecipient(recipientString, sBossName, sBossEmail);
+        boolean isBBosRecipient = isBBosRecipient(recipientString, bBossName, bBossEmail);
+
+        boolean SBRecipient = isSBosRecipient || isBBosRecipient;
+        return SBRecipient;
     }
 
     // 실장이 결재했는가?

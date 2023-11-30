@@ -154,6 +154,12 @@ public class GetExelService {
 
                     condition = checkValidate.checkCondition(currentState);
 
+                    // 실장 혹은 본부장이 수신처인가?
+                    boolean isSBBossRecipient = checkValidate.isSBBossRecipient(recipient, sBossEmpName, sBossEmail, bBossEmpName, bBossEmail);
+                    if (isSBBossRecipient) {
+                        condition = "O";
+                    }
+
                     // 팀장이고, 실장 혹은 본부장 중 아무에게도 결재를 받지 않음
                     if (condition.equals("X")) {
                         reasonIneligibility = ReasonIneligibility.E;
